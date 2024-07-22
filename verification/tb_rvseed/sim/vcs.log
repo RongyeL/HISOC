@@ -1,0 +1,172 @@
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '5.4.0-135-generic' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+       Version O-2018.09-SP2_Full64 -- Mon Jul 22 07:15:04 2024
+               Copyright (c) 1991-2018 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file '/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/alu.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/alu.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/ctrl.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/ctrl.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/data_mem.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/data_mem.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/imm_gen.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/imm_gen.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/inst_mem.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/inst_mem.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/mux_alu.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/mux_alu.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/mux_mem.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/mux_mem.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/mux_pc.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/mux_pc.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/mux_reg.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/mux_reg.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/pc_reg.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/pc_reg.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/reg_file.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/reg_file.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/rvseed.v'
+Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
+Back to file '/home/myeda/project/hisoc/rtl/rvseed/rvseed.v'.
+Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'
+Top Level Modules:
+       tb_rvseed
+TimeScale is 1 ns / 1 ps
+Starting vcs inline pass...
+1 module and 0 UDP read.
+recompiling module tb_rvseed
+make[1]: Entering directory '/home/myeda/project/hisoc/verification/tb_rvseed/sim/csrc'
+make[1]: Leaving directory '/home/myeda/project/hisoc/verification/tb_rvseed/sim/csrc'
+make[1]: Entering directory '/home/myeda/project/hisoc/verification/tb_rvseed/sim/csrc'
+rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -shared  -Bsymbolic  -o .//../simv.daidir//_csrc0.so objs/amcQw_d.o 
+rm -f _csrc0.so
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv -no-pie  -Wl,--no-as-needed    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath=./simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  -L/usr/lib/x86_64-linux-gnu -L/lib/x86_64-linux-gnu -Wl,--no-as-needed -rdynamic  -Wl,-rpath=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib -L/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib     _9146_archive_1.so _prev_archive_1.so _csrc0.so  SIM_l.o  _csrc0.so     rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a    -lvcsnew -lsimprofile -luclinative /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive        _vcs_pli_stub_.o   /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_save_restore_new.o /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a -ldl -lm  -lc -lpthread -ldl 
+../simv up to date
+make[1]: Leaving directory '/home/myeda/project/hisoc/verification/tb_rvseed/sim/csrc'
+Chronologic VCS simulator copyright 1991-2018
+Contains Synopsys proprietary information.
+Compiler version O-2018.09-SP2_Full64; Runtime version O-2018.09-SP2_Full64;  Jul 22 07:15 2024
+*Verdi* Loading libsscore_vcs201809.so
+FSDB Dumper for VCS, Release Verdi_O-2018.09-SP2, Linux x86_64/64bit, 02/21/2019
+(C) 1996 - 2019 by Synopsys, Inc.
+*Verdi* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
+*Verdi* : Create FSDB file 'sim_out.fsdb'
+*Verdi* : Begin traversing the scopes, layer (0).
+*Verdi* : End of traversing.
+~~~~~~~~~~~~~~~~~~~      ../inst/ADD PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/SUB PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/XOR PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~       ../inst/OR PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/AND PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/SLL PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/SRL PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/SRA PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/SLT PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/SLTU PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/ADDI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/XORI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/ORI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/ANDI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/SLLI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/SRLI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/SRAI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/SLTI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~    ../inst/SLTIU PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/LB line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~       ../inst/LB PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/LH line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~       ../inst/LH PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/LW line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~       ../inst/LW PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/LBU line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~      ../inst/LBU PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/LHU line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~      ../inst/LHU PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/SB line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~       ../inst/SB PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/SH line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~       ../inst/SH PASS ~~~~~~~~~~~~~~~~~~~
+
+Warning-[STASKW_RMIEAFL] Illegal entry
+/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 125
+  Illegal entry found at file ../inst/SW line 1025 while executing $readmem.
+  Please ensure that the file has proper entries.
+
+~~~~~~~~~~~~~~~~~~~       ../inst/SW PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/BEQ PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/BNE PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/BLT PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/BGE PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/BLTU PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/BGEU PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/JAL PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~     ../inst/JALR PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~      ../inst/LUI PASS ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~    ../inst/AUIPC PASS ~~~~~~~~~~~~~~~~~~~
+$finish called from file "/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", line 103.
+$finish at simulation time            371750000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 371750000 ps
+CPU Time:      0.280 seconds;       Data structure size:   0.1Mb
+Mon Jul 22 07:15:07 2024
+CPU time: .265 seconds to compile + .232 seconds to elab + .218 seconds to link + .307 seconds in simulation

@@ -1,0 +1,42 @@
+*design* DebussyLib (btIdent Verdi_O-2018.09-SP2)
+Command arguments:
+    +define+verilog
+    -f ../tb/tb.f
+        -f ../dut/dut.f
+            -f /home/myeda/project/hisoc/rtl/rvseed/rvseed.f
+                +incdir+/home/myeda/project/hisoc/rtl/rvseed
+                /home/myeda/project/hisoc/rtl/rvseed/alu.v
+                /home/myeda/project/hisoc/rtl/rvseed/ctrl.v
+                /home/myeda/project/hisoc/rtl/rvseed/data_mem.v
+                /home/myeda/project/hisoc/rtl/rvseed/imm_gen.v
+                /home/myeda/project/hisoc/rtl/rvseed/inst_mem.v
+                /home/myeda/project/hisoc/rtl/rvseed/mux_alu.v
+                /home/myeda/project/hisoc/rtl/rvseed/mux_mem.v
+                /home/myeda/project/hisoc/rtl/rvseed/mux_pc.v
+                /home/myeda/project/hisoc/rtl/rvseed/mux_reg.v
+                /home/myeda/project/hisoc/rtl/rvseed/pc_reg.v
+                /home/myeda/project/hisoc/rtl/rvseed/reg_file.v
+                /home/myeda/project/hisoc/rtl/rvseed/rvseed.v
+                /home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v
+        -f ../tc/tc.f
+            /home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v
+
+
+*Error* Syntax error at ++
+"/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", 97: 
+
+*Error* Syntax error at #
+"/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", 102: 
+
+*Error* Syntax error at $finish
+"/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", 103: 
+
+*Error* Syntax error at end
+"/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", 104: 
+
+*Error* missing step assignment in for assignment
+"/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", 97: 
+Highest level modules:
+tb_rvseed
+
+Total	5 error(s),   0 warning(s)

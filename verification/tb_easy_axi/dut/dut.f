@@ -1,0 +1,1 @@
+-f $HISOC_PATH/rtl/easy_axi/easy_axi.f

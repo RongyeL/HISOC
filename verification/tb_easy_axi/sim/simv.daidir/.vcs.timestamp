@@ -1,0 +1,138 @@
+2        
+0 easy_axi_para.v
+0 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/etc/systemverilog/easy_axi_para.v
+38
++define+DUMP_FSDB
++itf+/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcsdp_lite.tab
++v2k
++vcsd1
++vpi
+-Mamsrun=
+-Masflags=
+-Mcc=gcc
+-Mcfl= -pipe -fPIC -O -I/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/include
+-Mcplusplus=g++
+-Mcrt0=
+-Mcrtn=
+-Mcsrc=
+-Mexternalobj=
+-Mldflags=-L/usr/lib/x86_64-linux-gnu -L/lib/x86_64-linux-gnu -Wl,--no-as-needed -rdynamic
+-Mobjects= /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libvirsim.so /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/liberrorinf.so /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libsnpsmalloc.so /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libvfs.so /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a
+-Mout=simv
+-Msaverestoreobj=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_save_restore_new.o
+-Msyslibs=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a -ldl -lm
+-Mupdate
+-Mvcsaceobjs=
+-Mxcflags= -pipe -fPIC -I/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/include
+-P
+-P
+-Xvcs_run_simv=1
+-debug_acc+all
+-debug_region+cell+encrypt
+-f /home/myeda/project/hisoc/verification/tb_easy_axi/dut/dut.f
+-f /home/myeda/project/hisoc/verification/tb_easy_axi/tc/tc.f
+-fsdb
+-full64
+-gen_obj
+-picarchive
+-sverilog
+-timescale=1ns/1ps
+/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/bin/vcs1
+/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/novas.tab
+/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/verdi.tab
+74
+sysc_uni_pwd=/home/myeda/project/hisoc/verification/tb_easy_axi/sim
+XMODIFIERS=@im=ibus
+XDG_VTNR=2
+XDG_SESSION_TYPE=x11
+XDG_SESSION_ID=2
+XDG_SESSION_DESKTOP=ubuntu
+XDG_SEAT=seat0
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_MENU_PREFIX=gnome-
+XDG_DATA_DIRS=/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+XDG_CURRENT_DESKTOP=ubuntu:GNOME
+XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+XAUTHORITY=/run/user/1000/gdm/Xauthority
+WINDOWPATH=2
+VTE_VERSION=5202
+VMR_MODE_FLAG=64
+VERDI_HOME=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2
+VERDI_DIR=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2
+VCS_TARGET_ARCH=amd64
+VCS_MODE_FLAG=64
+VCS_HOME=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2
+VCS_DEPTH=0
+VCS_ARG_ADDED_FOR_TMP=1
+VCS_ARCH=linux64
+USERNAME=myeda
+UNAME=/bin/uname
+TOOL_HOME=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64
+TMUX_PANE=%3
+TMUX=/tmp/tmux-1000/default,2003,1
+TEXTDOMAINDIR=/usr/share/locale/
+TEXTDOMAIN=im-config
+SSH_AUTH_SOCK=/tmp/ssh-vG4SZXPmmvyk/agent.2734
+SSH_AGENT_PID=2735
+SNPS_VCS_INTERNAL_UBUNTU_PRE_LDFLAGS= -no-pie  -Wl,--no-as-needed 
+SNPS_VCS_INTERNAL_LINKER_NEEDS_NO_AS_NEEDED=1
+SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1552,unix/ubuntu:/tmp/.ICE-unix/1552
+SCRNAME=vcs
+SCRIPT_NAME=vcs
+QT_IM_MODULE=xim
+QT_ACCESSIBILITY=1
+QT4_IM_MODULE=xim
+OVA_UUM=0
+NPI_PLATFORM=LINUX64_GNU_472
+NOVAS_INST_DIR=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2
+NOVAS_HOME=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2
+MFLAGS=
+MANDATORY_PATH=/usr/share/gconf/ubuntu.mandatory.path
+MAKE_TERMOUT=/dev/pts/4
+MAKE_TERMERR=/dev/pts/4
+MAKELEVEL=1
+MAKEFLAGS=
+LIBRARY_PATH=/usr/lib/x86_64-linux-gnu
+LESSOPEN=| /usr/bin/lesspipe %s
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LC_ALL=C
+IM_CONFIG_PHASE=2
+HISOC_PATH=/home/myeda/project/hisoc
+GTK_MODULES=gail:atk-bridge
+GTK_IM_MODULE=ibus
+GPG_AGENT_INFO=/run/user/1000/gnupg/S.gpg-agent:0:1
+GNOME_TERMINAL_SERVICE=:1.57
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/bacf9720_3c46_4240_983a_0a43d8ce9b15
+GNOME_SHELL_SESSION_MODE=ubuntu
+GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+GJS_DEBUG_TOPICS=JS ERROR;JS LOG
+GJS_DEBUG_OUTPUT=stderr
+GDMSESSION=ubuntu
+DVE_HOME=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/gui/dve
+DESKTOP_SESSION=ubuntu
+DEFAULTS_PATH=/usr/share/gconf/ubuntu.default.path
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+CPATH=/usr/include/x86_64-linux-gnu
+COLORTERM=truecolor
+CLUTTER_IM_MODULE=xim
+0
+11
+1721578163 /home/myeda/project/hisoc/rtl/easy_axi/s_axi.v
+1721578151 /home/myeda/project/hisoc/rtl/easy_axi/m_axi.v
+1721651007 /home/myeda/project/hisoc/rtl/easy_axi/easy_axi.v
+1672463801 /home/myeda/project/hisoc/rtl/easy_axi/easy_axi_para.v
+1721576913 /home/myeda/project/hisoc/verification/tb_easy_axi/tc/easy_axi_tb.sv
+1721574105 /home/myeda/project/hisoc/rtl/easy_axi/easy_axi.f
+1721572704 /home/myeda/project/hisoc/verification/tb_easy_axi/dut/dut.f
+1721657593 /home/myeda/project/hisoc/verification/tb_easy_axi/tc/tc.f
+1550753332 /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/verdi.tab
+1551421246 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcsdp_lite.tab
+1550753332 /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/novas.tab
+5
+1551422344 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libvirsim.so
+1551421792 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/liberrorinf.so
+1551421768 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libsnpsmalloc.so
+1551421789 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libvfs.so
+1550752033 /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a
+1721657605 simv.daidir
+-1 partitionlib

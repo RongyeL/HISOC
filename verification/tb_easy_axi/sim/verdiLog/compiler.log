@@ -1,0 +1,18 @@
+*design* DebussyLib (btIdent Verdi_O-2018.09-SP2)
+Command arguments:
+    +define+verilog
+    -f ../tb/tb.f
+        -f ../dut/dut.f
+            -f /home/myeda/project/hisoc/rtl/easy_axi/easy_axi.f
+                +incdir+/home/myeda/project/hisoc/rtl/easy_axi
+                /home/myeda/project/hisoc/rtl/easy_axi/easy_axi_para.v
+                /home/myeda/project/hisoc/rtl/easy_axi/easy_axi.v
+                /home/myeda/project/hisoc/rtl/easy_axi/m_axi.v
+                /home/myeda/project/hisoc/rtl/easy_axi/s_axi.v
+        -f ../tc/tc.f
+            /home/myeda/project/hisoc/verification/tb_easy_axi/tc/easy_axi_tb.sv
+
+Highest level modules:
+EASY_AXI_TB
+
+Total	0 error(s),   0 warning(s)

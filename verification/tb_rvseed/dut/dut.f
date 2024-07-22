@@ -1,0 +1,1 @@
+-f $HISOC_PATH/rtl/rvseed/rvseed.f

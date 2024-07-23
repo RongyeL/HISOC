@@ -5,15 +5,13 @@
 // Filename      : mux_alu.v
 // Author        : Rongye
 // Created On    : 2022-03-25 02:16
-// Last Modified : 2022-04-13 04:03
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Select the data source of alu.  
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module mux_alu ( 
+module MUX_ALU ( 
     input      [`ALU_SRC_WIDTH-1:0] alu_src_sel,// reg or imm to alu
 
     input      [`CPU_WIDTH-1:0]     reg1_rdata, // register 1 read data

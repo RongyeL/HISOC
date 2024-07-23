@@ -5,7 +5,7 @@
 // Filename      : alu.v
 // Author        : Rongye
 // Created On    : 2022-03-24 23:36
-// Last Modified : 2022-04-21 20:29
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Only simple operations:
 //                 Integer Arithmetic Operations 
@@ -13,9 +13,7 @@
 //                 Shift operation 
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module alu(
+module ALU(
     input      [`ALU_OP_WIDTH-1:0] alu_op,   // alu opcode
     input      [`CPU_WIDTH-1:0]    alu_src1, // alu source 1
     input      [`CPU_WIDTH-1:0]    alu_src2, // alu source 2

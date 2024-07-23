@@ -4,7 +4,7 @@ Warning-[LINX_KRNL] Unsupported Linux kernel
   Supported versions are 2.4* or 2.6*.
 
                          Chronologic VCS (TM)
-       Version O-2018.09-SP2_Full64 -- Mon Jul 22 07:13:21 2024
+       Version O-2018.09-SP2_Full64 -- Tue Jul 23 09:43:37 2024
                Copyright (c) 1991-2018 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
@@ -28,7 +28,7 @@ Top Level Modules:
 TimeScale is 1 ns / 1 ps
 Starting vcs inline pass...
 1 module and 0 UDP read.
-recompiling module EASY_AXI_TB
+	However, due to incremental compilation, no re-compilation is necessary.
 make[1]: Entering directory '/home/myeda/project/hisoc/verification/tb_easy_axi/sim/csrc'
 make[1]: Leaving directory '/home/myeda/project/hisoc/verification/tb_easy_axi/sim/csrc'
 make[1]: Entering directory '/home/myeda/project/hisoc/verification/tb_easy_axi/sim/csrc'
@@ -36,12 +36,12 @@ rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
 ld -shared  -Bsymbolic  -o .//../simv.daidir//_csrc0.so objs/amcQw_d.o 
 rm -f _csrc0.so
 if [ -x ../simv ]; then chmod -x ../simv; fi
-g++  -o ../simv -no-pie  -Wl,--no-as-needed    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath=./simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  -L/usr/lib/x86_64-linux-gnu -L/lib/x86_64-linux-gnu -Wl,--no-as-needed -rdynamic  -Wl,-rpath=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib -L/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib     _8105_archive_1.so _prev_archive_1.so _csrc0.so  SIM_l.o  _csrc0.so     rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a    -lvcsnew -lsimprofile -luclinative /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive        _vcs_pli_stub_.o   /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_save_restore_new.o /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a -ldl -lm  -lc -lpthread -ldl 
+g++  -o ../simv -no-pie  -Wl,--no-as-needed    -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath=./simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  -L/usr/lib/x86_64-linux-gnu -L/lib/x86_64-linux-gnu -Wl,--no-as-needed -rdynamic  -Wl,-rpath=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib -L/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib     _40885_archive_1.so _prev_archive_1.so _csrc0.so  SIM_l.o  _csrc0.so     rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lzerosoft_rt_stubs -lvirsim -lerrorinf -lsnpsmalloc -lvfs /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a    -lvcsnew -lsimprofile -luclinative /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive        _vcs_pli_stub_.o   /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/vcs_save_restore_new.o /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a -ldl -lm  -lc -lpthread -ldl 
 ../simv up to date
 make[1]: Leaving directory '/home/myeda/project/hisoc/verification/tb_easy_axi/sim/csrc'
 Chronologic VCS simulator copyright 1991-2018
 Contains Synopsys proprietary information.
-Compiler version O-2018.09-SP2_Full64; Runtime version O-2018.09-SP2_Full64;  Jul 22 07:13 2024
+Compiler version O-2018.09-SP2_Full64; Runtime version O-2018.09-SP2_Full64;  Jul 23 09:43 2024
 *Verdi* Loading libsscore_vcs201809.so
 FSDB Dumper for VCS, Release Verdi_O-2018.09-SP2, Linux x86_64/64bit, 02/21/2019
 (C) 1996 - 2019 by Synopsys, Inc.
@@ -54,6 +54,6 @@ $finish called from file "/home/myeda/project/hisoc/verification/tb_easy_axi/tc/
 $finish at simulation time              4000000
            V C S   S i m u l a t i o n   R e p o r t 
 Time: 4000000 ps
-CPU Time:      0.260 seconds;       Data structure size:   0.0Mb
-Mon Jul 22 07:13:25 2024
-CPU time: .300 seconds to compile + .255 seconds to elab + .224 seconds to link + .284 seconds in simulation
+CPU Time:      0.240 seconds;       Data structure size:   0.0Mb
+Tue Jul 23 09:43:41 2024
+CPU time: .246 seconds to compile + .261 seconds to elab + .217 seconds to link + .266 seconds in simulation

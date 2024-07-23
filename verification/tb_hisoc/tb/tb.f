@@ -1,0 +1,2 @@
+-f ../dut/dut.f
+-f ../tc/tc.f

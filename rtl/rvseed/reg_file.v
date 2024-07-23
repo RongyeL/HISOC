@@ -5,7 +5,7 @@
 // Filename      : reg_file.v
 // Author        : Rongye
 // Created On    : 2022-03-23 23:18
-// Last Modified : 2022-04-01 10:02
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : The x1~x31 registers represent integer general registers, whose 
 // function is to save the intermediate results of program operation and store the 
@@ -13,9 +13,7 @@
 // some instruction functions. 
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module reg_file (
+module REG_FILE (
     input                            clk,
     input                            rst_n,
 

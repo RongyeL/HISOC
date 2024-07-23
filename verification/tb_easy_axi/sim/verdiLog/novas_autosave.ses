@@ -45,7 +45,6 @@ traceIncTopPort = False
 leadingZero = False
 signalPane = False
 Scope1 = "EASY_AXI_TB"
-multipleSelection = 5 18 2 0 0 17 2 0 0 19 2 0 0 20 8 0 0 21 2 0 0
 sdfCheckUndef = FALSE
 simFlow = FALSE
 [hb.design]
@@ -60,7 +59,7 @@ WaveformFile = /home/myeda/project/hisoc/verification/tb_easy_axi/sim/easy_axi_t
 UserActionNum = 0
 nMemWindowNum = 0
 [wave.0]
-viewPort = 0 27 1853 356 312 154
+viewPort = 0 27 1853 191 312 154
 primaryWindow = TRUE
 SessionFile = /home/myeda/project/hisoc/verification/tb_easy_axi/sim/verdiLog/novas_autosave.ses.wave.0
 displayGrid = FALSE

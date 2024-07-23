@@ -5,7 +5,7 @@
 // Filename      : id.v
 // Author        : Rongye
 // Created On    : 2022-03-22 19:10
-// Last Modified : 2022-08-31 22:58
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : The main control module decodes the read instructions 
 //                 to obtain the control signals, corresponding addresses 
@@ -13,9 +13,7 @@
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module ctrl (
+module CTRL (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
 
     output reg [`BRAN_WIDTH-1:0]       branch,     // branch flag

@@ -5,158 +5,168 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2022-12-22 06:16
+// Last Modified : 2024-07-23 09:38
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
+module RVSEED (
+// global 
+    input  wire                                  clk,
+    input  wire                                  rst_n,             // 
+// AW channel
+    output wire [`AXI_ID_WIDTH        -1:0]      ifu_axi_awid,     // 
+    output wire [`AXI_ADDR_WIDTH      -1:0]      ifu_axi_awaddr,   // 
+    output wire [`AXI_BURST_LEN_WIDTH  -1:0]      ifu_axi_awlen,    // 
+    output wire [`AXI_BURST_SIZE_WIDTH -1:0]      ifu_axi_awsize,   // 
+    output wire [`AXI_BURST_TYPE_WIDTH -1:0]      ifu_axi_awburst,  // 
+    output wire                                   ifu_axi_awlock,   // 
+    output wire [`AXI_CACHE_WIDTH      -1:0]      ifu_axi_awcache,  // 
+    output wire [`AXI_PROT_WIDTH       -1:0]      ifu_axi_awprot,   // 
+    output wire [`AXI_QOS_WIDTH        -1:0]      ifu_axi_awqos,    // 
+    output wire [`AXI_REGION_WIDTH     -1:0]      ifu_axi_awregion, // 
+    output wire                                   ifu_axi_awvalid,  // 
+    input  wire                                   ifu_axi_awready,  // 
+// W channel
+    output wire [`AXI_DATA_WIDTH      -1 : 0]    ifu_axi_wdata,    // 
+    output wire [(`AXI_DATA_WIDTH/8)  -1 : 0]    ifu_axi_wstrb,    // 
+    output wire                                   ifu_axi_wlast,    //
+    output wire                                   ifu_axi_wvalid,   //
+    input  wire                                   ifu_axi_wready,   //
+// B channel
+    input  wire [`AXI_ID_WIDTH-1 : 0]             ifu_axi_bid,      //
+    input  wire [`AXI_RESP_WIDTH-1 : 0]            ifu_axi_bresp,    //
+    input  wire                                    ifu_axi_bvalid,   //
+    output wire                                  ifu_axi_bready,    // 
+// AR channel 
+    output wire [`AXI_ID_WIDTH-1 : 0]            ifu_axi_arid,     // 
+    output wire [`AXI_ADDR_WIDTH-1 : 0]          ifu_axi_araddr,   // 
+    output wire [`AXI_BURST_LEN_WIDTH-1 : 0]      ifu_axi_arlen,    // 
+    output wire [`AXI_BURST_SIZE_WIDTH-1 : 0]     ifu_axi_arsize,   // 
+    output wire [`AXI_BURST_TYPE_WIDTH-1 : 0]     ifu_axi_arburst,  // 
+    output wire                                   ifu_axi_arlock,   // 
+    output wire [`AXI_CACHE_WIDTH-1 : 0]          ifu_axi_arcache,  // 
+    output wire [`AXI_PROT_WIDTH-1 : 0]           ifu_axi_arprot,   // 
+    output wire [`AXI_QOS_WIDTH-1 : 0]            ifu_axi_arqos,    // 
+    output wire [`AXI_REGION_WIDTH-1 : 0]         ifu_axi_arregion, // 
+    output wire                                   ifu_axi_arvalid,  // 
+    input  wire                                   ifu_axi_arready,  // 
+// R channel
+    input  wire [`AXI_ID_WIDTH-1 : 0]             ifu_axi_rid,      // 
+    input  wire [`AXI_DATA_WIDTH-1 : 0]           ifu_axi_rdata,    // 
+    input  wire [`AXI_RESP_WIDTH-1 : 0]            ifu_axi_rresp,    // 
+    input  wire                                    ifu_axi_rlast,    // 
+    input  wire                                    ifu_axi_rvalid,   // 
+    output wire                                    ifu_axi_rready    // 
 
-module rvseed (
-    input clk,
-    input rst_n
 );
 
-wire                         ena;
-wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
-wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
+IFU #(
+    .INST_MEM_BASE_ADDR (32'h40000000),
+    .BURST_LEN          (1           )
+) U_IFU (
+// global 
+    .clk                         (clk                  ),
+    .rst_n                       (rst_n                ),   
+// AW channel
+    .ifu_axi_awid                (ifu_axi_awid         ),   
+    .ifu_axi_awaddr              (ifu_axi_awaddr       ),   
+    .ifu_axi_awlen               (ifu_axi_awlen        ),   
+    .ifu_axi_awsize              (ifu_axi_awsize       ),  
+    .ifu_axi_awburst             (ifu_axi_awburst      ),  
+    .ifu_axi_awlock              (ifu_axi_awlock       ),   
+    .ifu_axi_awcache             (ifu_axi_awcache      ),  
+    .ifu_axi_awprot              (ifu_axi_awprot       ),   
+    .ifu_axi_awqos               (ifu_axi_awqos        ),    
+    .ifu_axi_awregion            (ifu_axi_awregion     ), 
+    .ifu_axi_awvalid             (ifu_axi_awvalid      ),  
+    .ifu_axi_awready             (ifu_axi_awready      ),  
+// W channel
+    .ifu_axi_wdata               (ifu_axi_wdata        ),    
+    .ifu_axi_wstrb               (ifu_axi_wstrb        ),    
+    .ifu_axi_wlast               (ifu_axi_wlast        ),    
+    .ifu_axi_wvalid              (ifu_axi_wvalid       ),   
+    .ifu_axi_wready              (ifu_axi_wready       ),   
+// B channel
+    .ifu_axi_bid                 (ifu_axi_bid          ),      
+    .ifu_axi_bresp               (ifu_axi_bresp        ),    
+    .ifu_axi_bvalid              (ifu_axi_bvalid       ),   
+    .ifu_axi_bready              (ifu_axi_bready       ),   
+// AR channel 
+    .ifu_axi_arid                (ifu_axi_arid         ),     
+    .ifu_axi_araddr              (ifu_axi_araddr       ),   
+    .ifu_axi_arlen               (ifu_axi_arlen        ),    
+    .ifu_axi_arsize              (ifu_axi_arsize       ),   
+    .ifu_axi_arburst             (ifu_axi_arburst      ),  
+    .ifu_axi_arlock              (ifu_axi_arlock       ),   
+    .ifu_axi_arcache             (ifu_axi_arcache      ),  
+    .ifu_axi_arprot              (ifu_axi_arprot       ),   
+    .ifu_axi_arqos               (ifu_axi_arqos        ),    
+    .ifu_axi_arregion            (ifu_axi_arregion     ), 
+    .ifu_axi_arvalid             (ifu_axi_arvalid      ),  
+    .ifu_axi_arready             (ifu_axi_arready      ),  
+// R channel
+    .ifu_axi_rid                 (ifu_axi_rid          ),      
+    .ifu_axi_rdata               (ifu_axi_rdata        ),    
+    .ifu_axi_rresp               (ifu_axi_rresp        ),    
+    .ifu_axi_rlast               (ifu_axi_rlast        ),    
+    .ifu_axi_rvalid              (ifu_axi_rvalid       ),   
+    .ifu_axi_rready              (ifu_axi_rready       )    
 
-wire [`BRAN_WIDTH-1:0]       branch;     // branch flag
-wire                         zero;       // alu result is zero
-wire [`JUMP_WIDTH-1:0]       jump;       // jump flag
-
-wire [`CPU_WIDTH-1:0]        inst;       // instruction
-
-wire                         reg_wen;    // register write enable
-wire [`REG_ADDR_WIDTH-1:0]   reg_waddr;  // register write address
-wire [`CPU_WIDTH-1:0]        reg_wdata;  // register write data
-wire [`REG_ADDR_WIDTH-1:0]   reg1_raddr; // register 1 read address
-wire [`REG_ADDR_WIDTH-1:0]   reg2_raddr; // register 2 read address
-wire [`CPU_WIDTH-1:0]        reg1_rdata; // register 1 read data
-wire [`CPU_WIDTH-1:0]        reg2_rdata; // register 2 read data
-
-wire                         mem_wen;    // memory write enable
-wire                         mem_ren;    // memory read enable
-wire                         mem2reg;    // memory to register flag
-wire [`MEM_OP_WIDTH-1:0]     mem_op;     // memory opcode
-wire [`CPU_WIDTH-1:0]        mem_addr;   // memory write/ read address
-wire [`CPU_WIDTH-1:0]        mem_wdata;  // memory write data input
-wire [`CPU_WIDTH-1:0]        mem_rdata;  // memory read data output
-
-
-wire [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op; // immediate extend opcode
-wire [`CPU_WIDTH-1:0]        imm;        // immediate
-
-wire [`ALU_OP_WIDTH-1:0]     alu_op;     // alu opcode
-wire [`ALU_SRC_WIDTH-1:0]    alu_src_sel;// alu source select flag
-wire [`CPU_WIDTH-1:0]        alu_src1;   // alu source 1
-wire [`CPU_WIDTH-1:0]        alu_src2;   // alu source 2
-wire [`CPU_WIDTH-1:0]        alu_res;    // alu result
-
-
-pc_reg u_pc_reg_0(
-    .clk                            ( clk                           ),
-    .rst_n                          ( rst_n                         ),
-    .ena                            ( ena                           ),
-    .next_pc                        ( next_pc                       ),
-    .curr_pc                        ( curr_pc                       )
 );
 
-mux_pc u_mux_pc_0(
-    .ena                            ( ena                           ),
-    .branch                         ( branch                        ),
-    .zero                           ( zero                          ),
-    .jump                           ( jump                          ),
-    .imm                            ( imm                           ),
-    .reg1_rdata                     ( reg1_rdata                    ),
-    .curr_pc                        ( curr_pc                       ),
-    .next_pc                        ( next_pc                       )
+AXI_MEM U_INST_MEM (
+// global 
+    .clk                         (clk                  ),
+    .rst_n                       (rst_n                ),   
+// AW channel
+    .mem_axi_awid                (ifu_axi_awid         ),   
+    .mem_axi_awaddr              (ifu_axi_awaddr       ),   
+    .mem_axi_awlen               (ifu_axi_awlen        ),   
+    .mem_axi_awsize              (ifu_axi_awsize       ),  
+    .mem_axi_awburst             (ifu_axi_awburst      ),  
+    .mem_axi_awlock              (ifu_axi_awlock       ),   
+    .mem_axi_awcache             (ifu_axi_awcache      ),  
+    .mem_axi_awprot              (ifu_axi_awprot       ),   
+    .mem_axi_awqos               (ifu_axi_awqos        ),    
+    .mem_axi_awregion            (ifu_axi_awregion     ), 
+    .mem_axi_awvalid             (ifu_axi_awvalid      ),  
+    .mem_axi_awready             (ifu_axi_awready      ),  
+// W channel
+    .mem_axi_wdata               (ifu_axi_wdata        ),    
+    .mem_axi_wstrb               (ifu_axi_wstrb        ),    
+    .mem_axi_wlast               (ifu_axi_wlast        ),    
+    .mem_axi_wvalid              (ifu_axi_wvalid       ),   
+    .mem_axi_wready              (ifu_axi_wready       ),   
+// B channel
+    .mem_axi_bid                 (ifu_axi_bid          ),      
+    .mem_axi_bresp               (ifu_axi_bresp        ),    
+    .mem_axi_bvalid              (ifu_axi_bvalid       ),   
+    .mem_axi_bready              (ifu_axi_bready       ),   
+// AR channel 
+    .mem_axi_arid                (ifu_axi_arid         ),     
+    .mem_axi_araddr              (ifu_axi_araddr       ),   
+    .mem_axi_arlen               (ifu_axi_arlen        ),    
+    .mem_axi_arsize              (ifu_axi_arsize       ),   
+    .mem_axi_arburst             (ifu_axi_arburst      ),  
+    .mem_axi_arlock              (ifu_axi_arlock       ),   
+    .mem_axi_arcache             (ifu_axi_arcache      ),  
+    .mem_axi_arprot              (ifu_axi_arprot       ),   
+    .mem_axi_arqos               (ifu_axi_arqos        ),    
+    .mem_axi_arregion            (ifu_axi_arregion     ), 
+    .mem_axi_arvalid             (ifu_axi_arvalid      ),  
+    .mem_axi_arready             (ifu_axi_arready      ),  
+// R channel
+    .mem_axi_rid                 (ifu_axi_rid          ),      
+    .mem_axi_rdata               (ifu_axi_rdata        ),    
+    .mem_axi_rresp               (ifu_axi_rresp        ),    
+    .mem_axi_rlast               (ifu_axi_rlast        ),    
+    .mem_axi_rvalid              (ifu_axi_rvalid       ),   
+    .mem_axi_rready              (ifu_axi_rready       )    
+
 );
 
-inst_mem u_inst_mem_0(
-    .curr_pc                        ( curr_pc                       ),
-    .inst                           ( inst                          )
-);
-ctrl u_ctrl_0(
-    .inst                           ( inst                          ),
-    .branch                         ( branch                        ),
-    .jump                           ( jump                          ),
-    .reg_wen                        ( reg_wen                       ),
-    .reg_waddr                      ( reg_waddr                     ),
-    .reg1_raddr                     ( reg1_raddr                    ),
-    .reg2_raddr                     ( reg2_raddr                    ),
-    .mem_wen                        ( mem_wen                       ),
-    .mem_ren                        ( mem_ren                       ),
-    .mem2reg                        ( mem2reg                       ),
-    .mem_op                         ( mem_op                        ),
-    .imm_gen_op                     ( imm_gen_op                    ),
-    .alu_op                         ( alu_op                        ),
-    .alu_src_sel                    ( alu_src_sel                   )
-);
-
-reg_file u_reg_file_0(
-    .clk                            ( clk                           ),
-    .rst_n                          ( rst_n                         ),
-    .reg_wen                        ( reg_wen                       ),
-    .reg_waddr                      ( reg_waddr                     ),
-    .reg_wdata                      ( reg_wdata                     ),
-    .reg1_raddr                     ( reg1_raddr                    ),
-    .reg2_raddr                     ( reg2_raddr                    ),
-    .reg1_rdata                     ( reg1_rdata                    ),
-    .reg2_rdata                     ( reg2_rdata                    )
-);
-
-imm_gen u_imm_gen_0(
-    .inst                           ( inst                          ),
-    .imm_gen_op                     ( imm_gen_op                    ),
-    .imm                            ( imm                           )
-);
-
-mux_alu u_mux_alu_0(
-    .alu_src_sel                    ( alu_src_sel                   ),
-    .reg1_rdata                     ( reg1_rdata                    ),
-    .reg2_rdata                     ( reg2_rdata                    ),
-    .imm                            ( imm                           ),
-    .curr_pc                        ( curr_pc                       ),
-    .alu_src1                       ( alu_src1                      ),
-    .alu_src2                       ( alu_src2                      )
-);
-
-alu u_alu_0(
-    .alu_op                         ( alu_op                        ),
-    .alu_src1                       ( alu_src1                      ),
-    .alu_src2                       ( alu_src2                      ),
-    .zero                           ( zero                          ),
-    .alu_res                        ( alu_res                       )
-);
-
-assign mem_addr = alu_res; 
-mux_mem u_mux_mem_0(
-    .mem_op                         ( mem_op                        ),
-    .mem_addr                       ( mem_addr                      ),
-    .reg2_rdata                     ( reg2_rdata                    ),
-    .mem_rdata                      ( mem_rdata                     ),
-    .mem_wdata                      ( mem_wdata                     )
-);
-
-data_mem u_data_mem_0(
-    .clk                            ( clk                           ),
-    .mem_wen                        ( mem_wen                       ),
-    .mem_ren                        ( mem_ren                       ),
-    .mem_addr                       ( mem_addr                      ),
-    .mem_wdata                      ( mem_wdata                     ),
-    .mem_rdata                      ( mem_rdata                     )
-);
-
-mux_reg u_mux_reg_0(
-    .mem2reg                        ( mem2reg                       ),
-    .alu_res                        ( alu_res                       ),
-    .mem_op                         ( mem_op                        ),
-    .mem_addr                       ( mem_addr                      ),
-    .mem_rdata                      ( mem_rdata                     ),
-    .reg_wdata                      ( reg_wdata                     )
-);
 
 
 endmodule

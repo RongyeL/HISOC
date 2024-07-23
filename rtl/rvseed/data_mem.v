@@ -5,15 +5,13 @@
 // Filename      : data_mem.v
 // Author        : Rongye
 // Created On    : 2022-03-24 22:11
-// Last Modified : 2022-04-20 19:25
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Data memory 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module data_mem (
+module DATA_MEM (
     input                       clk,
 
     input                       mem_wen,   // memory write enable

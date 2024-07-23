@@ -5,14 +5,12 @@
 // Filename      : pc_reg.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2022-03-30 05:17
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Update the current pc value 
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module pc_reg (
+module PC_REG (
     input                       clk,     // system clock
     input                       rst_n,   // active low reset
     output reg                  ena,     // system enable

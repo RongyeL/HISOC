@@ -1,15 +1,15 @@
 {
-    "EASY_AXI_TB": [
-        "EASY_AXI_TB",
-        "kkaM8",
-        "module",
-        2
-    ],
     "std": [
         "std",
         "reYIK",
         "module",
         1
+    ],
+    "EASY_AXI_TB": [
+        "EASY_AXI_TB",
+        "kkaM8",
+        "module",
+        2
     ],
     "...MASTER...": [
         "SIM",

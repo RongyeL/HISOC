@@ -1,0 +1,7 @@
+/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v
+/home/myeda/project/hisoc/rtl/rvseed/pc_reg.v
+/home/myeda/project/hisoc/rtl/rvseed/ifu.v
+/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v
+/home/myeda/project/hisoc/rtl/macro/axi_define.v
+/home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v
+/home/myeda/project/hisoc/rtl/rvseed/rvseed.v

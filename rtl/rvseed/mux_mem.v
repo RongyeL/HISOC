@@ -5,15 +5,13 @@
 // Filename      : mux_mem.v
 // Author        : Rongye
 // Created On    : 2022-03-28 22:35
-// Last Modified : 2022-04-20 19:19
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Select the data source of mem.  
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module mux_mem (
+module MUX_MEM (
     input      [`MEM_OP_WIDTH-1:0] mem_op, // memory opcode
     input      [`CPU_WIDTH-1:0]    mem_addr, // memory write/read address
     input      [`CPU_WIDTH-1:0]    reg2_rdata,

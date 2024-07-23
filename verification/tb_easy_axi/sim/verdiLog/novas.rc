@@ -226,7 +226,7 @@ Selection-LineWidth = 1
 [FSM_Dlg-Print]
 Orientation = Landscape
 [FileBrowser]
-nWaveOpenFsdbDirHistory = "\"/home/myeda/project/hisoc/verification/uvm_easy_axi/sim/easy_axi_tb.fsdb\""
+nWaveOpenFsdbDirHistory = "\"/home/myeda/project/hisoc/verification/uvm_easy_axi/sim/easy_axi_tb.fsdb\"" "\"/home/myeda/project/hisoc/verification/tb_easy_axi/sim/easy_axi_tb.fsdb\""
 [Form]
 version = Verdi_O-2018.09-SP2
 wave/unknownSave.fm = 100,100,520,275
@@ -394,8 +394,8 @@ savePropStat = FALSE
 savePropDtl = TRUE
 [QtDialog]
 monoFontDlg = 800,327,366,432
-QwWarnMsgDlg = 683,418,600,250
 openFileDlg = 692,328,602,483
+QwWarnMsgDlg = 683,478,600,250
 QwUserAskDlg = 831,487,324,163
 [Relationship]
 hideRecursiceNode = FALSE
@@ -403,7 +403,7 @@ hideRecursiceNode = FALSE
 3 = string (session file name)
 4 = string (session file name)
 5 = string (session file name)
-1 = /home/myeda/project/hisoc/verification/uvm_easy_axi/sim/verdiLog/novas_autosave.ses
+1 = /home/myeda/project/hisoc/verification/tb_easy_axi/sim/verdiLog/novas_autosave.ses
 2 = /home/myeda/verdiLog/novas_autosave.ses
 [Signal List]
 sigListBackgroundColor = ID_GRAY6
@@ -690,15 +690,15 @@ DefaultLogTimeUnit = "1.000000ns"
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0]
 parRuleSets = ""
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column0]
-name = Severity
-width = 60
-visualIndex = 1
-isHidden = TRUE
-isUserChangeColumnVisible = FALSE
-[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column1]
 name = Time
 width = 60
 visualIndex = 0
+isHidden = TRUE
+isUserChangeColumnVisible = FALSE
+[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column1]
+name = Severity
+width = 60
+visualIndex = 1
 isHidden = TRUE
 isUserChangeColumnVisible = FALSE
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column2]
@@ -1009,7 +1009,8 @@ curveWindow_Drag&Drop_Mode = TRUE
 hspiceIncOpenMode = TRUE
 pcSelectMode = TRUE
 hierarchyDelimiter = /
-RecentFile1 = "\"/home/myeda/project/hisoc/verification/uvm_easy_axi/sim/easy_axi_tb.fsdb\""
+RecentFile1 = "\"/home/myeda/project/hisoc/verification/tb_easy_axi/sim/easy_axi_tb.fsdb\""
+RecentFile2 = "\"/home/myeda/project/hisoc/verification/uvm_easy_axi/sim/easy_axi_tb.fsdb\""
 open_file_time_range = FALSE
 value_window_aligment = Right
 signal_window_alignment = Auto

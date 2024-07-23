@@ -1,0 +1,37 @@
+*design* DebussyLib (btIdent Verdi_O-2018.09-SP2)
+Command arguments:
+    +define+verilog
+    -f ../tb/tb.f
+        -f ../dut/dut.f
+            -f /home/myeda/project/hisoc/rtl/macro/macro.f
+                /home/myeda/project/hisoc/rtl/macro/axi_define.v
+            -f /home/myeda/project/hisoc/rtl/cbb/cbb.f
+                /home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v
+            -f /home/myeda/project/hisoc/rtl/rvseed/rvseed.f
+                +incdir+/home/myeda/project/hisoc/rtl/rvseed
+                /home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v
+                /home/myeda/project/hisoc/rtl/rvseed/pc_reg.v
+                /home/myeda/project/hisoc/rtl/rvseed/ifu.v
+                /home/myeda/project/hisoc/rtl/rvseed/rvseed.v
+        -f ../tc/tc.f
+            /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v
+
+
+*Error* Syntax error at ++
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 43: 
+
+*Error* Syntax error at #
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 48: 
+
+*Error* Syntax error at $finish
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 49: 
+
+*Error* Syntax error at end
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 50: 
+
+*Error* missing step assignment in for assignment
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 43: 
+Highest level modules:
+TB_HISOC
+
+Total	5 error(s),   0 warning(s)

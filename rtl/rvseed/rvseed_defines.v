@@ -5,7 +5,7 @@
 // Filename      : rvseed_defines.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2022-04-22 19:40
+// Last Modified : 2024-07-23 07:33
 // -----------------------------------------------------------------------
 // Description   : 
 //
@@ -142,10 +142,7 @@
 `define ALU_SRC_IMM     `ALU_SRC_WIDTH'b01 // src1 = reg1, src2 = imm
 `define ALU_SRC_FOUR_PC `ALU_SRC_WIDTH'b10 // src1 = 4,    src2 = pc
 `define ALU_SRC_IMM_PC  `ALU_SRC_WIDTH'b11 // src1 = imm,  src2 = pc
-
-// MEM opcode
-`define MEM_OP_WIDTH 3
-`define MEM_LB  `MEM_OP_WIDTH'b000 // load byte
+// MEM opcode `define MEM_OP_WIDTH 3 `define MEM_LB  `MEM_OP_WIDTH'b000 // load byte
 `define MEM_LH  `MEM_OP_WIDTH'b001 // load half word
 `define MEM_LW  `MEM_OP_WIDTH'b010 // load word
 `define MEM_LBU `MEM_OP_WIDTH'b011 // load byte (unsigned)
@@ -162,3 +159,7 @@
 `define IMM_GEN_J `IMM_GEN_OP_WIDTH'b011
 `define IMM_GEN_U `IMM_GEN_OP_WIDTH'b100
 
+// IFU define
+`define IFU_AXI_ID_WIDTH   4
+`define IFU_AXI_ADDR_WIDTH 32
+`define IFU_AXI_DATA_WIDTH 32

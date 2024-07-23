@@ -5,14 +5,13 @@
 // Filename      : inst_mem.v
 // Author        : Rongye
 // Created On    : 2022-03-22 01:33
-// Last Modified : 2022-04-08 23:35
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Instruction memory, the initial value is given by testbench. 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-module inst_mem (
+module INST_MEM (
     input      [`CPU_WIDTH-1:0] curr_pc, // current pc addr
     output reg [`CPU_WIDTH-1:0] inst     // instruction
 );

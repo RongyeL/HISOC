@@ -156,7 +156,7 @@ Limit information:
 cputime		unlimited
 filesize		unlimited
 datasize		unlimited
-stacksize		8192 kbytes
+stacksize		unlimited
 coredumpsize		0 kbytes
 memoryuse		unlimited
 vmemoryuse		unlimited
@@ -185,12 +185,12 @@ OLDPWD=/home/myeda/project/hisoc/verification/tb_rvseed/sim/simv.daidir/debug_du
 GNOME_SHELL_SESSION_MODE=ubuntu
 TOOL_HOME=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64
 COLORTERM=truecolor
-MAKE_TERMOUT=/dev/pts/4
+MAKE_TERMOUT=/dev/pts/2
 SNPSLMD_LICENSE_FILE=27000@ubuntu
 USERNAME=myeda
 OVA_UUM=0
 XDG_VTNR=2
-SSH_AUTH_SOCK=/tmp/ssh-vG4SZXPmmvyk/agent.2734
+SSH_AUTH_SOCK=/run/user/1000/keyring/ssh
 MFLAGS=
 VCS_MODE_FLAG=64
 MANDATORY_PATH=/usr/share/gconf/ubuntu.mandatory.path
@@ -199,16 +199,16 @@ USER=myeda
 DESKTOP_SESSION=ubuntu
 QT4_IM_MODULE=xim
 TEXTDOMAINDIR=/usr/share/locale/
-GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/bacf9720_3c46_4240_983a_0a43d8ce9b15
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/8be9a62a_6316_4972_8047_fcc2a33b2aa1
 DEFAULTS_PATH=/usr/share/gconf/ubuntu.default.path
 PWD=/home/myeda/project/hisoc/verification/tb_rvseed/sim
 VMR_MODE_FLAG=64
 HOME=/home/myeda
 TEXTDOMAIN=im-config
-SSH_AGENT_PID=2735
+SSH_AGENT_PID=1742
 QT_ACCESSIBILITY=1
 CPATH=/usr/include/x86_64-linux-gnu
-TMUX=/tmp/tmux-1000/default,2003,1
+TMUX=/tmp/tmux-1000/default,2101,0
 XDG_SESSION_TYPE=x11
 VCS_ARG_ADDED_FOR_TMP=1
 XDG_DATA_DIRS=/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
@@ -228,17 +228,17 @@ QT_IM_MODULE=xim
 XMODIFIERS=@im=ibus
 IM_CONFIG_PHASE=2
 LM_LICENSE_FILE=/home/myeda/EDATool/Synopsys/license/Synopsys.dat
-SNPS_VCS_TMPDIR=/tmp/vcs_20240722141503_8651
+SNPS_VCS_TMPDIR=/tmp/vcs_20240723125452_10437
 XDG_CURRENT_DESKTOP=ubuntu:GNOME
 GPG_AGENT_INFO=/run/user/1000/gnupg/S.gpg-agent:0:1
-GNOME_TERMINAL_SERVICE=:1.57
+GNOME_TERMINAL_SERVICE=:1.66
 MAKELEVEL=1
 VERDI_HOME=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2
-TMUX_PANE=%3
+TMUX_PANE=%1
 XDG_SEAT=seat0
 SHLVL=4
 VCS_COM=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/bin/vcs1
-MAKE_TERMERR=/dev/pts/4
+MAKE_TERMERR=/dev/pts/2
 VCS_ARCH=linux64
 VCS_DEPTH=0
 GDMSESSION=ubuntu
@@ -255,7 +255,7 @@ HISOC_PATH=/home/myeda/project/hisoc
 sysc_uni_pwd=/home/myeda/project/hisoc/verification/tb_rvseed/sim
 MAKEFLAGS=
 GJS_DEBUG_TOPICS=JS ERROR;JS LOG
-SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1552,unix/ubuntu:/tmp/.ICE-unix/1552
+SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1659,unix/ubuntu:/tmp/.ICE-unix/1659
 LESSOPEN=| /usr/bin/lesspipe %s
 GTK_IM_MODULE=ibus
 _=./simv
@@ -269,8 +269,8 @@ argv[0]=simv
 argv[1]=+v2k
 argv[2]=+define+DUMP_FSDB
 270 profile - 100
-          CPU/Mem usage: 0.030 sys,  0.190 user,  259.22M mem
-271 Mon Jul 22 07:15:07 2024
+          CPU/Mem usage: 0.520 sys,  0.110 user,  259.23M mem
+271 Tue Jul 23 05:54:54 2024
 272 pliAppInit
 273 FSDB_GATE is set.
 274 FSDB_RTL is set.
@@ -293,35 +293,35 @@ argv[2]=+define+DUMP_FSDB
 291 *Verdi* : Begin traversing the scopes, layer (0).
 292 *Verdi* : End of traversing.
 293 pliAppHDL_DumpVarComplete traverse var: profile - 
-          CPU/Mem usage: 0.030 sys,  0.200 user,  355.69M mem
-                   incr: 0.000 sys,  0.010 user,  8.93M mem
-                   accu: 0.000 sys,  0.010 user,  8.93M mem
-              accu incr: 0.000 sys,  0.010 user,  8.93M mem
+          CPU/Mem usage: 0.670 sys,  0.110 user,  355.57M mem
+                   incr: 0.020 sys,  0.000 user,  8.81M mem
+                   accu: 0.020 sys,  0.000 user,  8.81M mem
+              accu incr: 0.020 sys,  0.000 user,  8.81M mem
 
           Count usage: 146 var,  103 idcode,  65 callback
                  incr: 146 var,  103 idcode,  65 callback
                  accu: 146 var,  103 idcode,  65 callback
             accu incr: 146 var,  103 idcode,  65 callback
-294 Mon Jul 22 07:15:07 2024
+294 Tue Jul 23 05:54:54 2024
 295 pliAppHDL_DumpVarComplete: profile - 
-          CPU/Mem usage: 0.030 sys,  0.200 user,  356.75M mem
+          CPU/Mem usage: 0.670 sys,  0.110 user,  356.62M mem
                    incr: 0.000 sys,  0.000 user,  1.05M mem
-                   accu: 0.000 sys,  0.010 user,  9.99M mem
+                   accu: 0.020 sys,  0.000 user,  9.87M mem
               accu incr: 0.000 sys,  0.000 user,  1.05M mem
 
           Count usage: 146 var,  103 idcode,  65 callback
                  incr: 0 var,  0 idcode,  0 callback
                  accu: 146 var,  103 idcode,  65 callback
             accu incr: 0 var,  0 idcode,  0 callback
-296 Mon Jul 22 07:15:07 2024
+296 Tue Jul 23 05:54:54 2024
 297 End of simulation at 371750000
-298 Mon Jul 22 07:15:07 2024
+298 Tue Jul 23 05:54:54 2024
 299 Begin FSDB profile info:
 300 FSDB Writer : bc1(37338) bcn(59057) mtf/stf(0/0)
-FSDB Writer elapsed time : flush(0.013264) io wait(0.000000) theadpool wait(0.000000) target functin(0.000000)
+FSDB Writer elapsed time : flush(0.025826) io wait(0.000000) theadpool wait(0.000000) target functin(0.000000)
 FSDB Writer cpu time : MT Compression : 0
 301 End FSDB profile info
 302 Parallel profile    -  Flush:3 Expand:0 ProduceWait:0 ConsumerWait:0 BlockUsed:0
-303                        ProduceTime:0.291925131 ConsumerTime:0.000000000 Buffer:64MB
+303                        ProduceTime:0.897169817 ConsumerTime:0.000000000 Buffer:64MB
 304 SimExit
 305 Sim process exit

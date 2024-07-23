@@ -5,15 +5,13 @@
 // Filename      : pc_next.v
 // Author        : Rongye
 // Created On    : 2022-03-21 22:56
-// Last Modified : 2022-04-22 19:49
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Determine the update value of the pc. 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module mux_pc (
+module MUX_PC (
     input                        ena,
     input      [`BRAN_WIDTH-1:0] branch,     // branch type 
     input                        zero,       // alu result is zero

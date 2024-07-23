@@ -5,15 +5,13 @@
 // Filename      : imm_gen.v
 // Author        : Rongye
 // Created On    : 2022-03-23 22:23
-// Last Modified : 2022-04-11 20:20
+// Last Modified : 2024-07-23 05:37
 // ---------------------------------------------------------------------------------
 // Description   : There are five cases of immediate expansion. 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module imm_gen (
+module IMM_GEN (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
     input      [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op, // immediate extend opcode
 

@@ -1,3 +1,3 @@
 Command Line: /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/platform/LINUXAMD64/bin/Novas -f ../tb/tb.f
 uname(Linux ubuntu 5.4.0-135-generic #152~18.04.2-Ubuntu SMP Tue Nov 29 08:23:49 UTC 2022 x86_64)
-au time 14.779714 2.603594 1.255002 delta 672780288 672780288 total 1105137664 1105137664
+au time 154.290774 3.822058 1.792370 delta 604540928 604540928 total 1036898304 1036898304

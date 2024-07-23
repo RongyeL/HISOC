@@ -5,15 +5,13 @@
 // Filename      : mux4reg.v
 // Author        : Rongye
 // Created On    : 2022-03-25 02:08
-// Last Modified : 2022-04-20 19:26
+// Last Modified : 2024-07-23 05:51
 // ---------------------------------------------------------------------------------
 // Description   : Select the data source of reg_file.  
 //
 //
 // -FHDR----------------------------------------------------------------------------
-`include "rvseed_defines.v"
-
-module mux_reg ( 
+module MUX_REG ( 
     input                          mem2reg,   // memory or ALU to register
 
     input      [`CPU_WIDTH-1:0]    alu_res,   // alu result input

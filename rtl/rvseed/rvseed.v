@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-07-23 09:38
+// Last Modified : 2024-07-24 09:22
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -15,6 +15,7 @@ module RVSEED (
 // global 
     input  wire                                  clk,
     input  wire                                  rst_n,             // 
+    input  wire                                  enable,             // 
 // AW channel
     output wire [`AXI_ID_WIDTH        -1:0]      ifu_axi_awid,     // 
     output wire [`AXI_ADDR_WIDTH      -1:0]      ifu_axi_awaddr,   // 
@@ -69,6 +70,7 @@ IFU #(
 // global 
     .clk                         (clk                  ),
     .rst_n                       (rst_n                ),   
+    .enable                      (enable               ),   
 // AW channel
     .ifu_axi_awid                (ifu_axi_awid         ),   
     .ifu_axi_awaddr              (ifu_axi_awaddr       ),   

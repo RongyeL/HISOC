@@ -5,7 +5,7 @@
 // Filename      : axi_mem.v
 // Author        : Rongye
 // Created On    : 2024-07-23 05:57
-// Last Modified : 2024-07-23 10:01
+// Last Modified : 2024-07-24 09:43
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -67,7 +67,7 @@ reg                              axi_wready;
 reg  [`AXI_RESP_WIDTH  -1:0] 	 axi_bresp;
 reg                              axi_bvalid;
 reg  [`AXI_ADDR_WIDTH -1:0] 	 axi_araddr;
-reg                              axi_arready;
+wire                              axi_arready;
 reg  [`AXI_DATA_WIDTH -1:0] 	 axi_rdata;
 reg  [`AXI_RESP_WIDTH  -1:0] 	 axi_rresp;
 reg                              axi_rlast;
@@ -94,7 +94,7 @@ function integer clogb2 (input integer bit_depth);
 endfunction
 
 localparam integer ADDR_LSB       = (`AXI_DATA_WIDTH/32)+ 1;
-localparam integer MEM_ADDR_DEEP  = 1024;
+localparam integer MEM_ADDR_DEEP  = 2048;
 localparam integer MEM_ADDR_WIDTH = clogb2(MEM_ADDR_DEEP);
 localparam integer MEM_NUM        = 1;
 localparam integer MEM_BYTE_NUM   = 64; // Maximum number of bytes that can be written
@@ -220,25 +220,18 @@ end
 // Read transaction
 //--------------------
 
-always @(posedge clk) begin
-    if (rst_n == 1'b0) begin
-        axi_arready       <= 1'b0;
+always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
         burst_read_active <= 1'b0;
     end
-    else begin
-        if (~axi_arready && mem_axi_arvalid && ~burst_write_active && ~burst_read_active) begin
-            axi_arready       <= 1'b1;
-            burst_read_active <= 1'b1;
-        end
-        else if (axi_rvalid && mem_axi_rready && read_index == axi_arlen) begin
-            burst_read_active  <= 1'b0;
-        end
-        else begin
-            axi_arready <= 1'b0;
-        end
+    else if (axi_arready && mem_axi_arvalid && ~burst_read_active) begin
+        burst_read_active <= 1'b1;
+    end
+    else if (axi_rvalid && mem_axi_rready && read_index == axi_arlen) begin
+        burst_read_active  <= 1'b0;
     end
 end
-
+assign axi_arready = ~burst_read_active;
 
 always @(posedge clk) begin
     if (rst_n == 1'b0) begin
@@ -249,7 +242,7 @@ always @(posedge clk) begin
         axi_rlast   <= 1'b0;
     end
     else begin
-        if (~axi_arready && mem_axi_arvalid && ~burst_read_active) begin
+        if (axi_arready && mem_axi_arvalid && ~burst_read_active) begin
             axi_araddr  <= mem_axi_araddr[`AXI_ADDR_WIDTH - 1:0];
             axi_arburst <= mem_axi_arburst;
             axi_arlen   <= mem_axi_arlen;
@@ -311,7 +304,7 @@ end
 
 
 // implement Block RAM(s)
-assign mem_address = (burst_read_active  ? axi_araddr[MEM_ADDR_WIDTH-1:ADDR_LSB] 
+wire [MEM_ADDR_WIDTH-ADDR_LSB-1:0] mem_address = (burst_read_active  ? axi_araddr[MEM_ADDR_WIDTH-1:ADDR_LSB] 
                    : (burst_write_active ? axi_awaddr[MEM_ADDR_WIDTH-1:ADDR_LSB] 
                    : 0));
 

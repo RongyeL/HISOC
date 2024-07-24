@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-23 09:56
+// Last Modified : 2024-07-24 09:49
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -18,9 +18,10 @@ module IFU #(
 // global 
     input  wire                                  clk,
     input  wire                                  rst_n,          // active low
+    input  wire                                  enable,          // rvseed enable ctrl
 // AW channel
-    output wire [`AXI_ID_WIDTH        -1:0]      ifu_axi_awid,     // write transaction id
-    output wire [`AXI_ADDR_WIDTH      -1:0]      ifu_axi_awaddr,   // write address
+    output wire [`AXI_ID_WIDTH         -1:0]      ifu_axi_awid,     // write transaction id
+    output wire [`AXI_ADDR_WIDTH       -1:0]      ifu_axi_awaddr,   // write address
     output wire [`AXI_BURST_LEN_WIDTH  -1:0]      ifu_axi_awlen,    // write transaction burst lengths
     output wire [`AXI_BURST_SIZE_WIDTH -1:0]      ifu_axi_awsize,   // write transaction burst size
     output wire [`AXI_BURST_TYPE_WIDTH -1:0]      ifu_axi_awburst,  // write transaction burst type
@@ -32,25 +33,25 @@ module IFU #(
     output wire                                   ifu_axi_awvalid,  // write address channel valid
     input  wire                                   ifu_axi_awready,  // write address channel ready
 // W channel
-    output wire [`AXI_DATA_WIDTH      -1 : 0]    ifu_axi_wdata,    // write data
-    output wire [(`AXI_DATA_WIDTH/8)  -1 : 0]    ifu_axi_wstrb,    // write strobe, indicate which byte is valid
+    output wire [`AXI_DATA_WIDTH       -1:0]      ifu_axi_wdata,    // write data
+    output wire [(`AXI_DATA_WIDTH/8)   -1:0]      ifu_axi_wstrb,    // write strobe, indicate which byte is valid
     output wire                                   ifu_axi_wlast,    // write last data indicate
     output wire                                   ifu_axi_wvalid,   // write data channel valid
     input  wire                                   ifu_axi_wready,   // write data channel ready
 // B channel
-    input  wire [`AXI_ID_WIDTH-1 : 0]             ifu_axi_bid,      // write transaction id
-    input  wire [`AXI_RESP_WIDTH-1 : 0]            ifu_axi_bresp,    // write response
-    input  wire                                    ifu_axi_bvalid,   // write response channel valid
-    output wire                                  ifu_axi_bready,   // write response channel ready
+    input  wire [`AXI_ID_WIDTH         -1:0]             ifu_axi_bid,      // write transaction id
+    input  wire [`AXI_RESP_WIDTH       -1:0]           ifu_axi_bresp,    // write response
+    input  wire                                   ifu_axi_bvalid,   // write response channel valid
+    output wire                                   ifu_axi_bready,   // write response channel ready
 // AR channel 
-    output wire [`AXI_ID_WIDTH-1 : 0]            ifu_axi_arid,     // read transaction id
-    output wire [`AXI_ADDR_WIDTH-1 : 0]          ifu_axi_araddr,   // read address
-    output wire [`AXI_BURST_LEN_WIDTH-1 : 0]      ifu_axi_arlen,    // read transaction burst length
-    output wire [`AXI_BURST_SIZE_WIDTH-1 : 0]     ifu_axi_arsize,   // read transaction burst size
-    output wire [`AXI_BURST_TYPE_WIDTH-1 : 0]     ifu_axi_arburst,  // read transaction burst type
+    output wire [`AXI_ID_WIDTH         -1:0]            ifu_axi_arid,     // read transaction id
+    output wire [`AXI_ADDR_WIDTH       -1:0]          ifu_axi_araddr,   // read address
+    output wire [`AXI_BURST_LEN_WIDTH  -1:0]      ifu_axi_arlen,    // read transaction burst length
+    output wire [`AXI_BURST_SIZE_WIDTH -1:0]     ifu_axi_arsize,   // read transaction burst size
+    output wire [`AXI_BURST_TYPE_WIDTH -1:0]     ifu_axi_arburst,  // read transaction burst type
     output wire                                   ifu_axi_arlock,   // read atomic type
-    output wire [`AXI_CACHE_WIDTH-1 : 0]          ifu_axi_arcache,  // read transaction memory attribute
-    output wire [`AXI_PROT_WIDTH-1 : 0]           ifu_axi_arprot,   // read transaction protection attribute
+    output wire [`AXI_CACHE_WIDTH      -1 : 0]          ifu_axi_arcache,  // read transaction memory attribute
+    output wire [`AXI_PROT_WIDTH       -1 : 0]           ifu_axi_arprot,   // read transaction protection attribute
     output wire [`AXI_QOS_WIDTH-1 : 0]            ifu_axi_arqos,    // read transaction quality of service
     output wire [`AXI_REGION_WIDTH-1 : 0]         ifu_axi_arregion, // read transaction region
     output wire                                   ifu_axi_arvalid,  // read address channel valid
@@ -65,19 +66,68 @@ module IFU #(
 
 );
 
-wire [`CPU_WIDTH-1:0] next_pc; // next pc addr
-wire [`CPU_WIDTH-1:0] curr_pc; // next pc addr
-wire ena;
+wire                         next_en;
+wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
+wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
+wire                         pc_update;
 
-PC_REG U_PC_REG_0(
+wire [`BRAN_WIDTH-1:0]       branch;     // branch flag
+wire                         zero;       // alu result is zero
+wire [`JUMP_WIDTH-1:0]       jump;       // jump flag
+
+wire [`CPU_WIDTH-1:0]        imm;    // next pc addr
+wire [`CPU_WIDTH-1:0]        reg1_rdata;    // next pc addr
+assign branch     = `BRAN_WIDTH'b0;
+assign zero       = 1'b0;
+assign jump       = `JUMP_WIDTH'b0;
+assign imm        = `CPU_WIDTH'b0;
+assign reg1_rdata = `CPU_WIDTH'b0;
+
+wire if_process   = pc_update;
+reg  if_process_r;
+assign next_en = enable & ~if_process & ~if_process_r;
+PC_REG U_PC_REG(
     .clk                            ( clk                           ),
     .rst_n                          ( rst_n                         ),
-    .ena                            ( ena                           ),
-    .next_pc                        ( curr_pc                       ),
-    .curr_pc                        ( curr_pc                       )
+    .next_en                        ( next_en                       ),
+    .next_pc                        ( next_pc                       ),
+    .curr_pc                        ( curr_pc                       ),
+    .pc_update                      ( pc_update                     )
+);
+
+MUX_PC U_MUX_PC(
+    .ena                            ( next_en                       ),
+    .branch                         ( branch                        ),
+    .zero                           ( zero                          ),
+    .jump                           ( jump                          ),
+    .imm                            ( imm                           ),
+    .reg1_rdata                     ( reg1_rdata                    ),
+    .curr_pc                        ( curr_pc                       ),
+    .next_pc                        ( next_pc                       )
 );
 
 
+// ---------------------------------------------------------------------------------------------------
+// IFU CTRL
+// ---------------------------------------------------------------------------------------------------
+wire if_req_en    = ifu_axi_arvalid & ifu_axi_arready;
+wire if_result_en = ifu_axi_rvalid  & ifu_axi_rready & ifu_axi_rlast;
+always @ (posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        if_process_r <= 1'b0;
+    end
+    else if (pc_update) begin
+        if_process_r <= if_process;
+    end
+    else if (if_result_en) begin
+        if_process_r <= 1'b0;
+    end
+end
+
+
+// ---------------------------------------------------------------------------------------------------
+// AXI MST CTRL
+// ---------------------------------------------------------------------------------------------------
 // Determine the counter bit width by calculating log2.
 function integer clogb2 (input integer bit_depth);
     begin
@@ -327,7 +377,7 @@ always @(posedge clk) begin
     if (rst_n == 0 ) begin
         axi_araddr <= 'b0;
     end
-    else if (ifu_axi_arready && axi_arvalid) begin
+    else if (~axi_arvalid && pc_update) begin
         axi_araddr <= curr_pc;
     end
     else begin
@@ -357,13 +407,11 @@ always @(posedge clk) begin
     if (rst_n == 0  ) begin
         axi_rready <= 1'b0;
     end
-    else if (ifu_axi_rvalid) begin
-        if (ifu_axi_rlast && axi_rready) begin
-            axi_rready <= 1'b0;
-        end
-        else begin
-            axi_rready <= 1'b1;
-        end
+    else if (ifu_axi_rlast && axi_rready) begin
+        axi_rready <= 1'b0;
+    end
+    else begin
+        axi_rready <= 1'b1; //TODO
     end
 end
 
@@ -385,7 +433,7 @@ always @ ( posedge clk) begin
         // state transition
         case (mst_exestate)
             IDLE:
-                if (ena == 1'b1) begin
+                if (pc_update == 1'b1) begin
                     mst_exestate  <= READ;
                 end
                 else begin

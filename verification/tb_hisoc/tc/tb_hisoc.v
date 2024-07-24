@@ -5,7 +5,7 @@
 // Filename      : tb_rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 04:18
-// Last Modified : 2024-07-23 09:47
+// Last Modified : 2024-07-24 09:21
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -17,6 +17,7 @@ module TB_HISOC ();
 
 reg                  clk;
 reg                  rst_n;
+reg                  enable;
 
 reg [16*8-1:0] inst_list [0:40];
 reg [16*8-1:0] inst_name;
@@ -59,9 +60,11 @@ always #(`SIM_PERIOD/2) clk = ~clk;
 
 task reset;                // reset 1 clock
     begin
+        enable = 0; 
         rst_n = 0; 
         #(`SIM_PERIOD * 1);
         rst_n = 1;
+        enable = 1; 
     end
 endtask
 
@@ -82,7 +85,8 @@ endtask
 
 RVSEED U_RVSEED(
     .clk                            ( clk                           ),
-    .rst_n                          ( rst_n                         )
+    .rst_n                          ( rst_n                         ),
+    .enable                         ( enable                        )
 );
 
 // vcs 

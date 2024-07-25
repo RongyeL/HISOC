@@ -1,15 +1,15 @@
 {
-    "TB_HISOC": [
-        "TB_HISOC",
-        "QqGEW",
-        "module",
-        5
-    ],
     "std": [
         "std",
         "reYIK",
         "module",
         1
+    ],
+    "TB_HISOC": [
+        "TB_HISOC",
+        "QqGEW",
+        "module",
+        5
     ],
     "...MASTER...": [
         "SIM",

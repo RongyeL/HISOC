@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-24 09:49
+// Last Modified : 2024-07-25 08:47
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -22,9 +22,9 @@ module IFU #(
 // AW channel
     output wire [`AXI_ID_WIDTH         -1:0]      ifu_axi_awid,     // write transaction id
     output wire [`AXI_ADDR_WIDTH       -1:0]      ifu_axi_awaddr,   // write address
-    output wire [`AXI_BURST_LEN_WIDTH  -1:0]      ifu_axi_awlen,    // write transaction burst lengths
-    output wire [`AXI_BURST_SIZE_WIDTH -1:0]      ifu_axi_awsize,   // write transaction burst size
-    output wire [`AXI_BURST_TYPE_WIDTH -1:0]      ifu_axi_awburst,  // write transaction burst type
+    output wire [`AXI_LEN_WIDTH  -1:0]      ifu_axi_awlen,    // write transaction burst lengths
+    output wire [`AXI_SIZE_WIDTH -1:0]      ifu_axi_awsize,   // write transaction burst size
+    output wire [`AXI_BURST_WIDTH -1:0]      ifu_axi_awburst,  // write transaction burst type
     output wire                                   ifu_axi_awlock,   // write transaction atomic type
     output wire [`AXI_CACHE_WIDTH      -1:0]      ifu_axi_awcache,  // write transaction memory attribute
     output wire [`AXI_PROT_WIDTH       -1:0]      ifu_axi_awprot,   // write transaction protection attribute
@@ -46,9 +46,9 @@ module IFU #(
 // AR channel 
     output wire [`AXI_ID_WIDTH         -1:0]            ifu_axi_arid,     // read transaction id
     output wire [`AXI_ADDR_WIDTH       -1:0]          ifu_axi_araddr,   // read address
-    output wire [`AXI_BURST_LEN_WIDTH  -1:0]      ifu_axi_arlen,    // read transaction burst length
-    output wire [`AXI_BURST_SIZE_WIDTH -1:0]     ifu_axi_arsize,   // read transaction burst size
-    output wire [`AXI_BURST_TYPE_WIDTH -1:0]     ifu_axi_arburst,  // read transaction burst type
+    output wire [`AXI_LEN_WIDTH  -1:0]      ifu_axi_arlen,    // read transaction burst length
+    output wire [`AXI_SIZE_WIDTH -1:0]     ifu_axi_arsize,   // read transaction burst size
+    output wire [`AXI_BURST_WIDTH -1:0]     ifu_axi_arburst,  // read transaction burst type
     output wire                                   ifu_axi_arlock,   // read atomic type
     output wire [`AXI_CACHE_WIDTH      -1 : 0]          ifu_axi_arcache,  // read transaction memory attribute
     output wire [`AXI_PROT_WIDTH       -1 : 0]           ifu_axi_arprot,   // read transaction protection attribute
@@ -128,15 +128,7 @@ end
 // ---------------------------------------------------------------------------------------------------
 // AXI MST CTRL
 // ---------------------------------------------------------------------------------------------------
-// Determine the counter bit width by calculating log2.
-function integer clogb2 (input integer bit_depth);
-    begin
-        for(clogb2=0; bit_depth>0; clogb2=clogb2+1)
-            bit_depth = bit_depth >> 1;
-    end
-endfunction
-
-localparam integer TX_NUM_WIDTH = clogb2(BURST_LEN-1);
+localparam integer TX_NUM_WIDTH = $clog2(BURST_LEN-1);
 
 localparam [1:0] IDLE    = 2'b00, 
                  WRITE   = 2'b01, // write transaction,
@@ -179,8 +171,8 @@ wire                                read_resp_error;
 assign ifu_axi_awid       = 'b0;
 assign ifu_axi_awaddr     = INST_MEM_BASE_ADDR + axi_awaddr;
 assign ifu_axi_awlen      = BURST_LEN - 1;
-assign ifu_axi_awsize     = clogb2((`AXI_DATA_WIDTH/8)-1);
-assign ifu_axi_awburst    = `AXI_BURST_TYPE_WIDTH'b01;
+assign ifu_axi_awsize     = $clog2((`AXI_DATA_WIDTH/8)-1);
+assign ifu_axi_awburst    = `AXI_BURST_WIDTH'b01;
 assign ifu_axi_awlock     = 1'b0;
 assign ifu_axi_awcache    = `AXI_CACHE_WIDTH'b0010;
 assign ifu_axi_awprot     = `AXI_PROT_WIDTH'h0;
@@ -198,8 +190,8 @@ assign ifu_axi_bready     = axi_bready;
 assign ifu_axi_arid       = 'b0;
 assign ifu_axi_araddr     = INST_MEM_BASE_ADDR + axi_araddr;
 assign ifu_axi_arlen      = BURST_LEN - 1;
-assign ifu_axi_arsize     = clogb2((`AXI_DATA_WIDTH/8)-1);
-assign ifu_axi_arburst    = `AXI_BURST_TYPE_WIDTH'b01;
+assign ifu_axi_arsize     = $clog2((`AXI_DATA_WIDTH/8)-1);
+assign ifu_axi_arburst    = `AXI_BURST_WIDTH'b01;
 assign ifu_axi_arlock     = 1'b0;
 assign ifu_axi_arcache    = `AXI_CACHE_WIDTH'b0010;
 assign ifu_axi_arprot     = `AXI_PROT_WIDTH'h0;
@@ -407,7 +399,7 @@ always @(posedge clk) begin
     if (rst_n == 0  ) begin
         axi_rready <= 1'b0;
     end
-    else if (ifu_axi_rlast && axi_rready) begin
+    else if (ifu_axi_rlast && ifu_axi_rvalid && axi_rready) begin
         axi_rready <= 1'b0;
     end
     else begin

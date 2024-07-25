@@ -154,7 +154,7 @@ Limit information:
 cputime		unlimited
 filesize		unlimited
 datasize		unlimited
-stacksize		unlimited
+stacksize		8192 kbytes
 coredumpsize		0 kbytes
 memoryuse		unlimited
 vmemoryuse		unlimited
@@ -197,16 +197,16 @@ USER=myeda
 DESKTOP_SESSION=ubuntu
 QT4_IM_MODULE=xim
 TEXTDOMAINDIR=/usr/share/locale/
-GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/8be9a62a_6316_4972_8047_fcc2a33b2aa1
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/598842d5_859f_4282_ba15_5b81af528198
 DEFAULTS_PATH=/usr/share/gconf/ubuntu.default.path
 PWD=/home/myeda/project/hisoc/verification/tb_hisoc/sim
 VMR_MODE_FLAG=64
 HOME=/home/myeda
 TEXTDOMAIN=im-config
-SSH_AGENT_PID=1742
+SSH_AGENT_PID=1655
 QT_ACCESSIBILITY=1
 CPATH=/usr/include/x86_64-linux-gnu
-TMUX=/tmp/tmux-1000/default,2101,0
+TMUX=/tmp/tmux-1000/default,2086,0
 XDG_SESSION_TYPE=x11
 VCS_ARG_ADDED_FOR_TMP=1
 XDG_DATA_DIRS=/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
@@ -226,10 +226,10 @@ QT_IM_MODULE=xim
 XMODIFIERS=@im=ibus
 IM_CONFIG_PHASE=2
 LM_LICENSE_FILE=/home/myeda/EDATool/Synopsys/license/Synopsys.dat
-SNPS_VCS_TMPDIR=/tmp/vcs_20240723170154_46716
+SNPS_VCS_TMPDIR=/tmp/vcs_20240725155614_24002
 XDG_CURRENT_DESKTOP=ubuntu:GNOME
 GPG_AGENT_INFO=/run/user/1000/gnupg/S.gpg-agent:0:1
-GNOME_TERMINAL_SERVICE=:1.66
+GNOME_TERMINAL_SERVICE=:1.60
 MAKELEVEL=1
 VERDI_HOME=/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2
 TMUX_PANE=%1
@@ -253,7 +253,7 @@ HISOC_PATH=/home/myeda/project/hisoc
 sysc_uni_pwd=/home/myeda/project/hisoc/verification/tb_hisoc/sim
 MAKEFLAGS=
 GJS_DEBUG_TOPICS=JS ERROR;JS LOG
-SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1659,unix/ubuntu:/tmp/.ICE-unix/1659
+SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1572,unix/ubuntu:/tmp/.ICE-unix/1572
 LESSOPEN=| /usr/bin/lesspipe %s
 GTK_IM_MODULE=ibus
 _=./simv
@@ -267,8 +267,8 @@ argv[0]=simv
 argv[1]=+v2k
 argv[2]=+define+DUMP_FSDB
 268 profile - 100
-          CPU/Mem usage: 0.040 sys,  0.180 user,  259.25M mem
-269 Tue Jul 23 10:01:56 2024
+          CPU/Mem usage: 0.030 sys,  0.190 user,  259.24M mem
+269 Thu Jul 25 08:56:16 2024
 270 pliAppInit
 271 FSDB_GATE is set.
 272 FSDB_RTL is set.
@@ -278,14 +278,14 @@ argv[2]=+define+DUMP_FSDB
 276 LIBSSCORE=found /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/lib/LINUXAMD64/libsscore_vcs201809.so through $NOVAS_HOME setting.
 277 FSDB Dumper for VCS, Release Verdi_O-2018.09-SP2, Linux x86_64/64bit, 02/21/2019
 278 (C) 1996 - 2019 by Synopsys, Inc.
-279 sps_call_fsdbDumpfile_main at 0 : /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v(90)
+279 sps_call_fsdbDumpfile_main at 0 : /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v(94)
 280 argv[0]: (sim_out.fsdb)
 281 *Verdi* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
 282 *Verdi* : Create FSDB file 'sim_out.fsdb'
 283 compile option from '/home/myeda/project/hisoc/verification/tb_hisoc/sim/simv.daidir/vcs_rebuild'.
 284   "vcs '-f' '../tb/tb.f' '-timescale=1ns/1ps' '-full64' '+v2k' '-sverilog' '-Mupdate' '+define+DUMP_FSDB' '-R' '-P' '/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/novas.tab' '/home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a' '-debug_acc+all' '-debug_region+cell+encrypt' 2>&1"
 285 FSDB_VCS_ENABLE_FAST_VC is enable
-286 sps_call_fsdbDumpvars_vd_main at 0 : /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v(91)
+286 sps_call_fsdbDumpvars_vd_main at 0 : /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v(95)
 287 argv[0]: (+all)
 288 [spi_vcs_vd_ppi_create_root]: no upf option
 289 FSDB dumper cannot dump UPF related power signal ($power_tree): no ppiPowerNetwork.
@@ -293,35 +293,35 @@ argv[2]=+define+DUMP_FSDB
 291 *Verdi* : Enable +all dumping.
 292 *Verdi* : End of traversing.
 293 pliAppHDL_DumpVarComplete traverse var: profile - 
-          CPU/Mem usage: 0.050 sys,  0.190 user,  354.52M mem
-                   incr: 0.000 sys,  0.010 user,  7.73M mem
-                   accu: 0.000 sys,  0.010 user,  7.73M mem
-              accu incr: 0.000 sys,  0.010 user,  7.73M mem
+          CPU/Mem usage: 0.040 sys,  0.190 user,  354.54M mem
+                   incr: 0.000 sys,  0.000 user,  7.76M mem
+                   accu: 0.000 sys,  0.000 user,  7.76M mem
+              accu incr: 0.000 sys,  0.000 user,  7.76M mem
 
-          Count usage: 1251 var,  1166 idcode,  69 callback
-                 incr: 1251 var,  1166 idcode,  69 callback
-                 accu: 1251 var,  1166 idcode,  69 callback
-            accu incr: 1251 var,  1166 idcode,  69 callback
-294 Tue Jul 23 10:01:56 2024
+          Count usage: 2297 var,  2200 idcode,  78 callback
+                 incr: 2297 var,  2200 idcode,  78 callback
+                 accu: 2297 var,  2200 idcode,  78 callback
+            accu incr: 2297 var,  2200 idcode,  78 callback
+294 Thu Jul 25 08:56:16 2024
 295 pliAppHDL_DumpVarComplete: profile - 
-          CPU/Mem usage: 0.050 sys,  0.190 user,  355.57M mem
+          CPU/Mem usage: 0.040 sys,  0.190 user,  355.59M mem
                    incr: 0.000 sys,  0.000 user,  1.05M mem
-                   accu: 0.000 sys,  0.010 user,  8.78M mem
+                   accu: 0.000 sys,  0.000 user,  8.81M mem
               accu incr: 0.000 sys,  0.000 user,  1.05M mem
 
-          Count usage: 1251 var,  1166 idcode,  69 callback
+          Count usage: 2297 var,  2200 idcode,  78 callback
                  incr: 0 var,  0 idcode,  0 callback
-                 accu: 1251 var,  1166 idcode,  69 callback
+                 accu: 2297 var,  2200 idcode,  78 callback
             accu incr: 0 var,  0 idcode,  0 callback
-296 Tue Jul 23 10:01:56 2024
-297 End of simulation at 361730000
-298 Tue Jul 23 10:01:56 2024
+296 Thu Jul 25 08:56:16 2024
+297 End of simulation at 11030000
+298 Thu Jul 25 08:56:16 2024
 299 Begin FSDB profile info:
-300 FSDB Writer : bc1(76944) bcn(34546) mtf/stf(0/0)
-FSDB Writer elapsed time : flush(0.006392) io wait(0.000000) theadpool wait(0.000000) target functin(0.000000)
+300 FSDB Writer : bc1(2983) bcn(3420) mtf/stf(0/0)
+FSDB Writer elapsed time : flush(0.002649) io wait(0.000000) theadpool wait(0.000000) target functin(0.000000)
 FSDB Writer cpu time : MT Compression : 0
 301 End FSDB profile info
 302 Parallel profile    -  Flush:3 Expand:0 ProduceWait:0 ConsumerWait:0 BlockUsed:0
-303                        ProduceTime:0.280628779 ConsumerTime:0.000000000 Buffer:64MB
+303                        ProduceTime:0.249538898 ConsumerTime:0.000000000 Buffer:64MB
 304 SimExit
 305 Sim process exit

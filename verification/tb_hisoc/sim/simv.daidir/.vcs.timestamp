@@ -66,14 +66,14 @@ USERNAME=myeda
 UNAME=/bin/uname
 TOOL_HOME=/home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64
 TMUX_PANE=%1
-TMUX=/tmp/tmux-1000/default,2101,0
+TMUX=/tmp/tmux-1000/default,2086,0
 TEXTDOMAINDIR=/usr/share/locale/
 TEXTDOMAIN=im-config
 SSH_AUTH_SOCK=/run/user/1000/keyring/ssh
-SSH_AGENT_PID=1742
+SSH_AGENT_PID=1655
 SNPS_VCS_INTERNAL_UBUNTU_PRE_LDFLAGS= -no-pie  -Wl,--no-as-needed 
 SNPS_VCS_INTERNAL_LINKER_NEEDS_NO_AS_NEEDED=1
-SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1659,unix/ubuntu:/tmp/.ICE-unix/1659
+SESSION_MANAGER=local/ubuntu:@/tmp/.ICE-unix/1572,unix/ubuntu:/tmp/.ICE-unix/1572
 SCRNAME=vcs
 SCRIPT_NAME=vcs
 QT_IM_MODULE=xim
@@ -98,8 +98,8 @@ HISOC_PATH=/home/myeda/project/hisoc
 GTK_MODULES=gail:atk-bridge
 GTK_IM_MODULE=ibus
 GPG_AGENT_INFO=/run/user/1000/gnupg/S.gpg-agent:0:1
-GNOME_TERMINAL_SERVICE=:1.66
-GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/8be9a62a_6316_4972_8047_fcc2a33b2aa1
+GNOME_TERMINAL_SERVICE=:1.60
+GNOME_TERMINAL_SCREEN=/org/gnome/Terminal/screen/598842d5_859f_4282_ba15_5b81af528198
 GNOME_SHELL_SESSION_MODE=ubuntu
 GNOME_DESKTOP_SESSION_ID=this-is-deprecated
 GJS_DEBUG_TOPICS=JS ERROR;JS LOG
@@ -113,17 +113,19 @@ CPATH=/usr/include/x86_64-linux-gnu
 COLORTERM=truecolor
 CLUTTER_IM_MODULE=xim
 0
-16
-1721753226 /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v
-1721752699 /home/myeda/project/hisoc/rtl/rvseed/rvseed.v
-1721753768 /home/myeda/project/hisoc/rtl/rvseed/ifu.v
-1721739111 /home/myeda/project/hisoc/rtl/rvseed/pc_reg.v
+18
+1721922484 /home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v
+1721920184 /home/myeda/project/hisoc/rtl/rvseed/rvseed.v
+1721922437 /home/myeda/project/hisoc/rtl/rvseed/ifu.v
+1721739103 /home/myeda/project/hisoc/rtl/rvseed/mux_pc.v
+1721839950 /home/myeda/project/hisoc/rtl/rvseed/pc_reg.v
 1721745212 /home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v
-1721754107 /home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v
-1721753412 /home/myeda/project/hisoc/rtl/macro/axi_define.v
+1721922049 /home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v
+1721922971 /home/myeda/project/hisoc/rtl/cbb/axi/axi_slv_ctrl_rd.v
+1721914551 /home/myeda/project/hisoc/rtl/macro/axi_define.v
 1721745655 ../tc/tc.f
-1721746083 /home/myeda/project/hisoc/rtl/rvseed/rvseed.f
-1721745054 /home/myeda/project/hisoc/rtl/cbb/cbb.f
+1721839950 /home/myeda/project/hisoc/rtl/rvseed/rvseed.f
+1721920332 /home/myeda/project/hisoc/rtl/cbb/cbb.f
 1721744962 /home/myeda/project/hisoc/rtl/macro/macro.f
 1721745436 ../dut/dut.f
 1721745436 ../tb/tb.f
@@ -136,5 +138,5 @@ CLUTTER_IM_MODULE=xim
 1551421768 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libsnpsmalloc.so
 1551421789 /home/myeda/EDATool/Synopsys/vcs/vcs/O-2018.09-SP2/linux64/lib/libvfs.so
 1550752033 /home/myeda/EDATool/Synopsys/verdi/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/LINUX64/pli.a
-1721754116 simv.daidir
+1721922976 simv.daidir
 -1 partitionlib

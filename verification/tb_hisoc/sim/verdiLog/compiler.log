@@ -6,11 +6,13 @@ Command arguments:
             -f /home/myeda/project/hisoc/rtl/macro/macro.f
                 /home/myeda/project/hisoc/rtl/macro/axi_define.v
             -f /home/myeda/project/hisoc/rtl/cbb/cbb.f
+                /home/myeda/project/hisoc/rtl/cbb/axi/axi_slv_ctrl_rd.v
                 /home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v
             -f /home/myeda/project/hisoc/rtl/rvseed/rvseed.f
                 +incdir+/home/myeda/project/hisoc/rtl/rvseed
                 /home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v
                 /home/myeda/project/hisoc/rtl/rvseed/pc_reg.v
+                /home/myeda/project/hisoc/rtl/rvseed/mux_pc.v
                 /home/myeda/project/hisoc/rtl/rvseed/ifu.v
                 /home/myeda/project/hisoc/rtl/rvseed/rvseed.v
         -f ../tc/tc.f
@@ -18,19 +20,19 @@ Command arguments:
 
 
 *Error* Syntax error at ++
-"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 43: 
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 44: 
 
 *Error* Syntax error at #
-"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 48: 
-
-*Error* Syntax error at $finish
 "/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 49: 
 
-*Error* Syntax error at end
+*Error* Syntax error at $finish
 "/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 50: 
 
+*Error* Syntax error at end
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 51: 
+
 *Error* missing step assignment in for assignment
-"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 43: 
+"/home/myeda/project/hisoc/verification/tb_hisoc/tc/tb_hisoc.v", 44: 
 Highest level modules:
 TB_HISOC
 

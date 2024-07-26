@@ -5,13 +5,13 @@
 // Filename      : axi_slv_ctrl_rd.v
 // Author        : Rongye
 // Created On    : 2024-07-25 05:24
-// Last Modified : 2024-07-25 08:56
+// Last Modified : 2024-07-26 08:32
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-module AXI_SLV_CTRL_RD #(
+module AXI_SLV_RD_CTRL #(
 
 )(
     input  wire                              clk,
@@ -43,12 +43,15 @@ module AXI_SLV_CTRL_RD #(
     output wire [`AXI_RESP_WIDTH       -1:0] axi_slv_rresp,
     output wire                              axi_slv_rlast
 );
-localparam DLY = 0.1;
+localparam DLY      = 0.1;
+localparam ADDR_LSB = (`AXI_DATA_WIDTH/32)+ 1;
 //--------------------------------------------------------------------------------
 // inner signal
 //--------------------------------------------------------------------------------
-reg  [`AXI_LEN_WIDTH       -1:0] read_index;
+reg  [`AXI_LEN_WIDTH         :0] read_index;
 reg                              burst_read_active; 
+
+reg                              axi_slv_rvalid_r;
 
 reg  [`AXI_ID_WIDTH        -1:0] axi_slv_arid_r;
 reg  [`AXI_ADDR_WIDTH      -1:0] axi_slv_araddr_r;
@@ -58,16 +61,16 @@ reg  [`AXI_BURST_WIDTH     -1:0] axi_slv_arburst_r;
 reg  [`AXI_LOCK_WIDTH      -1:0] axi_slv_arlock_r;
 reg  [`AXI_CACHE_WIDTH     -1:0] axi_slv_arcache_r;
 reg  [`AXI_PROT_WIDTH      -1:0] axi_slv_arprot_r;
+reg  [`AXI_QOS_WIDTH       -1:0] axi_slv_arqos_r;
+reg  [`AXI_REGION_WIDTH    -1:0] axi_slv_arregion_r;
 
-reg                              axi_slv_rvalid_r;
 reg  [`AXI_DATA_WIDTH      -1:0] axi_slv_rdata_r;
 reg  [`AXI_RESP_WIDTH      -1:0] axi_slv_rresp_r;
 
-localparam integer ADDR_LSB       = (`AXI_DATA_WIDTH/32)+ 1;
 //--------------------------------------------------------------------------------
-// main 
+// main
 //--------------------------------------------------------------------------------
-// ar channel
+// register ar payload
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         axi_slv_arid_r    <= #DLY {`AXI_ID_WIDTH{1'b0}};
@@ -77,6 +80,8 @@ always @(posedge clk or negedge rst_n) begin
         axi_slv_arlock_r  <= #DLY {`AXI_LOCK_WIDTH{1'b0}};
         axi_slv_arcache_r <= #DLY {`AXI_CACHE_WIDTH{1'b0}};
         axi_slv_arprot_r  <= #DLY {`AXI_PROT_WIDTH{1'b0}};
+        axi_slv_arqos_r   <= #DLY {`AXI_QOS_WIDTH{1'b0}};
+        axi_slv_arregion_r<= #DLY {`AXI_REGION_WIDTH{1'b0}};
     end
     else if (axi_slv_arvalid && axi_slv_arready) begin
         axi_slv_arid_r    <= #DLY axi_slv_arid;   
@@ -86,6 +91,8 @@ always @(posedge clk or negedge rst_n) begin
         axi_slv_arlock_r  <= #DLY axi_slv_arlock; 
         axi_slv_arcache_r <= #DLY axi_slv_arcache;
         axi_slv_arprot_r  <= #DLY axi_slv_arprot; 
+        axi_slv_arqos_r   <= #DLY axi_slv_arqos; 
+        axi_slv_arregion_r<= #DLY axi_slv_arregion; 
     end
 end
 
@@ -96,7 +103,7 @@ always @(posedge clk or negedge rst_n) begin
     else if (axi_slv_arvalid && axi_slv_arready && ~burst_read_active) begin
         burst_read_active <= #DLY 1'b1;
     end
-    else if (axi_slv_rvalid && axi_slv_rready && (read_index == axi_slv_arlen_r)) begin
+    else if (axi_slv_rvalid && axi_slv_rready && axi_slv_rlast) begin
         burst_read_active <= #DLY 1'b0;
     end
 end
@@ -106,12 +113,12 @@ assign rd_req_en = burst_read_active && (read_index <= axi_slv_arlen_r);
 
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
-        read_index <= #DLY {`AXI_LEN_WIDTH{1'b0}};
+        read_index <= #DLY {(`AXI_LEN_WIDTH+1){1'b0}};
     end
     else if (axi_slv_arvalid && axi_slv_arready && ~burst_read_active) begin
-        read_index <= #DLY {`AXI_LEN_WIDTH{1'b0}};
+        read_index <= #DLY {(`AXI_LEN_WIDTH+1){1'b0}};
     end
-    else if((read_index <= axi_slv_arlen_r) && axi_slv_rvalid && axi_slv_rready) begin
+    else if((read_index <= axi_slv_arlen_r) && rd_req_en) begin
         read_index <= #DLY read_index + `AXI_LEN_WIDTH'b1;
     end
 end
@@ -186,8 +193,8 @@ always @(posedge clk or negedge rst_n) begin
     end
 end
 
-assign axi_slv_rlast  = burst_read_active && (read_index == axi_slv_arlen_r);
 assign axi_slv_rvalid = burst_read_active && axi_slv_rvalid_r; 
+assign axi_slv_rlast  = burst_read_active && axi_slv_rvalid && axi_slv_rready && (read_index == axi_slv_arlen_r+1);
 assign axi_slv_rdata  = axi_slv_rdata_r; 
 
 endmodule

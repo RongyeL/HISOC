@@ -1,2 +1,2 @@
-$HISOC_PATH/rtl/cbb/axi/axi_slv_ctrl_rd.v
-$HISOC_PATH/rtl/cbb/axi/axi_mem.v
+-f $HISOC_PATH/rtl/cbb/axi/axi.f
+-f $HISOC_PATH/rtl/cbb/reg/reg.f

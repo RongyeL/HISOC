@@ -5,7 +5,7 @@
 // Filename      : easy_axi_para.v
 // Author        : Rongye
 // Created On    : 2022-12-27 21:06
-// Last Modified : 2024-07-25 06:35
+// Last Modified : 2024-07-26 09:06
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -24,3 +24,19 @@
 `define AXI_QOS_WIDTH          4
 `define AXI_REGION_WIDTH       4
 `define AXI_RESP_WIDTH         2
+
+
+`define AXI_BURTS_FIXED        `AXI_BURST_WIDTH'b00
+`define AXI_BURTS_INCR         `AXI_BURST_WIDTH'b01
+`define AXI_BURTS_WRAP         `AXI_BURST_WIDTH'b10
+`define AXI_BURTS_RSV          `AXI_BURST_WIDTH'b11
+
+`define AXI_SIZE_1_BYTE        `AXI_SIZE_WIDTH'b000
+`define AXI_SIZE_2_BYTE        `AXI_SIZE_WIDTH'b001
+`define AXI_SIZE_4_BYTE        `AXI_SIZE_WIDTH'b010
+`define AXI_SIZE_8_BYTE        `AXI_SIZE_WIDTH'b011
+`define AXI_SIZE_16_BYTE       `AXI_SIZE_WIDTH'b100
+`define AXI_SIZE_32_BYTE       `AXI_SIZE_WIDTH'b101
+`define AXI_SIZE_64_BYTE       `AXI_SIZE_WIDTH'b110
+`define AXI_SIZE_128_BYTE      `AXI_SIZE_WIDTH'b111
+

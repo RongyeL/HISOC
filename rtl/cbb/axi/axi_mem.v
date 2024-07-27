@@ -5,7 +5,7 @@
 // Filename      : axi_mem.v
 // Author        : Rongye
 // Created On    : 2024-07-23 05:57
-// Last Modified : 2024-07-26 07:41
+// Last Modified : 2024-07-27 07:49
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -83,7 +83,7 @@ AXI_SLV_RD_CTRL U_AXI_SLV_RD_CTRL(
 
 // implement Block RAM(s)
 reg [`AXI_DATA_WIDTH-1:0] mem_data [0:MEM_ADDR_DEEP-1];
-reg [`AXI_DATA_WIDTH-1:0] mem_data_out;
+wire [`AXI_DATA_WIDTH-1:0] mem_data_out;
 reg mem_data_out_en;
 
 wire mem_rden = rd_req_en;

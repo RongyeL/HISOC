@@ -5,7 +5,7 @@
 // Filename      : pc_next.v
 // Author        : Rongye
 // Created On    : 2022-03-21 22:56
-// Last Modified : 2024-07-23 05:51
+// Last Modified : 2024-07-27 08:45
 // ---------------------------------------------------------------------------------
 // Description   : Determine the update value of the pc. 
 //
@@ -21,7 +21,7 @@ module MUX_PC (
 
     input      [`CPU_WIDTH-1:0]  curr_pc,    // current pc addr
     output reg [`CPU_WIDTH-1:0]  next_pc     // next pc addr
-    );
+);
 
 always @(*) begin
     if (~ena) 

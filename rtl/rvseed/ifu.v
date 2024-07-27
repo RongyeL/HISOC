@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-26 09:21
+// Last Modified : 2024-07-27 09:01
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -38,35 +38,55 @@ module IFU(
     input  wire                              axi_mst_rlast
 );
 
-wire                         next_en;
-wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
-wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
-wire                         pc_update;
+localparam DLY = 0.1;
 
-wire [`BRAN_WIDTH-1:0]       branch;     // branch flag
-wire                         zero;       // alu result is zero
-wire [`JUMP_WIDTH-1:0]       jump;       // jump flag
+wire                          next_en;
+wire [`CPU_WIDTH        -1:0] curr_pc;    
+wire [`CPU_WIDTH        -1:0] next_pc;    
 
-wire [`CPU_WIDTH-1:0]        imm;    // next pc addr
-wire [`CPU_WIDTH-1:0]        reg1_rdata;    // next pc addr
-assign branch     = `BRAN_WIDTH'b0;
-assign zero       = 1'b0;
-assign jump       = `JUMP_WIDTH'b0;
-assign imm        = `CPU_WIDTH'b0;
-assign reg1_rdata = `CPU_WIDTH'b0;
+wire [`BRAN_WIDTH       -1:0] branch;     
+wire                          zero;       
+wire [`JUMP_WIDTH       -1:0] jump;       
 
-wire if_process   = pc_update;
-reg  if_process_r;
+wire [`CPU_WIDTH        -1:0] imm;    
+wire [`CPU_WIDTH        -1:0] reg1_rdata;    
+
+wire                          rd_req_en;
+wire [`AXI_ID_WIDTH     -1:0] rd_id        = curr_pc[`AXI_ID_WIDTH-1:0];
+wire [`AXI_ADDR_WIDTH   -1:0] rd_base_addr = `INST_MEM_BASE_ADDR + curr_pc;
+wire [`AXI_LEN_WIDTH    -1:0] rd_len       = `AXI_LEN_WIDTH'h0; // len = 1
+wire [`AXI_SIZE_WIDTH   -1:0] rd_size      = `AXI_SIZE_4_BYTE;
+wire [`AXI_BURST_WIDTH  -1:0] rd_burst     = `AXI_BURTS_INCR;
+wire [`AXI_LOCK_WIDTH   -1:0] rd_lock      = `AXI_LOCK_WIDTH'b0;
+wire [`AXI_CACHE_WIDTH  -1:0] rd_cache     = `AXI_CACHE_WIDTH'b0000;
+wire [`AXI_PROT_WIDTH   -1:0] rd_prot      = `AXI_PROT_WIDTH'b000;
+wire [`AXI_QOS_WIDTH    -1:0] rd_qos       = `AXI_QOS_WIDTH'h0;
+wire [`AXI_REGION_WIDTH -1:0] rd_region    = `AXI_REGION_WIDTH'h0;
+
+wire                          rd_result_en; 
+wire [`AXI_DATA_WIDTH   -1:0] rd_result_data;
+
+wire                          if_process   = rd_req_en;
+reg                           if_process_r;
+reg                           if_start_r;
+wire                          if_start_en;
+wire                          if_done_en;
+
 // PC REGISTER INST
-assign next_en = enable & ~if_process & ~if_process_r;
+assign next_en = enable & if_done_en;
 PC_REG U_PC_REG(
     .clk                            ( clk                           ),
     .rst_n                          ( rst_n                         ),
     .next_en                        ( next_en                       ),
     .next_pc                        ( next_pc                       ),
-    .curr_pc                        ( curr_pc                       ),
-    .pc_update                      ( pc_update                     )
+    .curr_pc                        ( curr_pc                       )
 );
+
+assign branch     = `BRAN_WIDTH'b0;
+assign zero       = 1'b0;
+assign jump       = `JUMP_WIDTH'b0;
+assign imm        = `CPU_WIDTH'b0;
+assign reg1_rdata = `CPU_WIDTH'b0;
 
 MUX_PC U_MUX_PC(
     .ena                            ( next_en                       ),
@@ -80,18 +100,7 @@ MUX_PC U_MUX_PC(
 );
 
 // AXI_MST_RD_CTRL INST
-wire                         rd_req_en    = pc_update;
-wire [`AXI_ID_WIDTH    -1:0] rd_id        = curr_pc[`AXI_ID_WIDTH-1:0];
-wire [`AXI_ADDR_WIDTH  -1:0] rd_base_addr = `INST_MEM_BASE_ADDR + curr_pc;
-wire [`AXI_LEN_WIDTH   -1:0] rd_len       = `AXI_LEN_WIDTH'h0; // len = 1
-wire [`AXI_SIZE_WIDTH  -1:0] rd_size      = `AXI_SIZE_4_BYTE;
-wire [`AXI_BURST_WIDTH -1:0] rd_burst     = `AXI_BURTS_INCR;
-wire [`AXI_LOCK_WIDTH  -1:0] rd_lock      = `AXI_LOCK_WIDTH'b0;
-wire [`AXI_CACHE_WIDTH -1:0] rd_cache     = `AXI_CACHE_WIDTH'b0000;
-wire [`AXI_PROT_WIDTH  -1:0] rd_prot      = `AXI_PROT_WIDTH'b000;
-
-wire                         rd_result_en; 
-wire [`AXI_DATA_WIDTH  -1:0] rd_result_data;
+assign rd_req_en = enable & ~if_process_r;
 AXI_MST_RD_CTRL U_AXI_MST_RD_CTRL(
     .clk                (clk                ),
     .rst_n              (rst_n              ), 
@@ -135,17 +144,18 @@ AXI_MST_RD_CTRL U_AXI_MST_RD_CTRL(
 // ---------------------------------------------------------------------------------
 // IFU CTRL
 // ---------------------------------------------------------------------------------
-wire if_start_en = rd_req_en;
-wire if_done_en  = rd_result_en;
+assign if_start_en = rd_req_en;
+assign if_done_en  = rd_result_en;
+
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n) begin
-        if_process_r <= 1'b0;
+        if_process_r <= #DLY 1'b0;
     end
     else if (if_start_en) begin
-        if_process_r <= if_process;
+        if_process_r <= #DLY if_process;
     end
     else if (if_done_en) begin
-        if_process_r <= 1'b0;
+        if_process_r <= #DLY 1'b0;
     end
 end
 endmodule

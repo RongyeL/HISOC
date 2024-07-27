@@ -5,7 +5,7 @@
 // Filename      : tb_rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 04:18
-// Last Modified : 2024-07-26 09:32
+// Last Modified : 2024-07-27 08:50
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -41,7 +41,7 @@ integer k;
 initial begin
     #(`SIM_PERIOD/2);
     clk = 1'b0;
-    for (k = 0; k < 1; k++) begin
+    for (k = 0; k < 1; k=k+1) begin
         reset;
         inst_name = inst_list[k];
         inst_load(inst_name);
@@ -63,8 +63,9 @@ task reset;                // reset 1 clock
         enable = 0; 
         rst_n = 0; 
         #(`SIM_PERIOD * 1);
-        rst_n = 1;
         enable = 1; 
+        #(`SIM_PERIOD * 1);
+        rst_n = 1;
     end
 endtask
 

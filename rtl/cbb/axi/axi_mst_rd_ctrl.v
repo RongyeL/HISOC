@@ -5,7 +5,7 @@
 // Filename      : axi_mst_ctrl_rd.v
 // Author        : Rongye
 // Created On    : 2024-07-25 05:24
-// Last Modified : 2024-07-26 09:36
+// Last Modified : 2024-07-27 08:29
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -14,9 +14,10 @@
 module AXI_MST_RD_CTRL #(
 
 )(
+// Global
     input  wire                              clk,
     input  wire                              rst_n, 
-
+// Read Interface
     input  wire                              rd_req_en, 
     input  wire [`AXI_ID_WIDTH         -1:0] rd_id,
     input  wire [`AXI_ADDR_WIDTH       -1:0] rd_base_addr,
@@ -31,8 +32,7 @@ module AXI_MST_RD_CTRL #(
 
     output wire                              rd_result_en, 
     output wire [`AXI_DATA_WIDTH       -1:0] rd_result_data,
-
-// AR channel
+// AXI AR Channel
     output wire                              axi_mst_arvalid,
     input  wire                              axi_mst_arready,
     output wire [`AXI_ID_WIDTH         -1:0] axi_mst_arid,
@@ -45,7 +45,7 @@ module AXI_MST_RD_CTRL #(
     output wire [`AXI_PROT_WIDTH       -1:0] axi_mst_arprot,
     output wire [`AXI_QOS_WIDTH        -1:0] axi_mst_arqos,
     output wire [`AXI_REGION_WIDTH     -1:0] axi_mst_arregion,
-// R channel
+// AXI R Channel
     input  wire                              axi_mst_rvalid,
     output wire                              axi_mst_rready,
     input  wire [`AXI_ID_WIDTH         -1:0] axi_mst_rid,
@@ -55,13 +55,13 @@ module AXI_MST_RD_CTRL #(
 );
 localparam DLY         = 0.1;
 //--------------------------------------------------------------------------------
-// inner signal
+// Inner Signal
 //--------------------------------------------------------------------------------
 reg  [`AXI_LEN_WIDTH         :0] read_index; // read beat count in a burst
 reg                              burst_read_active;
+reg                              read_resp_error_r;
 
 reg                              axi_mst_arvalid_r;
-
 reg  [`AXI_ID_WIDTH        -1:0] axi_mst_arid_r;
 reg  [`AXI_ADDR_WIDTH      -1:0] axi_mst_araddr_r;
 reg  [`AXI_LEN_WIDTH       -1:0] axi_mst_arlen_r;
@@ -76,9 +76,8 @@ reg  [`AXI_REGION_WIDTH    -1:0] axi_mst_arregion_r;
 reg  [`AXI_RESP_WIDTH      -1:0] axi_mst_rresp_r;
 
 //--------------------------------------------------------------------------------
-// main 
+// Register Payload 
 //--------------------------------------------------------------------------------
-// register ar payload
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         axi_mst_arid_r    <= #DLY {`AXI_ID_WIDTH{1'b0}};
@@ -103,30 +102,41 @@ always @(posedge clk or negedge rst_n) begin
         axi_mst_arregion_r<= #DLY rd_region; 
     end
 end
+//--------------------------------------------------------------------------------
+// State Ctrl
+//--------------------------------------------------------------------------------
+always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        burst_read_active <= #DLY 1'b0;
+    end
+    else if (rd_req_en) begin
+        burst_read_active <= #DLY 1'b1;
+    end
+    else if (axi_mst_rvalid && axi_mst_rready && axi_mst_rlast) begin
+        burst_read_active <= #DLY 1'b0;
+    end
+end
+
+always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        read_index <= #DLY {(`AXI_LEN_WIDTH+1){1'b0}};
+    end
+    else if(rd_req_en) begin
+        read_index <= #DLY {(`AXI_LEN_WIDTH+1){1'b0}};
+    end
+    else if (axi_mst_rvalid && axi_mst_rready && (read_index != axi_mst_arlen_r)) begin
+        read_index <= #DLY read_index + `AXI_LEN_WIDTH'b1;
+    end
+end
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         axi_mst_araddr_r  <= #DLY {`AXI_ADDR_WIDTH{1'b0}};
     end
     else if (rd_req_en) begin
-        axi_mst_araddr_r  <= rd_base_addr;
+        axi_mst_araddr_r  <= #DLY rd_base_addr;
     end
 end
 
-assign axi_mst_arid    = axi_mst_arid_r    ;
-assign axi_mst_arlen   = axi_mst_arlen_r   ;
-assign axi_mst_arsize  = axi_mst_arsize_r  ;
-assign axi_mst_arburst = axi_mst_arburst_r ;
-assign axi_mst_arlock  = axi_mst_arlock_r  ;
-assign axi_mst_arcache = axi_mst_arcache_r ;
-assign axi_mst_arprot  = axi_mst_arprot_r  ;
-assign axi_mst_arqos   = axi_mst_arqos_r   ;
-assign axi_mst_arregion= axi_mst_arregion_r;
-assign axi_mst_araddr  = axi_mst_araddr_r;
-
-reg                       read_resp_error_r;
-//----------------------------
-//Read Address Channel
-//----------------------------
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         axi_mst_arvalid_r  <= #DLY 1'b0;
@@ -138,52 +148,40 @@ always @(posedge clk or negedge rst_n) begin
         axi_mst_arvalid_r  <= #DLY 1'b0;
     end
 end
-assign axi_mst_arvalid = burst_read_active && axi_mst_arvalid_r; 
-
-//--------------------------------
-//Read Data (and Response) Channel
-//--------------------------------
+//--------------------------------------------------------------------------------
+// Resp Ctrl
+//--------------------------------------------------------------------------------
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
-        read_index <= 0;
+        read_resp_error_r <= #DLY 1'b0;
     end
     else if(rd_req_en) begin
-        read_index <= 0;
-    end
-    else if (axi_mst_rvalid && axi_mst_rready && (read_index != axi_mst_arlen_r)) begin
-        read_index <= read_index + 1;
-    end
-end
-
-//Flag any read response errors
-always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-        read_resp_error_r <= 0;
-    end
-    else if(rd_req_en) begin
-        read_resp_error_r <= 0;
+        read_resp_error_r <= #DLY 1'b0;
     end
     else if (axi_mst_rvalid && axi_mst_rready) begin
-        read_resp_error_r <= read_resp_error_r | axi_mst_rresp[1];
+        read_resp_error_r <= #DLY read_resp_error_r | axi_mst_rresp[1];
     end
 end
 
-// burst_read_active signal is asserted when there is a burst write transaction
-always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-        burst_read_active <= 1'b0;
-    end
-    else if (rd_req_en) begin
-        burst_read_active <= 1'b1;
-    end
-    else if (axi_mst_rvalid && axi_mst_rready && axi_mst_rlast) begin
-        burst_read_active <= 1'b0;
-    end
-end
-assign axi_mst_rready = 1'b1; // ost = 1
+//--------------------------------------------------------------------------------
+// Output Signal
+//--------------------------------------------------------------------------------
+assign axi_mst_arvalid  = burst_read_active && axi_mst_arvalid_r;
 
-// Check for last read completion.
-assign rd_result_en   = axi_mst_rvalid && axi_mst_rready && axi_mst_rlast;
-assign rd_result_data = axi_mst_rdata;
+assign axi_mst_arid     = axi_mst_arid_r    ;
+assign axi_mst_arlen    = axi_mst_arlen_r   ;
+assign axi_mst_arsize   = axi_mst_arsize_r  ;
+assign axi_mst_arburst  = axi_mst_arburst_r ;
+assign axi_mst_arlock   = axi_mst_arlock_r  ;
+assign axi_mst_arcache  = axi_mst_arcache_r ;
+assign axi_mst_arprot   = axi_mst_arprot_r  ;
+assign axi_mst_arqos    = axi_mst_arqos_r   ;
+assign axi_mst_arregion = axi_mst_arregion_r;
+assign axi_mst_araddr   = axi_mst_araddr_r;
+
+assign axi_mst_rready   = 1'b1;  // always can receive data
+
+assign rd_result_en     = axi_mst_rvalid && axi_mst_rready && axi_mst_rlast;
+assign rd_result_data   = axi_mst_rdata;
 
 endmodule

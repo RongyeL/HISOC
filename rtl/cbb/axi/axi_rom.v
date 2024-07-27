@@ -5,13 +5,13 @@
 // Filename      : axi_mem.v
 // Author        : Rongye
 // Created On    : 2024-07-23 05:57
-// Last Modified : 2024-07-27 07:49
+// Last Modified : 2024-07-27 09:07
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-module AXI_MEM(
+module AXI_ROM(
 // Global 
     input wire                                 clk,
     input wire                                 rst_n,
@@ -81,14 +81,14 @@ AXI_SLV_RD_CTRL U_AXI_SLV_RD_CTRL(
 
 
 
-// implement Block RAM(s)
+// implement Block ROM(s) read only
 reg [`AXI_DATA_WIDTH-1:0] mem_data [0:MEM_ADDR_DEEP-1];
 wire [`AXI_DATA_WIDTH-1:0] mem_data_out;
 reg mem_data_out_en;
 
 wire mem_rden = rd_req_en;
-wire [MEM_ADDR_WIDTH-1:0] mem_address = (mem_rden ? rd_base_addr[ADDR_LSB+:MEM_ADDR_WIDTH]
-                                                  : {MEM_ADDR_WIDTH{1'b0}});
+wire [MEM_ADDR_WIDTH-1:0] mem_address = mem_rden ? rd_base_addr[ADDR_LSB+:MEM_ADDR_WIDTH]
+                                                 : {MEM_ADDR_WIDTH{1'b0}};
 
 assign mem_data_out = mem_rden ? mem_data[mem_address] : {`AXI_DATA_WIDTH{1'b0}};
 

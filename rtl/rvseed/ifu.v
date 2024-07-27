@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-27 09:01
+// Last Modified : 2024-07-27 10:17
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -35,7 +35,12 @@ module IFU(
     input  wire [`AXI_ID_WIDTH         -1:0] axi_mst_rid,
     input  wire [`AXI_DATA_WIDTH       -1:0] axi_mst_rdata,
     input  wire [`AXI_RESP_WIDTH       -1:0] axi_mst_rresp,
-    input  wire                              axi_mst_rlast
+    input  wire                              axi_mst_rlast,
+
+    output wire                              ifu_start_en,
+    output wire                              ifu_done_en,
+    output wire [`CPU_WIDTH            -1:0] ifu_inst_pc,
+    output wire [`CPU_WIDTH            -1:0] ifu_inst
 );
 
 localparam DLY = 0.1;
@@ -66,14 +71,12 @@ wire [`AXI_REGION_WIDTH -1:0] rd_region    = `AXI_REGION_WIDTH'h0;
 wire                          rd_result_en; 
 wire [`AXI_DATA_WIDTH   -1:0] rd_result_data;
 
-wire                          if_process   = rd_req_en;
-reg                           if_process_r;
-reg                           if_start_r;
-wire                          if_start_en;
-wire                          if_done_en;
+wire                          ifu_process   = rd_req_en;
+reg                           ifu_process_r;
+reg  [`CPU_WIDTH        -1:0] ifu_inst_pc_r;
 
 // PC REGISTER INST
-assign next_en = enable & if_done_en;
+assign next_en = enable & ifu_done_en;
 PC_REG U_PC_REG(
     .clk                            ( clk                           ),
     .rst_n                          ( rst_n                         ),
@@ -100,7 +103,7 @@ MUX_PC U_MUX_PC(
 );
 
 // AXI_MST_RD_CTRL INST
-assign rd_req_en = enable & ~if_process_r;
+assign rd_req_en = enable & ~ifu_process_r;
 AXI_MST_RD_CTRL U_AXI_MST_RD_CTRL(
     .clk                (clk                ),
     .rst_n              (rst_n              ), 
@@ -144,18 +147,27 @@ AXI_MST_RD_CTRL U_AXI_MST_RD_CTRL(
 // ---------------------------------------------------------------------------------
 // IFU CTRL
 // ---------------------------------------------------------------------------------
-assign if_start_en = rd_req_en;
-assign if_done_en  = rd_result_en;
-
+assign ifu_start_en  = rd_req_en;
+assign ifu_done_en   = rd_result_en;
+assign ifu_inst_pc   = ifu_inst_pc_r;
+assign ifu_inst      = rd_result_data;
 always @ (posedge clk or negedge rst_n) begin
     if (~rst_n) begin
-        if_process_r <= #DLY 1'b0;
+        ifu_inst_pc_r <= #DLY `CPU_WIDTH'b0;
     end
-    else if (if_start_en) begin
-        if_process_r <= #DLY if_process;
+    else if (ifu_start_en) begin
+        ifu_inst_pc_r <= #DLY curr_pc;
     end
-    else if (if_done_en) begin
-        if_process_r <= #DLY 1'b0;
+end
+always @ (posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        ifu_process_r <= #DLY 1'b0;
+    end
+    else if (ifu_start_en) begin
+        ifu_process_r <= #DLY ifu_process;
+    end
+    else if (ifu_done_en) begin
+        ifu_process_r <= #DLY 1'b0;
     end
 end
 endmodule

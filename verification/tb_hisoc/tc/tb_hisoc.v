@@ -5,7 +5,7 @@
 // Filename      : tb_rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 04:18
-// Last Modified : 2024-07-27 08:50
+// Last Modified : 2024-07-27 09:10
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -72,7 +72,7 @@ endtask
 task inst_load;
     input [16*8-1:0] inst_name;
     begin
-        $readmemh (inst_name, U_HISOC. U_INST_MEM. mem_data);
+        $readmemh (inst_name, U_HISOC. U_INST_ROM. mem_data);
         #(`SIM_PERIOD * 500);
     end
 endtask

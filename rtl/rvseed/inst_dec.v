@@ -2,10 +2,10 @@
 //                 Copyright (c) 2022 
 //                       ALL RIGHTS RESERVED
 // ---------------------------------------------------------------------------------
-// Filename      : id.v
+// Filename      : inst_decoder.v
 // Author        : Rongye
 // Created On    : 2022-03-22 19:10
-// Last Modified : 2024-07-23 05:51
+// Last Modified : 2024-07-27 09:15
 // ---------------------------------------------------------------------------------
 // Description   : The main control module decodes the read instructions 
 //                 to obtain the control signals, corresponding addresses 
@@ -13,7 +13,7 @@
 //
 //
 // -FHDR----------------------------------------------------------------------------
-module CTRL (
+module INST_DEC (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
 
     output reg [`BRAN_WIDTH-1:0]       branch,     // branch flag

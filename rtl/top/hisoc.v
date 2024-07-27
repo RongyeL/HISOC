@@ -5,91 +5,89 @@
 // Filename      : hisoc.v
 // Author        : Rongye
 // Created On    : 2024-07-26 09:23
-// Last Modified : 2024-07-26 09:38
+// Last Modified : 2024-07-27 09:09
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
 //
 // -FHDR----------------------------------------------------------------------------
 module HISOC (
-// global 
+// Global 
     input  wire                   clk,
-    input  wire                   rst_n,             // 
-    input  wire                   enable             // 
+    input  wire                   rst_n,              
+    input  wire                   enable              
 );
 
-wire                          rvseed_mst_arvalid;
-wire                          rvseed_mst_arready;
-wire [`AXI_ID_WIDTH     -1:0] rvseed_mst_arid;
-wire [`AXI_ADDR_WIDTH   -1:0] rvseed_mst_araddr;
-wire [`AXI_LEN_WIDTH    -1:0] rvseed_mst_arlen;
-wire [`AXI_SIZE_WIDTH   -1:0] rvseed_mst_arsize;
-wire [`AXI_BURST_WIDTH  -1:0] rvseed_mst_arburst;
-wire                          rvseed_mst_arlock;
-wire [`AXI_CACHE_WIDTH  -1:0] rvseed_mst_arcache;
-wire [`AXI_PROT_WIDTH   -1:0] rvseed_mst_arprot;
-wire [`AXI_QOS_WIDTH    -1:0] rvseed_mst_arqos;
-wire [`AXI_REGION_WIDTH -1:0] rvseed_mst_arregion;
+wire                          ifu_mst_arvalid;
+wire                          ifu_mst_arready;
+wire [`AXI_ID_WIDTH     -1:0] ifu_mst_arid;
+wire [`AXI_ADDR_WIDTH   -1:0] ifu_mst_araddr;
+wire [`AXI_LEN_WIDTH    -1:0] ifu_mst_arlen;
+wire [`AXI_SIZE_WIDTH   -1:0] ifu_mst_arsize;
+wire [`AXI_BURST_WIDTH  -1:0] ifu_mst_arburst;
+wire                          ifu_mst_arlock;
+wire [`AXI_CACHE_WIDTH  -1:0] ifu_mst_arcache;
+wire [`AXI_PROT_WIDTH   -1:0] ifu_mst_arprot;
+wire [`AXI_QOS_WIDTH    -1:0] ifu_mst_arqos;
+wire [`AXI_REGION_WIDTH -1:0] ifu_mst_arregion;
 
-wire                          rvseed_mst_rvalid;
-wire                          rvseed_mst_rready;
-wire [`AXI_ID_WIDTH     -1:0] rvseed_mst_rid;
-wire [`AXI_DATA_WIDTH   -1:0] rvseed_mst_rdata;
-wire [`AXI_RESP_WIDTH   -1:0] rvseed_mst_rresp;
-wire                          rvseed_mst_rlast;
+wire                          ifu_mst_rvalid;
+wire                          ifu_mst_rready;
+wire [`AXI_ID_WIDTH     -1:0] ifu_mst_rid;
+wire [`AXI_DATA_WIDTH   -1:0] ifu_mst_rdata;
+wire [`AXI_RESP_WIDTH   -1:0] ifu_mst_rresp;
+wire                          ifu_mst_rlast;
 
 RVSEED U_RVSEED (
-// global 
-    .clk                (clk                   ),
-    .rst_n              (rst_n                 ),   
-    .enable             (enable                ),   
+    .clk                (clk                ),
+    .rst_n              (rst_n              ),   
+    .enable             (enable             ),   
 
-    .rvseed_mst_arvalid (rvseed_mst_arvalid    ),
-    .rvseed_mst_arready (rvseed_mst_arready    ),
-    .rvseed_mst_arid    (rvseed_mst_arid       ),
-    .rvseed_mst_araddr  (rvseed_mst_araddr     ),
-    .rvseed_mst_arlen   (rvseed_mst_arlen      ),
-    .rvseed_mst_arsize  (rvseed_mst_arsize     ),
-    .rvseed_mst_arburst (rvseed_mst_arburst    ),
-    .rvseed_mst_arlock  (rvseed_mst_arlock     ),
-    .rvseed_mst_arcache (rvseed_mst_arcache    ),
-    .rvseed_mst_arprot  (rvseed_mst_arprot     ),
-    .rvseed_mst_arqos   (rvseed_mst_arqos      ),
-    .rvseed_mst_arregion(rvseed_mst_arregion   ),
+    .ifu_mst_arvalid    (ifu_mst_arvalid    ),
+    .ifu_mst_arready    (ifu_mst_arready    ),
+    .ifu_mst_arid       (ifu_mst_arid       ),
+    .ifu_mst_araddr     (ifu_mst_araddr     ),
+    .ifu_mst_arlen      (ifu_mst_arlen      ),
+    .ifu_mst_arsize     (ifu_mst_arsize     ),
+    .ifu_mst_arburst    (ifu_mst_arburst    ),
+    .ifu_mst_arlock     (ifu_mst_arlock     ),
+    .ifu_mst_arcache    (ifu_mst_arcache    ),
+    .ifu_mst_arprot     (ifu_mst_arprot     ),
+    .ifu_mst_arqos      (ifu_mst_arqos      ),
+    .ifu_mst_arregion   (ifu_mst_arregion   ),
 
-    .rvseed_mst_rvalid  (rvseed_mst_rvalid     ),
-    .rvseed_mst_rready  (rvseed_mst_rready     ),
-    .rvseed_mst_rid     (rvseed_mst_rid        ),
-    .rvseed_mst_rdata   (rvseed_mst_rdata      ),     
-    .rvseed_mst_rresp   (rvseed_mst_rresp      ),
-    .rvseed_mst_rlast   (rvseed_mst_rlast      )
+    .ifu_mst_rvalid     (ifu_mst_rvalid     ),
+    .ifu_mst_rready     (ifu_mst_rready     ),
+    .ifu_mst_rid        (ifu_mst_rid        ),
+    .ifu_mst_rdata      (ifu_mst_rdata      ),     
+    .ifu_mst_rresp      (ifu_mst_rresp      ),
+    .ifu_mst_rlast      (ifu_mst_rlast      )
 );
 
 
-AXI_MEM U_INST_MEM (
-// global 
-    .clk                (clk                   ),
-    .rst_n              (rst_n                 ),   
-// AR channel 
-    .axi_slv_arvalid    (rvseed_mst_arvalid    ),     
-    .axi_slv_arready    (rvseed_mst_arready    ),   
-    .axi_slv_arid       (rvseed_mst_arid       ),  
-    .axi_slv_araddr     (rvseed_mst_araddr     ),  
-    .axi_slv_arlen      (rvseed_mst_arlen      ),    
-    .axi_slv_arsize     (rvseed_mst_arsize     ),   
-    .axi_slv_arburst    (rvseed_mst_arburst    ),  
-    .axi_slv_arlock     (rvseed_mst_arlock     ),   
-    .axi_slv_arcache    (rvseed_mst_arcache    ),  
-    .axi_slv_arprot     (rvseed_mst_arprot     ),   
-    .axi_slv_arqos      (rvseed_mst_arqos      ),    
-    .axi_slv_arregion   (rvseed_mst_arregion   ), 
-// R channel            
-    .axi_slv_rvalid     (rvseed_mst_rvalid     ),   
-    .axi_slv_rready     (rvseed_mst_rready     ),    
-    .axi_slv_rid        (rvseed_mst_rid        ),      
-    .axi_slv_rdata      (rvseed_mst_rdata      ),    
-    .axi_slv_rresp      (rvseed_mst_rresp      ),    
-    .axi_slv_rlast      (rvseed_mst_rlast      )    
+AXI_ROM U_INST_ROM (
+    .clk                (clk                ),
+    .rst_n              (rst_n              ),   
+
+    .axi_slv_arvalid    (ifu_mst_arvalid    ),     
+    .axi_slv_arready    (ifu_mst_arready    ),   
+    .axi_slv_arid       (ifu_mst_arid       ),  
+    .axi_slv_araddr     (ifu_mst_araddr     ),  
+    .axi_slv_arlen      (ifu_mst_arlen      ),    
+    .axi_slv_arsize     (ifu_mst_arsize     ),   
+    .axi_slv_arburst    (ifu_mst_arburst    ),  
+    .axi_slv_arlock     (ifu_mst_arlock     ),   
+    .axi_slv_arcache    (ifu_mst_arcache    ),  
+    .axi_slv_arprot     (ifu_mst_arprot     ),   
+    .axi_slv_arqos      (ifu_mst_arqos      ),    
+    .axi_slv_arregion   (ifu_mst_arregion   ), 
+
+    .axi_slv_rvalid     (ifu_mst_rvalid     ),   
+    .axi_slv_rready     (ifu_mst_rready     ),    
+    .axi_slv_rid        (ifu_mst_rid        ),      
+    .axi_slv_rdata      (ifu_mst_rdata      ),    
+    .axi_slv_rresp      (ifu_mst_rresp      ),    
+    .axi_slv_rlast      (ifu_mst_rlast      )    
 );
 
 endmodule

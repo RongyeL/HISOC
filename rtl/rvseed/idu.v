@@ -5,7 +5,7 @@
 // Filename      : idu.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-27 10:21
+// Last Modified : 2024-07-28 00:29
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -20,7 +20,12 @@ module IDU(
     input  wire                              ifu_start_en,
     input  wire                              ifu_done_en,
     input  wire [`CPU_WIDTH            -1:0] ifu_inst_pc,
-    input  wire [`CPU_WIDTH            -1:0] ifu_inst
+    input  wire [`CPU_WIDTH            -1:0] ifu_inst,
+// IDU2EXU
+    output wire                              idu_done_en,
+    output wire [`CPU_WIDTH            -1:0] idu_inst_pc,
+    output wire [`CPU_WIDTH            -1:0] idu_inst,
+    output wire [`CPU_WIDTH            -1:0] idu_inst_parse
 );
 
 localparam DLY = 0.1;
@@ -43,7 +48,7 @@ wire [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op;
 wire [`ALU_OP_WIDTH-1:0]     alu_op;     
 wire [`ALU_SRC_WIDTH-1:0]    alu_src_sel;
 
-// PC REGISTER INST
+// INST DECODER 
 INST_DEC U_INST_DEC(
     .inst          (ifu_inst    ), // instruction input
 
@@ -64,6 +69,9 @@ INST_DEC U_INST_DEC(
 //--------------------------------------------------------------------------------
 // Register Payload 
 //--------------------------------------------------------------------------------
+reg  [`BRAN_WIDTH-1:0]       ifu_inst_pc_r;     
+reg  [`BRAN_WIDTH-1:0]       ifu_inst_r;     
+
 reg  [`BRAN_WIDTH-1:0]       branch_r;     
 reg  [`JUMP_WIDTH-1:0]       jump_r;       
 
@@ -81,6 +89,17 @@ reg  [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op_r;
 
 reg  [`ALU_OP_WIDTH-1:0]     alu_op_r;     
 reg  [`ALU_SRC_WIDTH-1:0]    alu_src_sel_r;
+
+always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        ifu_inst_pc_r <= #DLY {`CPU_WIDTH{1'b0}};
+        ifu_inst_r    <= #DLY {`CPU_WIDTH{1'b0}};
+    end
+    else if (ifu_done_en) begin
+        ifu_inst_pc_r <= #DLY ifu_inst_pc;      
+        ifu_inst_r    <= #DLY ifu_inst;      
+    end
+end
 always @(posedge clk or negedge rst_n) begin
     if (~rst_n) begin
         branch_r      <= #DLY {`BRAN_WIDTH{1'b0}};
@@ -113,5 +132,12 @@ always @(posedge clk or negedge rst_n) begin
         alu_src_sel_r <= #DLY alu_src_sel; 
     end
 end
+
+//--------------------------------------------------------------------------------
+// Output Signal
+//--------------------------------------------------------------------------------
+
+
+
 endmodule
 

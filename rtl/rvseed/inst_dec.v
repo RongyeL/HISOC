@@ -5,7 +5,7 @@
 // Filename      : inst_decoder.v
 // Author        : Rongye
 // Created On    : 2022-03-22 19:10
-// Last Modified : 2024-07-27 09:15
+// Last Modified : 2024-07-29 07:04
 // ---------------------------------------------------------------------------------
 // Description   : The main control module decodes the read instructions 
 //                 to obtain the control signals, corresponding addresses 
@@ -29,7 +29,7 @@ module INST_DEC (
     output reg                         mem2reg,    // memory to register flag
     output reg [`MEM_OP_WIDTH-1:0]     mem_op,     // memory opcode
      
-    output reg [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op, // immediate extend opcode
+    output reg [`CPU_WIDTH-1:0]        imm, // immediate extend opcode
 
     output reg [`ALU_OP_WIDTH-1:0]     alu_op,     // alu opcode
     output reg [`ALU_SRC_WIDTH-1:0]    alu_src_sel // alu source select flag
@@ -50,11 +50,11 @@ always @(*) begin
     reg1_raddr  = `REG_ADDR_WIDTH'b0;
     reg2_raddr  = `REG_ADDR_WIDTH'b0;
     reg_waddr   = `REG_ADDR_WIDTH'b0;
-    mem_wen    = 1'b0;
-    mem_ren    = 1'b0;
-    mem2reg    = `ALU2REG;
-    mem_op     = `MEM_LW;
-    imm_gen_op  = `IMM_GEN_I;
+    mem_wen     = 1'b0;
+    mem_ren     = 1'b0;
+    mem2reg     = `ALU2REG;
+    mem_op      = `MEM_LW;
+    imm         = `CPU_WIDTH'b0;
     alu_op      = `ALU_AND;
     alu_src_sel = `ALU_SRC_REG;
     case (opcode)
@@ -87,6 +87,7 @@ always @(*) begin
             reg_wen     = 1'b1;
             reg1_raddr  = rs1;
             reg_waddr   = rd;
+            imm         = {{20{inst[31]}},inst[31:20]};
             alu_src_sel = `ALU_SRC_IMM;
             case (funct3)
                 `INST_ADDI: 
@@ -113,7 +114,7 @@ always @(*) begin
             reg_waddr  = rd;
             mem_ren    = 1'b1;
             mem2reg    = `MEM2REG;
-            imm_gen_op = `IMM_GEN_I;
+            imm        = {{20{inst[31]}},inst[31:20]};
             alu_op     = `ALU_ADD;
             alu_src_sel= `ALU_SRC_IMM;
             case (funct3)
@@ -134,9 +135,9 @@ always @(*) begin
             reg2_raddr = rs2;                    
             mem_wen    = 1'b1;
             mem_ren    = 1'b1;
-            imm_gen_op = `IMM_GEN_S;
+            imm        = {{20{inst[31]}},inst[31:25],inst[11:7]};
             alu_op     = `ALU_ADD;
-            alu_src_sel = `ALU_SRC_IMM;
+            alu_src_sel= `ALU_SRC_IMM;
             case (funct3)
                 `INST_SB: 
                     mem_op = `MEM_SB;
@@ -149,7 +150,7 @@ always @(*) begin
         `INST_TYPE_B: begin
             reg1_raddr  = rs1;
             reg2_raddr  = rs2;
-            imm_gen_op  = `IMM_GEN_B;
+            imm         = {{20{inst[31]}},inst[7],inst[30:25],inst[11:8], 1'b0};
             alu_src_sel = `ALU_SRC_REG;
             case (funct3)
                 `INST_BEQ: begin
@@ -182,7 +183,7 @@ always @(*) begin
             jump        = `JUMP_JAL;
             reg_wen     = 1'b1;
             reg_waddr   = rd;
-            imm_gen_op  = `IMM_GEN_J;
+            imm         = {{12{inst[31]}},inst[19:12],inst[20],inst[30:21], 1'b0};
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_FOUR_PC; // pc + 4
         end
@@ -191,7 +192,7 @@ always @(*) begin
             reg_wen     = 1'b1;
             reg1_raddr  = rs1;  
             reg_waddr   = rd;
-            imm_gen_op  = `IMM_GEN_I;
+            imm         = {{20{inst[31]}},inst[31:20]};
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_FOUR_PC; // pc + 4
         end
@@ -199,14 +200,14 @@ always @(*) begin
                 reg_wen     = 1'b1;
                 reg1_raddr  = `REG_ADDR_WIDTH'b0; // x0 = 0
                 reg_waddr   = rd;
-                imm_gen_op  = `IMM_GEN_U;
+                imm         = {inst[31:12],12'b0};
                 alu_op      = `ALU_ADD;
                 alu_src_sel = `ALU_SRC_IMM; // x0 + imm
         end
         `INST_AUIPC: begin // only auipc
                 reg_wen     = 1'b1;
                 reg_waddr   = rd;
-                imm_gen_op  = `IMM_GEN_U;
+                imm         = {inst[31:12],12'b0};
                 alu_op      = `ALU_ADD;
                 alu_src_sel = `ALU_SRC_IMM_PC; // pc + imm
         end

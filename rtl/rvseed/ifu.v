@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-27 10:17
+// Last Modified : 2024-07-29 08:55
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -16,6 +16,14 @@ module IFU(
     input  wire                              clk,
     input  wire                              rst_n,          // active low
     input  wire                              enable,          // rvseed enable ctrl
+
+    input  wire [`BRAN_WIDTH           -1:0] branch,     // branch flag
+    input  wire                              zero,       // jump flag
+    input  wire [`JUMP_WIDTH           -1:0] jump,       // jump flag
+    input  wire [`CPU_WIDTH            -1:0] imm,       // jump flag
+    input  wire [`CPU_WIDTH            -1:0] reg1_rdata,       // jump flag
+
+
 // AR channel
     output wire                              axi_mst_arvalid,
     input  wire                              axi_mst_arready,
@@ -40,21 +48,16 @@ module IFU(
     output wire                              ifu_start_en,
     output wire                              ifu_done_en,
     output wire [`CPU_WIDTH            -1:0] ifu_inst_pc,
-    output wire [`CPU_WIDTH            -1:0] ifu_inst
+    output wire [`CPU_WIDTH            -1:0] ifu_inst,
+    input  wire [`CPU_WIDTH            -1:0] idu_inst_pc
 );
 
 localparam DLY = 0.1;
 
+wire                          branch_active = ((branch == `BRAN_TYPE_A) &&  zero) | ((branch == `BRAN_TYPE_B) && ~zero); 
 wire                          next_en;
 wire [`CPU_WIDTH        -1:0] curr_pc;    
 wire [`CPU_WIDTH        -1:0] next_pc;    
-
-wire [`BRAN_WIDTH       -1:0] branch;     
-wire                          zero;       
-wire [`JUMP_WIDTH       -1:0] jump;       
-
-wire [`CPU_WIDTH        -1:0] imm;    
-wire [`CPU_WIDTH        -1:0] reg1_rdata;    
 
 wire                          rd_req_en;
 wire [`AXI_ID_WIDTH     -1:0] rd_id        = curr_pc[`AXI_ID_WIDTH-1:0];
@@ -76,7 +79,7 @@ reg                           ifu_process_r;
 reg  [`CPU_WIDTH        -1:0] ifu_inst_pc_r;
 
 // PC REGISTER INST
-assign next_en = enable & ifu_done_en;
+assign next_en = enable & (ifu_done_en | branch_active);
 PC_REG U_PC_REG(
     .clk                            ( clk                           ),
     .rst_n                          ( rst_n                         ),
@@ -85,11 +88,6 @@ PC_REG U_PC_REG(
     .curr_pc                        ( curr_pc                       )
 );
 
-assign branch     = `BRAN_WIDTH'b0;
-assign zero       = 1'b0;
-assign jump       = `JUMP_WIDTH'b0;
-assign imm        = `CPU_WIDTH'b0;
-assign reg1_rdata = `CPU_WIDTH'b0;
 
 MUX_PC U_MUX_PC(
     .ena                            ( next_en                       ),
@@ -99,6 +97,7 @@ MUX_PC U_MUX_PC(
     .imm                            ( imm                           ),
     .reg1_rdata                     ( reg1_rdata                    ),
     .curr_pc                        ( curr_pc                       ),
+    .idu_inst_pc                    ( idu_inst_pc                   ),
     .next_pc                        ( next_pc                       )
 );
 
@@ -147,8 +146,8 @@ AXI_MST_RD_CTRL U_AXI_MST_RD_CTRL(
 // ---------------------------------------------------------------------------------
 // IFU CTRL
 // ---------------------------------------------------------------------------------
-assign ifu_start_en  = rd_req_en;
-assign ifu_done_en   = rd_result_en;
+assign ifu_start_en  = rd_req_en & ~branch_active;
+assign ifu_done_en   = rd_result_en & ~branch_active;
 assign ifu_inst_pc   = ifu_inst_pc_r;
 assign ifu_inst      = rd_result_data;
 always @ (posedge clk or negedge rst_n) begin

@@ -11,7 +11,7 @@ excel_name= re.sub(r'\.\w+','',excel_name)
 excel_name= re.sub(r'\_\w+','',excel_name)
 
 #生成一个test.v，其中写入的是将test.xlsx中的信息转化为verilog的代码框架
-gen_file= os.getcwd()+"/"+excel_name.lower()+'_define.v'
+gen_file= os.getcwd()+"/"+excel_name.lower()+'_structure_define.v'
 #每次运行的时候检测test.v是否存在，如果存在则删除
 if os.path.exists(gen_file):
     os.remove(gen_file)

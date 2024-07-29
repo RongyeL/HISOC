@@ -5,31 +5,12 @@
 // Filename      : rvseed_defines.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2024-07-27 10:16
+// Last Modified : 2024-07-29 05:42
 // -----------------------------------------------------------------------
 // Description   : 
 //
 //
 // -FHDR------------------------------------------------------------------
-
-// simulation clock period
-`define SIM_PERIOD 20 // 20ns -> 50MHz 
-
-// processor numbers
-`define CPU_WIDTH 32 // rv32
-
-// instruction memory
-`define INST_MEM_ADDR_DEPTH 1024
-`define INST_MEM_ADDR_WIDTH 10 // 2^10 = 1024
-
-// register 
-`define REG_DATA_DEPTH 32
-`define REG_ADDR_WIDTH 5 // 2^5 = 32
-
-// data memory 
-`define DATA_MEM_ADDR_DEPTH 1024
-`define DATA_MEM_ADDR_WIDTH 10 // 2^10 = 1024
-
 // immediate generate
 `define INST_I_IMM_WIDTH 12
 `define INST_S_IMM_WIDTH 12
@@ -161,8 +142,3 @@
 `define IMM_GEN_B `IMM_GEN_OP_WIDTH'b010
 `define IMM_GEN_J `IMM_GEN_OP_WIDTH'b011
 `define IMM_GEN_U `IMM_GEN_OP_WIDTH'b100
-
-// IFU define
-`define IFU_AXI_ID_WIDTH   4
-`define IFU_AXI_ADDR_WIDTH 32
-`define IFU_AXI_DATA_WIDTH 32

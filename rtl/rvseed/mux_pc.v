@@ -5,7 +5,7 @@
 // Filename      : pc_next.v
 // Author        : Rongye
 // Created On    : 2022-03-21 22:56
-// Last Modified : 2024-07-27 08:45
+// Last Modified : 2024-07-29 08:18
 // ---------------------------------------------------------------------------------
 // Description   : Determine the update value of the pc. 
 //
@@ -20,6 +20,7 @@ module MUX_PC (
     input      [`CPU_WIDTH-1:0]  imm,        // immediate  
 
     input      [`CPU_WIDTH-1:0]  curr_pc,    // current pc addr
+    input      [`CPU_WIDTH-1:0]  idu_inst_pc,    // current pc addr
     output reg [`CPU_WIDTH-1:0]  next_pc     // next pc addr
 );
 
@@ -27,11 +28,11 @@ always @(*) begin
     if (~ena) 
         next_pc = curr_pc;
     else if ((branch == `BRAN_TYPE_A) &&  zero) // beq/bge/bgeu : branch if the zero flag is high.
-        next_pc = curr_pc + imm;
+        next_pc = idu_inst_pc + imm;
     else if ((branch == `BRAN_TYPE_B) && ~zero) // bne/blt/bltu : branch if the zero flag is low.
-        next_pc = curr_pc + imm;
+        next_pc = idu_inst_pc + imm;
     else if (jump == `JUMP_JAL)                 // jal 
-        next_pc = curr_pc + imm;
+        next_pc = idu_inst_pc + imm;
     else if (jump == `JUMP_JALR)                // jalr 
         next_pc = reg1_rdata + imm;
     else 

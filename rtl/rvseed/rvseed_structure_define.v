@@ -42,7 +42,7 @@
 `define RISCV_INST_I_RD_W                           5
 `define RISCV_INST_I_FUNCT3_W                       3
 `define RISCV_INST_I_RS1_W                          5
-`define RISCV_INST_I_IMM_0_W                        12
+`define RISCV_INST_I_IMM0_W                        12
 
 // Position define
 `define RISCV_INST_I_OPCODE_LSB                     0
@@ -61,31 +61,31 @@
 `define RISCV_INST_I_RS1_MSB                       (`RISCV_INST_I_RS1_W-1)       +`RISCV_INST_I_RS1_LSB
 `define RISCV_INST_I_RS1                            `RISCV_INST_I_RS1_MSB        :`RISCV_INST_I_RS1_LSB
 
-`define RISCV_INST_I_IMM_0_LSB                      `RISCV_INST_I_RS1_MSB
-`define RISCV_INST_I_IMM_0_MSB                     (`RISCV_INST_I_IMM_0_W-1)     +`RISCV_INST_I_IMM_0_LSB
-`define RISCV_INST_I_IMM_0                          `RISCV_INST_I_IMM_0_MSB      :`RISCV_INST_I_IMM_0_LSB
+`define RISCV_INST_I_IMM0_LSB                      `RISCV_INST_I_RS1_MSB
+`define RISCV_INST_I_IMM0_MSB                     (`RISCV_INST_I_IMM0_W-1)     +`RISCV_INST_I_IMM0_LSB
+`define RISCV_INST_I_IMM0                          `RISCV_INST_I_IMM0_MSB      :`RISCV_INST_I_IMM0_LSB
 
 //--------------------------------------------------------------------------------
 // RISCV_INST_S
 //--------------------------------------------------------------------------------
 // Width define
 `define RISCV_INST_S_OPCODE_W                       7
-`define RISCV_INST_S_IMM_0_W                        5
+`define RISCV_INST_S_IMM0_W                        5
 `define RISCV_INST_S_FUNCT3_W                       3
 `define RISCV_INST_S_RS1_W                          5
 `define RISCV_INST_S_RS2_W                          5
-`define RISCV_INST_S_IMM_1_W                        7
+`define RISCV_INST_S_IMM1_W                        7
 
 // Position define
 `define RISCV_INST_S_OPCODE_LSB                     0
 `define RISCV_INST_S_OPCODE_MSB                    (`RISCV_INST_S_OPCODE_W-1)    +`RISCV_INST_S_OPCODE_LSB
 `define RISCV_INST_S_OPCODE                         `RISCV_INST_S_OPCODE_MSB     :`RISCV_INST_S_OPCODE_LSB
 
-`define RISCV_INST_S_IMM_0_LSB                      `RISCV_INST_S_OPCODE_MSB
-`define RISCV_INST_S_IMM_0_MSB                     (`RISCV_INST_S_IMM_0_W-1)     +`RISCV_INST_S_IMM_0_LSB
-`define RISCV_INST_S_IMM_0                          `RISCV_INST_S_IMM_0_MSB      :`RISCV_INST_S_IMM_0_LSB
+`define RISCV_INST_S_IMM0_LSB                      `RISCV_INST_S_OPCODE_MSB
+`define RISCV_INST_S_IMM0_MSB                     (`RISCV_INST_S_IMM0_W-1)     +`RISCV_INST_S_IMM0_LSB
+`define RISCV_INST_S_IMM0                          `RISCV_INST_S_IMM0_MSB      :`RISCV_INST_S_IMM0_LSB
 
-`define RISCV_INST_S_FUNCT3_LSB                     `RISCV_INST_S_IMM_0_MSB
+`define RISCV_INST_S_FUNCT3_LSB                     `RISCV_INST_S_IMM0_MSB
 `define RISCV_INST_S_FUNCT3_MSB                    (`RISCV_INST_S_FUNCT3_W-1)    +`RISCV_INST_S_FUNCT3_LSB
 `define RISCV_INST_S_FUNCT3                         `RISCV_INST_S_FUNCT3_MSB     :`RISCV_INST_S_FUNCT3_LSB
 
@@ -97,31 +97,31 @@
 `define RISCV_INST_S_RS2_MSB                       (`RISCV_INST_S_RS2_W-1)       +`RISCV_INST_S_RS2_LSB
 `define RISCV_INST_S_RS2                            `RISCV_INST_S_RS2_MSB        :`RISCV_INST_S_RS2_LSB
 
-`define RISCV_INST_S_IMM_1_LSB                      `RISCV_INST_S_RS2_MSB
-`define RISCV_INST_S_IMM_1_MSB                     (`RISCV_INST_S_IMM_1_W-1)     +`RISCV_INST_S_IMM_1_LSB
-`define RISCV_INST_S_IMM_1                          `RISCV_INST_S_IMM_1_MSB      :`RISCV_INST_S_IMM_1_LSB
+`define RISCV_INST_S_IMM1_LSB                      `RISCV_INST_S_RS2_MSB
+`define RISCV_INST_S_IMM1_MSB                     (`RISCV_INST_S_IMM1_W-1)     +`RISCV_INST_S_IMM1_LSB
+`define RISCV_INST_S_IMM1                          `RISCV_INST_S_IMM1_MSB      :`RISCV_INST_S_IMM1_LSB
 
 //--------------------------------------------------------------------------------
 // RISCV_INST_B
 //--------------------------------------------------------------------------------
 // Width define
 `define RISCV_INST_B_OPCODE_W                       7
-`define RISCV_INST_B_IMM_0_W                        5
+`define RISCV_INST_B_IMM0_W                        5
 `define RISCV_INST_B_FUNCT3_W                       3
 `define RISCV_INST_B_RS1_W                          5
 `define RISCV_INST_B_RS2_W                          5
-`define RISCV_INST_B_IMM_1_W                        7
+`define RISCV_INST_B_IMM1_W                        7
 
 // Position define
 `define RISCV_INST_B_OPCODE_LSB                     0
 `define RISCV_INST_B_OPCODE_MSB                    (`RISCV_INST_B_OPCODE_W-1)    +`RISCV_INST_B_OPCODE_LSB
 `define RISCV_INST_B_OPCODE                         `RISCV_INST_B_OPCODE_MSB     :`RISCV_INST_B_OPCODE_LSB
 
-`define RISCV_INST_B_IMM_0_LSB                      `RISCV_INST_B_OPCODE_MSB
-`define RISCV_INST_B_IMM_0_MSB                     (`RISCV_INST_B_IMM_0_W-1)     +`RISCV_INST_B_IMM_0_LSB
-`define RISCV_INST_B_IMM_0                          `RISCV_INST_B_IMM_0_MSB      :`RISCV_INST_B_IMM_0_LSB
+`define RISCV_INST_B_IMM0_LSB                      `RISCV_INST_B_OPCODE_MSB
+`define RISCV_INST_B_IMM0_MSB                     (`RISCV_INST_B_IMM0_W-1)     +`RISCV_INST_B_IMM0_LSB
+`define RISCV_INST_B_IMM0                          `RISCV_INST_B_IMM0_MSB      :`RISCV_INST_B_IMM0_LSB
 
-`define RISCV_INST_B_FUNCT3_LSB                     `RISCV_INST_B_IMM_0_MSB
+`define RISCV_INST_B_FUNCT3_LSB                     `RISCV_INST_B_IMM0_MSB
 `define RISCV_INST_B_FUNCT3_MSB                    (`RISCV_INST_B_FUNCT3_W-1)    +`RISCV_INST_B_FUNCT3_LSB
 `define RISCV_INST_B_FUNCT3                         `RISCV_INST_B_FUNCT3_MSB     :`RISCV_INST_B_FUNCT3_LSB
 
@@ -133,9 +133,9 @@
 `define RISCV_INST_B_RS2_MSB                       (`RISCV_INST_B_RS2_W-1)       +`RISCV_INST_B_RS2_LSB
 `define RISCV_INST_B_RS2                            `RISCV_INST_B_RS2_MSB        :`RISCV_INST_B_RS2_LSB
 
-`define RISCV_INST_B_IMM_1_LSB                      `RISCV_INST_B_RS2_MSB
-`define RISCV_INST_B_IMM_1_MSB                     (`RISCV_INST_B_IMM_1_W-1)     +`RISCV_INST_B_IMM_1_LSB
-`define RISCV_INST_B_IMM_1                          `RISCV_INST_B_IMM_1_MSB      :`RISCV_INST_B_IMM_1_LSB
+`define RISCV_INST_B_IMM1_LSB                      `RISCV_INST_B_RS2_MSB
+`define RISCV_INST_B_IMM1_MSB                     (`RISCV_INST_B_IMM1_W-1)     +`RISCV_INST_B_IMM1_LSB
+`define RISCV_INST_B_IMM1                          `RISCV_INST_B_IMM1_MSB      :`RISCV_INST_B_IMM1_LSB
 
 //--------------------------------------------------------------------------------
 // RISCV_INST_U
@@ -143,7 +143,7 @@
 // Width define
 `define RISCV_INST_U_OPCODE_W                       7
 `define RISCV_INST_U_RD_W                           5
-`define RISCV_INST_U_IMM_0_W                        20
+`define RISCV_INST_U_IMM0_W                        20
 
 // Position define
 `define RISCV_INST_U_OPCODE_LSB                     0
@@ -154,9 +154,9 @@
 `define RISCV_INST_U_RD_MSB                        (`RISCV_INST_U_RD_W-1)        +`RISCV_INST_U_RD_LSB
 `define RISCV_INST_U_RD                             `RISCV_INST_U_RD_MSB         :`RISCV_INST_U_RD_LSB
 
-`define RISCV_INST_U_IMM_0_LSB                      `RISCV_INST_U_RD_MSB
-`define RISCV_INST_U_IMM_0_MSB                     (`RISCV_INST_U_IMM_0_W-1)     +`RISCV_INST_U_IMM_0_LSB
-`define RISCV_INST_U_IMM_0                          `RISCV_INST_U_IMM_0_MSB      :`RISCV_INST_U_IMM_0_LSB
+`define RISCV_INST_U_IMM0_LSB                      `RISCV_INST_U_RD_MSB
+`define RISCV_INST_U_IMM0_MSB                     (`RISCV_INST_U_IMM0_W-1)     +`RISCV_INST_U_IMM0_LSB
+`define RISCV_INST_U_IMM0                          `RISCV_INST_U_IMM0_MSB      :`RISCV_INST_U_IMM0_LSB
 
 //--------------------------------------------------------------------------------
 // RISCV_INST_J
@@ -164,7 +164,7 @@
 // Width define
 `define RISCV_INST_J_OPCODE_W                       7
 `define RISCV_INST_J_RD_W                           5
-`define RISCV_INST_J_IMM_0_W                        20
+`define RISCV_INST_J_IMM0_W                        20
 
 // Position define
 `define RISCV_INST_J_OPCODE_LSB                     0
@@ -175,7 +175,7 @@
 `define RISCV_INST_J_RD_MSB                        (`RISCV_INST_J_RD_W-1)        +`RISCV_INST_J_RD_LSB
 `define RISCV_INST_J_RD                             `RISCV_INST_J_RD_MSB         :`RISCV_INST_J_RD_LSB
 
-`define RISCV_INST_J_IMM_0_LSB                      `RISCV_INST_J_RD_MSB
-`define RISCV_INST_J_IMM_0_MSB                     (`RISCV_INST_J_IMM_0_W-1)     +`RISCV_INST_J_IMM_0_LSB
-`define RISCV_INST_J_IMM_0                          `RISCV_INST_J_IMM_0_MSB      :`RISCV_INST_J_IMM_0_LSB
+`define RISCV_INST_J_IMM0_LSB                      `RISCV_INST_J_RD_MSB
+`define RISCV_INST_J_IMM0_MSB                     (`RISCV_INST_J_IMM0_W-1)     +`RISCV_INST_J_IMM0_LSB
+`define RISCV_INST_J_IMM0                          `RISCV_INST_J_IMM0_MSB      :`RISCV_INST_J_IMM0_LSB
 

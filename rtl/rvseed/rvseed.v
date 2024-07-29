@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-07-27 10:05
+// Last Modified : 2024-07-29 08:16
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -44,10 +44,50 @@ wire                              ifu_done_en;
 wire [`CPU_WIDTH            -1:0] ifu_inst_pc;
 wire [`CPU_WIDTH            -1:0] ifu_inst;
 
+wire                              idu_done_en;
+wire [`CPU_WIDTH            -1:0] idu_inst_pc;
+wire [`CPU_WIDTH            -1:0] idu_inst;
+
+wire [`BRAN_WIDTH           -1:0] branch;     // branch flag
+wire                              zero;    // memory write enable
+wire [`JUMP_WIDTH           -1:0] jump;       // jump flag
+
+wire                              reg_wen;    // register write enable
+wire [`REG_ADDR_WIDTH       -1:0] reg_waddr;  // register write address
+wire [`REG_ADDR_WIDTH       -1:0] reg1_raddr; // register 1 read address
+wire [`REG_ADDR_WIDTH       -1:0] reg2_raddr; // register 2 read address
+wire [`CPU_WIDTH            -1:0] reg1_rdata;       // jump flag
+wire [`CPU_WIDTH            -1:0] reg2_rdata;       // jump flag
+wire [`CPU_WIDTH            -1:0] reg_wdata;       // jump flag
+wire [`CPU_WIDTH            -1:0] alu_src1;       // jump flag
+wire [`CPU_WIDTH            -1:0] alu_src2;       // jump flag
+wire [`CPU_WIDTH            -1:0] alu_res;       // jump flag
+
+wire                              mem_wen;    // memory write enable
+wire                              mem_ren;    // memory read enable
+wire                              mem2reg;    // memory to register flag
+wire [`MEM_OP_WIDTH         -1:0] mem_op;     // memory opcode
+
+wire [`CPU_WIDTH            -1:0] mem_addr;       // jump flag
+wire [`CPU_WIDTH            -1:0] mem_rdata;       // jump flag
+wire [`CPU_WIDTH            -1:0] mem_wdata;       // jump flag
+
+wire [`CPU_WIDTH            -1:0] imm;        // immediate value
+
+wire [`ALU_OP_WIDTH         -1:0] alu_op;     // alu opcode
+wire [`ALU_SRC_WIDTH        -1:0] alu_src_sel; // alu source select flag
+
 IFU U_IFU (
     .clk                (clk                ),
     .rst_n              (rst_n              ),   
     .enable             (enable             ),   
+
+    .branch             (branch      ),
+    .zero               (zero        ),
+    .jump               (jump        ),
+    .imm                (imm        ),
+    .reg1_rdata         (reg1_rdata        ),
+
 
     .axi_mst_arvalid    (ifu_mst_arvalid    ),
     .axi_mst_arready    (ifu_mst_arready    ),
@@ -72,20 +112,98 @@ IFU U_IFU (
     .ifu_start_en       (ifu_start_en       ),
     .ifu_done_en        (ifu_done_en        ),
     .ifu_inst_pc        (ifu_inst_pc        ),
-    .ifu_inst           (ifu_inst           )
+    .ifu_inst           (ifu_inst           ),
+
+    .idu_inst_pc        (idu_inst_pc        )
 );
 
 IDU U_IDU (
 // global 
-    .clk                (clk                ),
-    .rst_n              (rst_n              ),   
-    .enable             (enable             ),   
+    .clk                  (clk                  ),
+    .rst_n                (rst_n                ),   
+    .enable               (enable               ),   
 
-    .ifu_start_en       (ifu_start_en       ),
-    .ifu_done_en        (ifu_done_en        ),
-    .ifu_inst_pc        (ifu_inst_pc        ),
-    .ifu_inst           (ifu_inst           )
+    .ifu_start_en         (ifu_start_en         ),
+    .ifu_done_en          (ifu_done_en          ),
+    .ifu_inst_pc          (ifu_inst_pc          ),
+    .ifu_inst             (ifu_inst             ),
 
+    .idu_done_en          (idu_done_en          ),
+    .idu_inst_pc          (idu_inst_pc          ),
+    .idu_inst             (idu_inst             ),
+
+    .idu_inst_branch      (branch      ),
+    .zero                 (zero        ),
+    .idu_inst_jump        (jump        ),
+
+    .idu_inst_reg_wen     (reg_wen     ),
+    .idu_inst_reg_waddr   (reg_waddr   ),
+    .idu_inst_reg1_raddr  (reg1_raddr  ),
+    .idu_inst_reg2_raddr  (reg2_raddr  ),
+    .idu_inst_mem_wen     (mem_wen     ),
+    .idu_inst_mem_ren     (mem_ren     ),
+    .idu_inst_mem2reg     (mem2reg     ),
+    .idu_inst_mem_op      (mem_op      ),
+    .idu_inst_imm         (imm         ),
+    .idu_inst_alu_op      (alu_op      ),
+    .idu_inst_alu_src_sel (alu_src_sel )
 );
 
+REG_RVSEED U_REG_RVSEED(
+    .clk                            ( clk                           ),
+    .rst_n                          ( rst_n                         ),
+    .reg_wen                        ( reg_wen                       ),
+    .reg_waddr                      ( reg_waddr                     ),
+    .reg_wdata                      ( reg_wdata                     ),
+    .reg1_raddr                     ( reg1_raddr                    ),
+    .reg2_raddr                     ( reg2_raddr                    ),
+    .reg1_rdata                     ( reg1_rdata                    ),
+    .reg2_rdata                     ( reg2_rdata                    )
+);
+
+
+MUX_ALU U_MUX_ALU(
+    .alu_src_sel                    ( alu_src_sel                   ),
+    .reg1_rdata                     ( reg1_rdata                    ),
+    .reg2_rdata                     ( reg2_rdata                    ),
+    .imm                            ( imm                           ),
+    .curr_pc                        ( idu_inst_pc                   ),
+    .alu_src1                       ( alu_src1                      ),
+    .alu_src2                       ( alu_src2                      )
+);
+
+ALU U_ALU(
+    .alu_op                         ( alu_op                        ),
+    .alu_src1                       ( alu_src1                      ),
+    .alu_src2                       ( alu_src2                      ),
+    .zero                           ( zero                          ),
+    .alu_res                        ( alu_res                       )
+);
+
+assign mem_addr = alu_res; 
+MUX_MEM U_MUX_MEM(
+    .mem_op                         ( mem_op                        ),
+    .mem_addr                       ( mem_addr                      ),
+    .reg2_rdata                     ( reg2_rdata                    ),
+    .mem_rdata                      ( mem_rdata                     ),
+    .mem_wdata                      ( mem_wdata                     )
+);
+
+DATA_MEM U_DATA_MEM(
+    .clk                            ( clk                           ),
+    .mem_wen                        ( mem_wen                       ),
+    .mem_ren                        ( mem_ren                       ),
+    .mem_addr                       ( mem_addr                      ),
+    .mem_wdata                      ( mem_wdata                     ),
+    .mem_rdata                      ( mem_rdata                     )
+);
+
+MUX_REG U_MUX_REG(
+    .mem2reg                        ( mem2reg                       ),
+    .alu_res                        ( alu_res                       ),
+    .mem_op                         ( mem_op                        ),
+    .mem_addr                       ( mem_addr                      ),
+    .mem_rdata                      ( mem_rdata                     ),
+    .reg_wdata                      ( reg_wdata                     )
+);
 endmodule

@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-29 08:55
+// Last Modified : 2024-07-30 10:01
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -78,6 +78,11 @@ wire                          ifu_process   = rd_req_en;
 reg                           ifu_process_r;
 reg  [`CPU_WIDTH        -1:0] ifu_inst_pc_r;
 
+wire                          full; 
+wire                          empty; 
+wire  [32        -1:0] rd_dat;
+wire                          rd_dat_vld; 
+wire [3        -1:0] fifo_num;
 // PC REGISTER INST
 assign next_en = enable & (ifu_done_en | branch_active);
 PC_REG U_PC_REG(
@@ -143,6 +148,24 @@ AXI_MST_RD_CTRL U_AXI_MST_RD_CTRL(
     .axi_mst_rlast      (axi_mst_rlast      )
 );
 
+SYNC_FIFO #(
+    .FIFO_DEEP   (8 ),
+    .FIFO_DEEP_W (3 ),
+    .FIFO_DATA_W (32)
+) U_INST_FIFO 
+(
+    .clk           (clk         ),
+    .rst_n         (rst_n       ),
+    .wr            (rd_result_en & ~branch_active          ),
+    .rd            (rd_req_en & ~branch_active & ~empty           ),
+    .wr_dat        (rd_result_data      ),
+    .rd_dat        (rd_dat      ),
+    .rd_dat_vld    (rd_dat_vld  ),
+
+    .full          (full        ),
+    .empty         (empty       ),
+    .fifo_num      (fifo_num    )
+);
 // ---------------------------------------------------------------------------------
 // IFU CTRL
 // ---------------------------------------------------------------------------------

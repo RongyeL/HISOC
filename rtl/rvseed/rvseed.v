@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-07-29 08:16
+// Last Modified : 2024-07-31 09:18
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -39,7 +39,6 @@ module RVSEED (
 );
 
 
-wire                              ifu_start_en;
 wire                              ifu_done_en;
 wire [`CPU_WIDTH            -1:0] ifu_inst_pc;
 wire [`CPU_WIDTH            -1:0] ifu_inst;
@@ -109,7 +108,6 @@ IFU U_IFU (
     .axi_mst_rresp      (ifu_mst_rresp      ),
     .axi_mst_rlast      (ifu_mst_rlast      ),
 
-    .ifu_start_en       (ifu_start_en       ),
     .ifu_done_en        (ifu_done_en        ),
     .ifu_inst_pc        (ifu_inst_pc        ),
     .ifu_inst           (ifu_inst           ),
@@ -123,7 +121,6 @@ IDU U_IDU (
     .rst_n                (rst_n                ),   
     .enable               (enable               ),   
 
-    .ifu_start_en         (ifu_start_en         ),
     .ifu_done_en          (ifu_done_en          ),
     .ifu_inst_pc          (ifu_inst_pc          ),
     .ifu_inst             (ifu_inst             ),

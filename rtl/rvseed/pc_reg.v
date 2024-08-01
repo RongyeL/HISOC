@@ -5,7 +5,7 @@
 // Filename      : pc_reg.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2024-07-27 09:01
+// Last Modified : 2024-07-31 08:34
 // ---------------------------------------------------------------------------------
 // Description   : Update the current pc value 
 //
@@ -19,11 +19,6 @@ module PC_REG (
 );
 
 localparam DLY = 0.1;
-always @ (posedge clk or negedge rst_n) begin
-    if(~rst_n)
-        curr_pc <= #DLY `CPU_WIDTH'b0;
-    else if (next_en)
-        curr_pc <= #DLY next_pc;
-end    
+   
 
 endmodule

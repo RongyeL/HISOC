@@ -5,7 +5,7 @@
 // Filename      : idu.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-29 08:44
+// Last Modified : 2024-07-31 09:18
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -17,7 +17,6 @@ module IDU(
     input  wire                            rst_n,          // active low
     input  wire                            enable,          // rvseed enable ctrl
 // IFU2IDU
-    input  wire                            ifu_start_en,
     input  wire                            ifu_done_en,
     input  wire [`CPU_WIDTH          -1:0] ifu_inst_pc,
     input  wire [`CPU_WIDTH          -1:0] ifu_inst,

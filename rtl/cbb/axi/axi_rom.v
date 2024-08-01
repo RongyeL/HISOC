@@ -5,7 +5,7 @@
 // Filename      : axi_mem.v
 // Author        : Rongye
 // Created On    : 2024-07-23 05:57
-// Last Modified : 2024-07-27 09:07
+// Last Modified : 2024-08-01 07:46
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -49,7 +49,9 @@ wire [`AXI_ADDR_WIDTH -1:0] rd_base_addr;
 wire [`AXI_DATA_WIDTH -1:0] rd_result_data;
 
 
-AXI_SLV_RD_CTRL U_AXI_SLV_RD_CTRL(
+AXI_SLV_RD_CTRL #(
+    .AXI_RD_OST_NUM     (8                  )
+)U_AXI_SLV_RD_CTRL(
     .clk                (clk                ),
     .rst_n              (rst_n              ), 
                         

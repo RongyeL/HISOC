@@ -5,7 +5,7 @@
 // Filename      : rvseed_defines.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2024-07-28 08:57
+// Last Modified : 2024-08-01 07:47
 // -----------------------------------------------------------------------
 // Description   : 
 //
@@ -17,6 +17,18 @@
 
 // processor numbers
 `define CPU_WIDTH 32 // rv32
+
+// instruction fifo
+`define INST_FIFO_DEEP    8
+`define INST_FIFO_DEEP_W  3
+`define INST_FIFO_DATA_W  32
+
+// PC fifo
+`define PC_FIFO_DEEP    8
+`define PC_FIFO_DEEP_W  3
+`define PC_FIFO_DATA_W  32
+
+
 
 // instruction memory
 `define INST_MEM_ADDR_DEPTH 2048

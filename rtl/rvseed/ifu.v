@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-08-01 08:29
+// Last Modified : 2024-08-05 08:32
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -17,44 +17,44 @@ module IFU(
     input  wire                              rst_n,          
     input  wire                              enable,          
 
-    input  wire [`BRAN_WIDTH           -1:0] branch,     
-    input  wire                              zero,       
-    input  wire [`JUMP_WIDTH           -1:0] jump,       
-    input  wire [`CPU_WIDTH            -1:0] imm,       
+    input  wire [`BRAN_WIDTH           -1:0] idu_branch,     
+    input  wire                              exu_zero,       
+    input  wire [`JUMP_WIDTH           -1:0] idu_jump,       
+    input  wire [`CPU_WIDTH            -1:0] idu_imm,       
     input  wire [`CPU_WIDTH            -1:0] reg1_rdata,       
 
 
 // AR channel
-    output wire                              axi_mst_arvalid,
-    input  wire                              axi_mst_arready,
-    output wire [`AXI_ID_WIDTH         -1:0] axi_mst_arid,
-    output wire [`AXI_ADDR_WIDTH       -1:0] axi_mst_araddr,
-    output wire [`AXI_LEN_WIDTH        -1:0] axi_mst_arlen,
-    output wire [`AXI_SIZE_WIDTH       -1:0] axi_mst_arsize,
-    output wire [`AXI_BURST_WIDTH      -1:0] axi_mst_arburst,
-    output wire                              axi_mst_arlock,
-    output wire [`AXI_CACHE_WIDTH      -1:0] axi_mst_arcache,
-    output wire [`AXI_PROT_WIDTH       -1:0] axi_mst_arprot,
-    output wire [`AXI_QOS_WIDTH        -1:0] axi_mst_arqos,
-    output wire [`AXI_REGION_WIDTH     -1:0] axi_mst_arregion,
+    output wire                              ifu_arvalid,
+    input  wire                              ifu_arready,
+    output wire [`AXI_ID_WIDTH         -1:0] ifu_arid,
+    output wire [`AXI_ADDR_WIDTH       -1:0] ifu_araddr,
+    output wire [`AXI_LEN_WIDTH        -1:0] ifu_arlen,
+    output wire [`AXI_SIZE_WIDTH       -1:0] ifu_arsize,
+    output wire [`AXI_BURST_WIDTH      -1:0] ifu_arburst,
+    output wire                              ifu_arlock,
+    output wire [`AXI_CACHE_WIDTH      -1:0] ifu_arcache,
+    output wire [`AXI_PROT_WIDTH       -1:0] ifu_arprot,
+    output wire [`AXI_QOS_WIDTH        -1:0] ifu_arqos,
+    output wire [`AXI_REGION_WIDTH     -1:0] ifu_arregion,
 // R channel
-    input  wire                              axi_mst_rvalid,
-    output wire                              axi_mst_rready,
-    input  wire [`AXI_ID_WIDTH         -1:0] axi_mst_rid,
-    input  wire [`AXI_DATA_WIDTH       -1:0] axi_mst_rdata,
-    input  wire [`AXI_RESP_WIDTH       -1:0] axi_mst_rresp,
-    input  wire                              axi_mst_rlast,
+    input  wire                              ifu_rvalid,
+    output wire                              ifu_rready,
+    input  wire [`AXI_ID_WIDTH         -1:0] ifu_rid,
+    input  wire [`AXI_DATA_WIDTH       -1:0] ifu_rdata,
+    input  wire [`AXI_RESP_WIDTH       -1:0] ifu_rresp,
+    input  wire                              ifu_rlast,
 
-    output wire                              ifu_done_en,
-    output wire [`CPU_WIDTH            -1:0] ifu_inst_pc,
-    output wire [`CPU_WIDTH            -1:0] ifu_inst,
-    input  wire [`CPU_WIDTH            -1:0] idu_inst_pc
+    output wire                              ifu2idu_en,
+    output wire [`CPU_WIDTH            -1:0] ifu2idu_pc,
+    output wire [`CPU_WIDTH            -1:0] ifu2idu_inst,
+    input  wire [`CPU_WIDTH            -1:0] idu_pc
 );
 
 localparam DLY = 0.1;
 
-wire                          branch_active = ((branch == `BRAN_TYPE_A) &&  zero) 
-                                            | ((branch == `BRAN_TYPE_B) && ~zero); 
+wire                          branch_active = ((idu_branch == `BRAN_TYPE_A) &&  exu_zero) 
+                                            | ((idu_branch == `BRAN_TYPE_B) && ~exu_zero); 
 reg  [`CPU_WIDTH        -1:0] curr_pc;    
 reg  [`CPU_WIDTH        -1:0] next_pc;    
 reg  [`CPU_WIDTH        -1:0] if_pc;    
@@ -74,7 +74,7 @@ wire [`AXI_REGION_WIDTH -1:0] rd_region    = `AXI_REGION_WIDTH'h0;
 wire                          rd_result_en; 
 wire [`AXI_DATA_WIDTH   -1:0] rd_result_data;
 
-reg  [`CPU_WIDTH        -1:0] ifu_inst_pc_r;
+reg  [`CPU_WIDTH        -1:0] ifu2idu_pc_r;
 
 wire                          pc_full; 
 wire                          pc_empty; 
@@ -93,16 +93,16 @@ always @ (posedge clk or negedge rst_n) begin
         curr_pc <= #DLY `CPU_WIDTH'b0;
     end
     else if (enable) begin
-        if (branch_active) begin // beq/bge/bgeu : branch if the zero flag is high.// bne/blt/bltu : branch if the zero flag is low.
-            curr_pc <= #DLY idu_inst_pc + imm;
+        if (branch_active) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
+            curr_pc <= #DLY idu_pc + idu_imm;
         end
-        else if (jump == `JUMP_JAL) begin           // jal 
-            curr_pc <= #DLY idu_inst_pc + imm;
+        else if (idu_jump == `JUMP_JAL) begin           // jal 
+            curr_pc <= #DLY idu_pc + idu_imm;
         end
-        else if (jump == `JUMP_JALR) begin           // jalr 
-            curr_pc <= #DLY reg1_rdata + imm;
+        else if (idu_jump == `JUMP_JALR) begin           // jalr 
+            curr_pc <= #DLY reg1_rdata + idu_imm;
         end
-        else if (ifu_done_en) begin
+        else if (ifu2idu_en) begin
             curr_pc <= #DLY curr_pc + `CPU_WIDTH'h4;      // pc + 4  
         end
     end
@@ -113,14 +113,14 @@ always @ (posedge clk or negedge rst_n) begin
         if_pc <= #DLY `CPU_WIDTH'b0;
     end
     else if (enable) begin
-        if (branch_active) begin // beq/bge/bgeu : branch if the zero flag is high.// bne/blt/bltu : branch if the zero flag is low.
-            if_pc <= #DLY idu_inst_pc + imm;
+        if (branch_active) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
+            if_pc <= #DLY idu_pc + idu_imm;
         end
-        else if (jump == `JUMP_JAL) begin           // jal 
-            if_pc <= #DLY idu_inst_pc + imm;
+        else if (idu_jump == `JUMP_JAL) begin           // jal 
+            if_pc <= #DLY idu_pc + idu_imm;
         end
-        else if (jump == `JUMP_JALR) begin           // jalr 
-            if_pc <= #DLY reg1_rdata + imm;
+        else if (idu_jump == `JUMP_JALR) begin           // jalr 
+            if_pc <= #DLY reg1_rdata + idu_imm;
         end
         else if (rd_req_en) begin
             if_pc <= #DLY if_pc + `CPU_WIDTH'h4;      // pc + 4  
@@ -150,25 +150,25 @@ AXI_MST_RD_CTRL #(
     .rd_result_en       (rd_result_en       ), 
     .rd_result_data     (rd_result_data     ),
                         
-    .axi_mst_arvalid    (axi_mst_arvalid    ),
-    .axi_mst_arready    (axi_mst_arready    ),
-    .axi_mst_arid       (axi_mst_arid       ),
-    .axi_mst_araddr     (axi_mst_araddr     ),
-    .axi_mst_arlen      (axi_mst_arlen      ),
-    .axi_mst_arsize     (axi_mst_arsize     ),
-    .axi_mst_arburst    (axi_mst_arburst    ),
-    .axi_mst_arlock     (axi_mst_arlock     ),
-    .axi_mst_arcache    (axi_mst_arcache    ),
-    .axi_mst_arprot     (axi_mst_arprot     ),
-    .axi_mst_arqos      (axi_mst_arqos      ),
-    .axi_mst_arregion   (axi_mst_arregion   ),
+    .axi_mst_arvalid    (ifu_arvalid    ),
+    .axi_mst_arready    (ifu_arready    ),
+    .axi_mst_arid       (ifu_arid       ),
+    .axi_mst_araddr     (ifu_araddr     ),
+    .axi_mst_arlen      (ifu_arlen      ),
+    .axi_mst_arsize     (ifu_arsize     ),
+    .axi_mst_arburst    (ifu_arburst    ),
+    .axi_mst_arlock     (ifu_arlock     ),
+    .axi_mst_arcache    (ifu_arcache    ),
+    .axi_mst_arprot     (ifu_arprot     ),
+    .axi_mst_arqos      (ifu_arqos      ),
+    .axi_mst_arregion   (ifu_arregion   ),
                         
-    .axi_mst_rvalid     (axi_mst_rvalid     ),
-    .axi_mst_rready     (axi_mst_rready     ),
-    .axi_mst_rid        (axi_mst_rid        ),
-    .axi_mst_rdata      (axi_mst_rdata      ),     
-    .axi_mst_rresp      (axi_mst_rresp      ),
-    .axi_mst_rlast      (axi_mst_rlast      )
+    .axi_mst_rvalid     (ifu_rvalid     ),
+    .axi_mst_rready     (ifu_rready     ),
+    .axi_mst_rid        (ifu_rid        ),
+    .axi_mst_rdata      (ifu_rdata      ),     
+    .axi_mst_rresp      (ifu_rresp      ),
+    .axi_mst_rlast      (ifu_rlast      )
 );
 SYNC_FIFO #(
     .FIFO_DEEP   (`PC_FIFO_DEEP   ),
@@ -213,9 +213,9 @@ SYNC_FIFO #(
 // ---------------------------------------------------------------------------------
 // IFU CTRL
 // ---------------------------------------------------------------------------------
-assign ifu_done_en   = (pc_pop_dat_vld & (curr_pc == pc_pop_dat)) & ~branch_active;
-assign ifu_inst_pc   = pc_pop_dat;
-assign ifu_inst      = {`INST_FIFO_DATA_W{inst_pop_dat_vld}} & inst_pop_dat;
+assign ifu2idu_en   = (pc_pop_dat_vld & (curr_pc == pc_pop_dat)) & ~branch_active;
+assign ifu2idu_pc   = pc_pop_dat;
+assign ifu2idu_inst = {`INST_FIFO_DATA_W{inst_pop_dat_vld}} & inst_pop_dat;
 
 endmodule
 

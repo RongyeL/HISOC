@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-08-05 09:03
+// Last Modified : 2024-08-11 08:41
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -39,17 +39,81 @@ module RVSEED (
 );
 localparam DLY = 0.1;
 
+wire                                exu2ifu_branch_en;       
+wire [`CPU_WIDTH            -1:0]   exu2ifu_branch_pc;       
+wire                                exu2ifu_jump_en;       
+wire [`CPU_WIDTH            -1:0]   exu2ifu_jump_pc;       
+
+wire                                exu2idu_branch_en;       
+wire [`CPU_WIDTH            -1:0]   exu2idu_branch_pc;       
+wire                                exu2idu_jump_en;       
+wire [`CPU_WIDTH            -1:0]   exu2idu_jump_pc;       
+
 wire                                ifu2idu_en;
 wire [`CPU_WIDTH            -1:0]   ifu2idu_pc;
 wire [`CPU_WIDTH            -1:0]   ifu2idu_inst;
+
+IFU U_IFU(
+    .clk                    (clk                    ),
+    .rst_n                  (rst_n                  ),   
+    .enable                 (enable                 ),   
+
+    .exu2ifu_branch_en      (exu2ifu_branch_en      ),
+    .exu2ifu_branch_pc      (exu2ifu_branch_pc      ),
+    .exu2ifu_jump_en        (exu2ifu_jump_en        ),
+    .exu2ifu_jump_pc        (exu2ifu_jump_pc        ),
+
+    .ifu_arvalid            (ifu_arvalid            ),
+    .ifu_arready            (ifu_arready            ),
+    .ifu_arid               (ifu_arid               ),
+    .ifu_araddr             (ifu_araddr             ),
+    .ifu_arlen              (ifu_arlen              ),
+    .ifu_arsize             (ifu_arsize             ),
+    .ifu_arburst            (ifu_arburst            ),
+    .ifu_arlock             (ifu_arlock             ),
+    .ifu_arcache            (ifu_arcache            ),
+    .ifu_arprot             (ifu_arprot             ),
+    .ifu_arqos              (ifu_arqos              ),
+    .ifu_arregion           (ifu_arregion           ),
+
+    .ifu_rvalid             (ifu_rvalid             ),
+    .ifu_rready             (ifu_rready             ),
+    .ifu_rid                (ifu_rid                ),
+    .ifu_rdata              (ifu_rdata              ),     
+    .ifu_rresp              (ifu_rresp              ),
+    .ifu_rlast              (ifu_rlast              ),
+
+    .ifu2idu_en             (ifu2idu_en             ),
+    .ifu2idu_pc             (ifu2idu_pc             ),
+    .ifu2idu_inst           (ifu2idu_inst           )
+
+);
+
+wire                                ifu2idu_en_r;
+wire [`CPU_WIDTH            -1:0]   ifu2idu_pc_r;
+wire [`CPU_WIDTH            -1:0]   ifu2idu_inst_r;
+
+IFU2IDU U_IFU2IDU(
+    .clk                    (clk                    ),
+    .rst_n                  (rst_n                  ),
+
+    .ifu2idu_en             (ifu2idu_en             ), 
+    .ifu2idu_pc             (ifu2idu_pc             ),
+    .ifu2idu_inst           (ifu2idu_inst           ),
+
+    .ifu2idu_en_r           (ifu2idu_en_r           ),
+    .ifu2idu_pc_r           (ifu2idu_pc_r           ),
+    .ifu2idu_inst_r         (ifu2idu_inst_r         ),
+
+    .exu2ifu_branch_en      (exu2ifu_branch_en      ),
+    .exu2ifu_jump_en        (exu2ifu_jump_en        )
+);
 
 wire                                idu2exu_en;
 wire [`CPU_WIDTH            -1:0]   idu2exu_pc;
 wire [`CPU_WIDTH            -1:0]   idu2exu_inst;
 
 wire [`BRAN_WIDTH           -1:0]   idu2exu_branch;     // idu_branch flag
-wire                                exu2ifu_zero;    // memory write enable
-wire                                exu2idu_zero;    // memory write enable
 wire [`JUMP_WIDTH           -1:0]   idu2exu_jump;       // idu_jump flag
 
 wire                                idu2exu_reg_wen;    // register write enable
@@ -77,13 +141,45 @@ wire [`CPU_WIDTH            -1:0]   idu2exu_imm;        // immediate value
 wire [`ALU_OP_WIDTH         -1:0]   idu2exu_alu_op;     // alu opcode
 wire [`ALU_SRC_WIDTH        -1:0]   idu2exu_alu_src_sel; // alu source select flag
 
-wire                                ifu2idu_en_r;
-wire [`CPU_WIDTH            -1:0]   ifu2idu_pc_r;
-wire [`CPU_WIDTH            -1:0]   ifu2idu_inst_r;
+IDU U_IDU (
+    .clk                    (clk                    ),
+    .rst_n                  (rst_n                  ),
+    .enable                 (enable                 ),
+
+    .ifu2idu_en             (ifu2idu_en_r           ),
+    .ifu2idu_pc             (ifu2idu_pc_r           ),
+    .ifu2idu_inst           (ifu2idu_inst_r         ),
+
+    .idu2exu_en             (idu2exu_en             ),
+    .idu2exu_pc             (idu2exu_pc             ),
+    .idu2exu_inst           (idu2exu_inst           ),
+
+    .idu2exu_branch         (idu2exu_branch         ),
+    .idu2exu_jump           (idu2exu_jump           ),
+
+    .idu2exu_reg_wen        (idu2exu_reg_wen        ),
+    .idu2exu_reg_waddr      (idu2exu_reg_waddr      ),
+    .idu2exu_reg1_raddr     (idu2exu_reg1_raddr     ),
+    .idu2exu_reg2_raddr     (idu2exu_reg2_raddr     ),
+    .idu2exu_mem_wen        (idu2exu_mem_wen        ),
+    .idu2exu_mem_ren        (idu2exu_mem_ren        ),
+    .idu2exu_mem2reg        (idu2exu_mem2reg        ),
+    .idu2exu_mem_op         (idu2exu_mem_op         ),
+    .idu2exu_imm            (idu2exu_imm            ),
+    .idu2exu_alu_op         (idu2exu_alu_op         ),
+    .idu2exu_alu_src_sel    (idu2exu_alu_src_sel    ),
+
+    .exu2idu_branch_en      (exu2idu_branch_en      ),
+    .exu2idu_jump_en        (exu2idu_jump_en        )
+);
 
 wire                                idu2exu_en_r;
 wire [`CPU_WIDTH            -1:0]   idu2exu_pc_r;
 wire [`CPU_WIDTH            -1:0]   idu2exu_inst_r;
+
+wire [`BRAN_WIDTH           -1:0]   idu2exu_branch_r;     // idu_branch flag
+wire [`JUMP_WIDTH           -1:0]   idu2exu_jump_r;       // idu_jump flag
+wire                                branch_active;
 
 wire                                idu2exu_reg_wen_r;    // register write enable
 wire [`REG_ADDR_WIDTH       -1:0]   idu2exu_reg_waddr_r;  // register write address
@@ -102,88 +198,6 @@ wire [`CPU_WIDTH            -1:0]   idu2exu_imm_r;        // immediate value
 wire [`ALU_OP_WIDTH         -1:0]   idu2exu_alu_op_r;     // alu opcode
 wire [`ALU_SRC_WIDTH        -1:0]   idu2exu_alu_src_sel_r; // alu source select flag
 
-
-IFU U_IFU(
-    .clk                    (clk                    ),
-    .rst_n                  (rst_n                  ),   
-    .enable                 (enable                 ),   
-
-    .idu_branch             (idu2exu_branch_r       ),
-    .exu_zero               (exu2ifu_zero           ),
-    .idu_jump               (idu2exu_jump_r         ),
-    .idu_imm                (idu2exu_imm_r          ),
-    .reg1_rdata             (reg2exu_reg1_rdata     ),
-
-    .ifu2idu_en             (ifu2idu_en             ),
-    .ifu2idu_pc             (ifu2idu_pc             ),
-    .ifu2idu_inst           (ifu2idu_inst           ),
-
-    .idu_pc                 (idu2exu_pc_r           ),
-
-    .ifu_arvalid            (ifu_arvalid            ),
-    .ifu_arready            (ifu_arready            ),
-    .ifu_arid               (ifu_arid               ),
-    .ifu_araddr             (ifu_araddr             ),
-    .ifu_arlen              (ifu_arlen              ),
-    .ifu_arsize             (ifu_arsize             ),
-    .ifu_arburst            (ifu_arburst            ),
-    .ifu_arlock             (ifu_arlock             ),
-    .ifu_arcache            (ifu_arcache            ),
-    .ifu_arprot             (ifu_arprot             ),
-    .ifu_arqos              (ifu_arqos              ),
-    .ifu_arregion           (ifu_arregion           ),
-
-    .ifu_rvalid             (ifu_rvalid             ),
-    .ifu_rready             (ifu_rready             ),
-    .ifu_rid                (ifu_rid                ),
-    .ifu_rdata              (ifu_rdata              ),     
-    .ifu_rresp              (ifu_rresp              ),
-    .ifu_rlast              (ifu_rlast              )
-
-);
-
-IFU2IDU U_IFU2IDU(
-    .clk                    (clk                    ),
-    .rst_n                  (rst_n                  ),
-
-    .ifu2idu_en             (ifu2idu_en             ), 
-    .ifu2idu_pc             (ifu2idu_pc             ),
-    .ifu2idu_inst           (ifu2idu_inst           ),
-
-    .ifu2idu_en_r           (ifu2idu_en_r           ),
-    .ifu2idu_pc_r           (ifu2idu_pc_r           ),
-    .ifu2idu_inst_r         (ifu2idu_inst_r         )
-);
-
-IDU U_IDU (
-    .clk                    (clk                    ),
-    .rst_n                  (rst_n                  ),
-    .enable                 (enable                 ),
-
-    .ifu2idu_en             (ifu2idu_en_r           ),
-    .ifu2idu_pc             (ifu2idu_pc_r           ),
-    .ifu2idu_inst           (ifu2idu_inst_r         ),
-
-    .idu2exu_en             (idu2exu_en             ),
-    .idu2exu_pc             (idu2exu_pc             ),
-    .idu2exu_inst           (idu2exu_inst           ),
-
-    .idu2exu_branch         (idu2exu_branch         ),
-    .exu2idu_zero           (exu2idu_zero           ),
-    .idu2exu_jump           (idu2exu_jump           ),
-
-    .idu2exu_reg_wen        (idu2exu_reg_wen        ),
-    .idu2exu_reg_waddr      (idu2exu_reg_waddr      ),
-    .idu2exu_reg1_raddr     (idu2exu_reg1_raddr     ),
-    .idu2exu_reg2_raddr     (idu2exu_reg2_raddr     ),
-    .idu2exu_mem_wen        (idu2exu_mem_wen        ),
-    .idu2exu_mem_ren        (idu2exu_mem_ren        ),
-    .idu2exu_mem2reg        (idu2exu_mem2reg        ),
-    .idu2exu_mem_op         (idu2exu_mem_op         ),
-    .idu2exu_imm            (idu2exu_imm            ),
-    .idu2exu_alu_op         (idu2exu_alu_op         ),
-    .idu2exu_alu_src_sel    (idu2exu_alu_src_sel    )
-);
 IDU2EXU U_IDU2EXU(
     .clk                    (clk                    ),
     .rst_n                  (rst_n                  ),
@@ -230,12 +244,15 @@ IDU2EXU U_IDU2EXU(
     .idu2exu_imm_r          (idu2exu_imm_r          ),
     
     .idu2exu_alu_op_r       (idu2exu_alu_op_r       ),
-    .idu2exu_alu_src_sel_r  (idu2exu_alu_src_sel_r  ) 
+    .idu2exu_alu_src_sel_r  (idu2exu_alu_src_sel_r  ), 
+
+    .exu2idu_branch_en      (exu2idu_branch_en      ),
+    .exu2idu_jump_en        (exu2idu_jump_en        )
 );
 
-REG_RVSEED U_REG_RVSEED(
-    .clk                    (clk                    ),
-    .rst_n                  (rst_n                  ),
+REGS_RVSEED U_REGS_RVSEED(
+    .clk_reg                (clk                    ),
+    .rst_reg_n              (rst_n                  ),
     .reg_wen                (idu2exu_reg_wen_r      ),
     .reg_waddr              (idu2exu_reg_waddr_r    ),
     .reg_wdata              (idu2exu_reg_wdata_r    ),
@@ -245,49 +262,57 @@ REG_RVSEED U_REG_RVSEED(
     .reg2_rdata             (reg2exu_reg2_rdata     )
 );
 
-
 MUX_ALU U_MUX_ALU(
-    .alu_src_sel                    ( idu2exu_alu_src_sel_r                   ),
-    .reg1_rdata                     ( reg2exu_reg1_rdata                    ),
-    .reg2_rdata                     ( reg2exu_reg2_rdata                    ),
-    .imm                            ( idu2exu_imm_r                           ),
-    .curr_pc                        ( idu2exu_pc_r                   ),
-    .alu_src1                       ( alu_src1                      ),
-    .alu_src2                       ( alu_src2                      )
+    .alu_src_sel                    ( idu2exu_alu_src_sel_r        ),
+    .reg1_rdata                     ( reg2exu_reg1_rdata           ),
+    .reg2_rdata                     ( reg2exu_reg2_rdata           ),
+    .imm                            ( idu2exu_imm_r                ),
+    .curr_pc                        ( idu2exu_pc_r                 ),
+    .alu_src1                       ( alu_src1                     ),
+    .alu_src2                       ( alu_src2                     )
 );
 
 ALU U_ALU(
-    .alu_op                         ( idu2exu_alu_op_r                        ),
-    .alu_src1                       ( alu_src1                      ),
-    .alu_src2                       ( alu_src2                      ),
-    .zero                           ( exu2ifu_zero                          ),
-    .alu_res                        ( alu_res                       )
+    .alu_op                         ( idu2exu_alu_op_r             ),
+    .alu_src1                       ( alu_src1                     ),
+    .alu_src2                       ( alu_src2                     ),
+    .alu_res                        ( alu_res                      )
 );
-assign exu2idu_zero = exu2ifu_zero;
+assign exu2ifu_branch_en = ((idu2exu_branch_r == `BRAN_TYPE_A) &&  (alu_res==1)) 
+                         | ((idu2exu_branch_r == `BRAN_TYPE_B) && ~(alu_res==1)); 
+assign exu2ifu_branch_pc = idu2exu_pc_r + idu2exu_imm_r;
+assign exu2ifu_jump_en   = (idu2exu_jump_r == `JUMP_JAL) | (idu2exu_jump_r == `JUMP_JALR);
+assign exu2ifu_jump_pc   = (idu2exu_jump_r == `JUMP_JAL) ? idu2exu_pc_r + idu2exu_imm_r
+                                                         : reg2exu_reg1_rdata + idu2exu_imm_r;
+assign exu2idu_branch_en = exu2ifu_branch_en;
+assign exu2idu_branch_pc = exu2ifu_branch_pc;
+assign exu2idu_jump_en   = exu2ifu_jump_en;
+assign exu2idu_jump_pc   = exu2ifu_jump_pc;
+                           
 assign mem_addr = alu_res; 
 MUX_MEM U_MUX_MEM(
-    .mem_op                         ( idu2exu_mem_op_r                        ),
+    .mem_op                         ( idu2exu_mem_op_r              ),
     .mem_addr                       ( mem_addr                      ),
-    .reg2_rdata                     ( reg2exu_reg2_rdata                    ),
+    .reg2_rdata                     ( reg2exu_reg2_rdata            ),
     .mem_rdata                      ( mem_rdata                     ),
     .mem_wdata                      ( mem_wdata                     )
 );
 
 DATA_MEM U_DATA_MEM(
     .clk                            ( clk                           ),
-    .mem_wen                        ( idu2exu_mem_wen_r                       ),
-    .mem_ren                        ( idu2exu_mem_ren_r                       ),
+    .mem_wen                        ( idu2exu_mem_wen_r             ),
+    .mem_ren                        ( idu2exu_mem_ren_r             ),
     .mem_addr                       ( mem_addr                      ),
     .mem_wdata                      ( mem_wdata                     ),
     .mem_rdata                      ( mem_rdata                     )
 );
 
 MUX_REG U_MUX_REG(
-    .mem2reg                        ( idu2exu_mem2reg_r                       ),
+    .mem2reg                        ( idu2exu_mem2reg_r             ),
     .alu_res                        ( alu_res                       ),
-    .mem_op                         ( idu2exu_mem_op_r                        ),
+    .mem_op                         ( idu2exu_mem_op_r              ),
     .mem_addr                       ( mem_addr                      ),
     .mem_rdata                      ( mem_rdata                     ),
-    .reg_wdata                      ( idu2exu_reg_wdata_r                     )
+    .reg_wdata                      ( idu2exu_reg_wdata_r           )
 );
 endmodule

@@ -5,7 +5,7 @@
 // Filename      : rvseed_defines.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2024-07-29 05:42
+// Last Modified : 2024-08-11 07:57
 // -----------------------------------------------------------------------
 // Description   : 
 //
@@ -114,8 +114,7 @@
 `define ALU_SLTU `ALU_OP_WIDTH'b1001 // set less than (unsigned) 
 `define ALU_BLT  `ALU_OP_WIDTH'b1010 // branch less than
 `define ALU_BLTU `ALU_OP_WIDTH'b1011 // branch less than (unsigned)
-`define ALU_JAL  `ALU_OP_WIDTH'b1100  
-`define ALU_JALR `ALU_OP_WIDTH'b1101  
+`define ALU_EQU  `ALU_OP_WIDTH'b1100 // equal
 
 // ALU select soure
 `define ALU_SRC_WIDTH 2

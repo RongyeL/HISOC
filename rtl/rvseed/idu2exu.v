@@ -5,7 +5,7 @@
 // Filename      : idu2exu.v
 // Author        : Rongye
 // Created On    : 2024-08-05 06:09
-// Last Modified : 2024-08-05 08:47
+// Last Modified : 2024-08-11 06:42
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -57,13 +57,19 @@ module IDU2EXU (
     output reg  [`CPU_WIDTH         -1:0]   idu2exu_imm_r,
     
     output reg  [`ALU_OP_WIDTH      -1:0]   idu2exu_alu_op_r,
-    output reg  [`ALU_SRC_WIDTH     -1:0]   idu2exu_alu_src_sel_r
+    output reg  [`ALU_SRC_WIDTH     -1:0]   idu2exu_alu_src_sel_r,
+
+    input  wire                             exu2idu_branch_en,
+    input  wire                             exu2idu_jump_en
 );
 localparam DLY = 0.1;
 
 // IDU2EXU Register 
 always @ (posedge clk or negedge rst_n) begin
     if(~rst_n) begin
+        idu2exu_en_r <= #DLY 1'b0;
+    end
+    else if (exu2idu_branch_en | exu2idu_jump_en) begin
         idu2exu_en_r <= #DLY 1'b0;
     end
     else begin
@@ -75,6 +81,10 @@ always @ (posedge clk or negedge rst_n) begin
         idu2exu_pc_r   <= #DLY `CPU_WIDTH'b0;
         idu2exu_inst_r <= #DLY `CPU_WIDTH'b0;
     end
+    else if (exu2idu_branch_en | exu2idu_jump_en) begin
+        idu2exu_pc_r   <= #DLY `CPU_WIDTH'b0;
+        idu2exu_inst_r <= #DLY `CPU_WIDTH'b0;
+    end
     else if (idu2exu_en) begin
         idu2exu_pc_r   <= #DLY idu2exu_pc ;
         idu2exu_inst_r <= #DLY idu2exu_inst ;
@@ -83,6 +93,21 @@ end
 
 always @ (posedge clk or negedge rst_n) begin
     if(~rst_n) begin
+        idu2exu_branch_r      <= #DLY {`BRAN_WIDTH{1'b0}};
+        idu2exu_jump_r        <= #DLY {`JUMP_WIDTH{1'b0}};
+        idu2exu_reg_wen_r     <= #DLY 1'b0;
+        idu2exu_reg_waddr_r   <= #DLY {`REG_ADDR_WIDTH{1'b0}};
+        idu2exu_reg1_raddr_r  <= #DLY {`REG_ADDR_WIDTH{1'b0}};
+        idu2exu_reg2_raddr_r  <= #DLY {`REG_ADDR_WIDTH{1'b0}};
+        idu2exu_mem_wen_r     <= #DLY 1'b0;
+        idu2exu_mem_ren_r     <= #DLY 1'b0;
+        idu2exu_mem2reg_r     <= #DLY 1'b0;
+        idu2exu_mem_op_r      <= #DLY {`MEM_OP_WIDTH{1'b0}};
+        idu2exu_imm_r         <= #DLY {`CPU_WIDTH{1'b0}};
+        idu2exu_alu_op_r      <= #DLY {`ALU_OP_WIDTH{1'b0}};
+        idu2exu_alu_src_sel_r <= #DLY {`ALU_SRC_WIDTH{1'b0}};
+    end
+    else if(exu2idu_branch_en | exu2idu_jump_en) begin
         idu2exu_branch_r      <= #DLY {`BRAN_WIDTH{1'b0}};
         idu2exu_jump_r        <= #DLY {`JUMP_WIDTH{1'b0}};
         idu2exu_reg_wen_r     <= #DLY 1'b0;

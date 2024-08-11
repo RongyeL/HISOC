@@ -2,10 +2,10 @@
 //                 Copyright (c) 2022 
 //                       ALL RIGHTS RESERVED
 // ---------------------------------------------------------------------------------
-// Filename      : id.v
+// Filename      : inst_decoder.v
 // Author        : Rongye
 // Created On    : 2022-03-22 19:10
-// Last Modified : 2024-07-23 05:51
+// Last Modified : 2024-08-11 08:02
 // ---------------------------------------------------------------------------------
 // Description   : The main control module decodes the read instructions 
 //                 to obtain the control signals, corresponding addresses 
@@ -13,7 +13,7 @@
 //
 //
 // -FHDR----------------------------------------------------------------------------
-module CTRL (
+module INST_DEC (
     input      [`CPU_WIDTH-1:0]        inst,       // instruction input
 
     output reg [`BRAN_WIDTH-1:0]       branch,     // branch flag
@@ -29,18 +29,18 @@ module CTRL (
     output reg                         mem2reg,    // memory to register flag
     output reg [`MEM_OP_WIDTH-1:0]     mem_op,     // memory opcode
      
-    output reg [`IMM_GEN_OP_WIDTH-1:0] imm_gen_op, // immediate extend opcode
+    output reg [`CPU_WIDTH-1:0]        imm, // immediate extend opcode
 
     output reg [`ALU_OP_WIDTH-1:0]     alu_op,     // alu opcode
     output reg [`ALU_SRC_WIDTH-1:0]    alu_src_sel // alu source select flag
 );
 
-wire [`OPCODE_WIDTH-1:0] opcode = inst[`OPCODE_WIDTH-1:0];            
-wire [`FUNCT3_WIDTH-1:0] funct3 = inst[`FUNCT3_WIDTH+`FUNCT3_BASE-1:`FUNCT3_BASE];
-wire [`FUNCT7_WIDTH-1:0] funct7 = inst[`FUNCT7_WIDTH+`FUNCT7_BASE-1:`FUNCT7_BASE]; 
-wire [`REG_ADDR_WIDTH-1:0] rd   = inst[`REG_ADDR_WIDTH+`RD_BASE-1:`RD_BASE]; 
-wire [`REG_ADDR_WIDTH-1:0] rs1  = inst[`REG_ADDR_WIDTH+`RS1_BASE-1:`RS1_BASE]; 
-wire [`REG_ADDR_WIDTH-1:0] rs2  = inst[`REG_ADDR_WIDTH+`RS2_BASE-1:`RS2_BASE]; 
+wire [`OPCODE_WIDTH-1:0] opcode    = inst[`OPCODE_WIDTH-1:0];
+wire [`FUNCT3_WIDTH-1:0] funct3    = inst[`FUNCT3_WIDTH+`FUNCT3_BASE-1:`FUNCT3_BASE];
+wire [`FUNCT7_WIDTH-1:0] funct7    = inst[`FUNCT7_WIDTH+`FUNCT7_BASE-1:`FUNCT7_BASE];
+wire [`RISCV_INST_R_RD_W-1:0] rd   = inst[`RISCV_INST_R_RD_W+`RD_BASE-1:`RD_BASE];
+wire [`RISCV_INST_R_RS1_W-1:0] rs1 = inst[`RISCV_INST_R_RS1_W+`RS1_BASE-1:`RS1_BASE];
+wire [`RISCV_INST_R_RS2_W-1:0] rs2 = inst[`RISCV_INST_R_RS2_W+`RS2_BASE-1:`RS2_BASE];
 
 
 always @(*) begin
@@ -50,19 +50,19 @@ always @(*) begin
     reg1_raddr  = `REG_ADDR_WIDTH'b0;
     reg2_raddr  = `REG_ADDR_WIDTH'b0;
     reg_waddr   = `REG_ADDR_WIDTH'b0;
-    mem_wen    = 1'b0;
-    mem_ren    = 1'b0;
-    mem2reg    = `ALU2REG;
-    mem_op     = `MEM_LW;
-    imm_gen_op  = `IMM_GEN_I;
+    mem_wen     = 1'b0;
+    mem_ren     = 1'b0;
+    mem2reg     = `ALU2REG;
+    mem_op      = `MEM_LW;
+    imm         = `CPU_WIDTH'b0;
     alu_op      = `ALU_AND;
     alu_src_sel = `ALU_SRC_REG;
     case (opcode)
         `INST_TYPE_R: begin
             reg_wen     = 1'b1;
-            reg1_raddr  = rs1;
-            reg2_raddr  = rs2;
-            reg_waddr   = rd;
+            reg1_raddr  = rs1 << 2;
+            reg2_raddr  = rs2 << 2;
+            reg_waddr   = rd << 2;
             alu_src_sel = `ALU_SRC_REG;
             case (funct3)
                 `INST_ADD_SUB: 
@@ -85,8 +85,9 @@ always @(*) begin
         end
         `INST_TYPE_I: begin
             reg_wen     = 1'b1;
-            reg1_raddr  = rs1;
-            reg_waddr   = rd;
+            reg1_raddr  = rs1 << 2;
+            reg_waddr   = rd << 2;
+            imm         = {{20{inst[31]}},inst[31:20]};
             alu_src_sel = `ALU_SRC_IMM;
             case (funct3)
                 `INST_ADDI: 
@@ -109,11 +110,11 @@ always @(*) begin
         end
         `INST_TYPE_IL: begin
             reg_wen    = 1'b1;
-            reg1_raddr = rs1;
-            reg_waddr  = rd;
+            reg1_raddr = rs1 << 2;
+            reg_waddr  = rd << 2;
             mem_ren    = 1'b1;
             mem2reg    = `MEM2REG;
-            imm_gen_op = `IMM_GEN_I;
+            imm        = {{20{inst[31]}},inst[31:20]};
             alu_op     = `ALU_ADD;
             alu_src_sel= `ALU_SRC_IMM;
             case (funct3)
@@ -130,13 +131,13 @@ always @(*) begin
             endcase
         end
         `INST_TYPE_S: begin
-            reg1_raddr = rs1;
-            reg2_raddr = rs2;                    
+            reg1_raddr = rs1 << 2;
+            reg2_raddr = rs2 << 2;                    
             mem_wen    = 1'b1;
             mem_ren    = 1'b1;
-            imm_gen_op = `IMM_GEN_S;
+            imm        = {{20{inst[31]}},inst[31:25],inst[11:7]};
             alu_op     = `ALU_ADD;
-            alu_src_sel = `ALU_SRC_IMM;
+            alu_src_sel= `ALU_SRC_IMM;
             case (funct3)
                 `INST_SB: 
                     mem_op = `MEM_SB;
@@ -147,33 +148,33 @@ always @(*) begin
             endcase
         end
         `INST_TYPE_B: begin
-            reg1_raddr  = rs1;
-            reg2_raddr  = rs2;
-            imm_gen_op  = `IMM_GEN_B;
+            reg1_raddr  = rs1 << 2;
+            reg2_raddr  = rs2 << 2;
+            imm         = {{20{inst[31]}},inst[7],inst[30:25],inst[11:8], 1'b0};
             alu_src_sel = `ALU_SRC_REG;
             case (funct3)
                 `INST_BEQ: begin
                     branch     = `BRAN_TYPE_A;
-                    alu_op     = `ALU_SUB;
+                    alu_op     = `ALU_EQU;
                 end
                 `INST_BNE: begin
                     branch     = `BRAN_TYPE_B;
-                    alu_op     = `ALU_SUB;
+                    alu_op     = `ALU_EQU;
                 end
                 `INST_BLT: begin
-                    branch     = `BRAN_TYPE_B;
+                    branch     = `BRAN_TYPE_A;
                     alu_op     = `ALU_SLT;
                 end
                 `INST_BGE: begin
-                    branch     = `BRAN_TYPE_A;
+                    branch     = `BRAN_TYPE_B;
                     alu_op     = `ALU_SLT;
                 end
                 `INST_BLTU: begin
-                    branch     = `BRAN_TYPE_B;
+                    branch     = `BRAN_TYPE_A;
                     alu_op     = `ALU_SLTU;
                 end
                 `INST_BGEU: begin
-                    branch     = `BRAN_TYPE_A;
+                    branch     = `BRAN_TYPE_B;
                     alu_op     = `ALU_SLTU;               
                 end
             endcase
@@ -181,32 +182,32 @@ always @(*) begin
         `INST_JAL: begin // only jal
             jump        = `JUMP_JAL;
             reg_wen     = 1'b1;
-            reg_waddr   = rd;
-            imm_gen_op  = `IMM_GEN_J;
+            reg_waddr   = rd << 2;
+            imm         = {{12{inst[31]}},inst[19:12],inst[20],inst[30:21], 1'b0};
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_FOUR_PC; // pc + 4
         end
         `INST_JALR: begin // only jalr 
             jump        = `JUMP_JALR;
             reg_wen     = 1'b1;
-            reg1_raddr  = rs1;  
-            reg_waddr   = rd;
-            imm_gen_op  = `IMM_GEN_I;
+            reg1_raddr  = rs1 << 2;  
+            reg_waddr   = rd << 2;
+            imm         = {{20{inst[31]}},inst[31:20]};
             alu_op      = `ALU_ADD;
             alu_src_sel = `ALU_SRC_FOUR_PC; // pc + 4
         end
         `INST_LUI: begin // only lui
                 reg_wen     = 1'b1;
                 reg1_raddr  = `REG_ADDR_WIDTH'b0; // x0 = 0
-                reg_waddr   = rd;
-                imm_gen_op  = `IMM_GEN_U;
+                reg_waddr   = rd << 2;
+                imm         = {inst[31:12],12'b0};
                 alu_op      = `ALU_ADD;
                 alu_src_sel = `ALU_SRC_IMM; // x0 + imm
         end
         `INST_AUIPC: begin // only auipc
                 reg_wen     = 1'b1;
-                reg_waddr   = rd;
-                imm_gen_op  = `IMM_GEN_U;
+                reg_waddr   = rd << 2;
+                imm         = {inst[31:12],12'b0};
                 alu_op      = `ALU_ADD;
                 alu_src_sel = `ALU_SRC_IMM_PC; // pc + imm
         end

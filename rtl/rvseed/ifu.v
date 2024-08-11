@@ -5,523 +5,207 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-07-25 08:47
+// Last Modified : 2024-08-11 02:19
 // ---------------------------------------------------------------------------------
 // Description   :
 //
 //
 // -FHDR----------------------------------------------------------------------------
-module IFU #(
-    parameter INST_MEM_BASE_ADDR	    = 32'h00000000,
-    parameter integer BURST_LEN	= 1
-)(
+module IFU(
 // global 
-    input  wire                                  clk,
-    input  wire                                  rst_n,          // active low
-    input  wire                                  enable,          // rvseed enable ctrl
-// AW channel
-    output wire [`AXI_ID_WIDTH         -1:0]      ifu_axi_awid,     // write transaction id
-    output wire [`AXI_ADDR_WIDTH       -1:0]      ifu_axi_awaddr,   // write address
-    output wire [`AXI_LEN_WIDTH  -1:0]      ifu_axi_awlen,    // write transaction burst lengths
-    output wire [`AXI_SIZE_WIDTH -1:0]      ifu_axi_awsize,   // write transaction burst size
-    output wire [`AXI_BURST_WIDTH -1:0]      ifu_axi_awburst,  // write transaction burst type
-    output wire                                   ifu_axi_awlock,   // write transaction atomic type
-    output wire [`AXI_CACHE_WIDTH      -1:0]      ifu_axi_awcache,  // write transaction memory attribute
-    output wire [`AXI_PROT_WIDTH       -1:0]      ifu_axi_awprot,   // write transaction protection attribute
-    output wire [`AXI_QOS_WIDTH        -1:0]      ifu_axi_awqos,    // write transaction quality of service
-    output wire [`AXI_REGION_WIDTH     -1:0]      ifu_axi_awregion, // write transaction region
-    output wire                                   ifu_axi_awvalid,  // write address channel valid
-    input  wire                                   ifu_axi_awready,  // write address channel ready
-// W channel
-    output wire [`AXI_DATA_WIDTH       -1:0]      ifu_axi_wdata,    // write data
-    output wire [(`AXI_DATA_WIDTH/8)   -1:0]      ifu_axi_wstrb,    // write strobe, indicate which byte is valid
-    output wire                                   ifu_axi_wlast,    // write last data indicate
-    output wire                                   ifu_axi_wvalid,   // write data channel valid
-    input  wire                                   ifu_axi_wready,   // write data channel ready
-// B channel
-    input  wire [`AXI_ID_WIDTH         -1:0]             ifu_axi_bid,      // write transaction id
-    input  wire [`AXI_RESP_WIDTH       -1:0]           ifu_axi_bresp,    // write response
-    input  wire                                   ifu_axi_bvalid,   // write response channel valid
-    output wire                                   ifu_axi_bready,   // write response channel ready
-// AR channel 
-    output wire [`AXI_ID_WIDTH         -1:0]            ifu_axi_arid,     // read transaction id
-    output wire [`AXI_ADDR_WIDTH       -1:0]          ifu_axi_araddr,   // read address
-    output wire [`AXI_LEN_WIDTH  -1:0]      ifu_axi_arlen,    // read transaction burst length
-    output wire [`AXI_SIZE_WIDTH -1:0]     ifu_axi_arsize,   // read transaction burst size
-    output wire [`AXI_BURST_WIDTH -1:0]     ifu_axi_arburst,  // read transaction burst type
-    output wire                                   ifu_axi_arlock,   // read atomic type
-    output wire [`AXI_CACHE_WIDTH      -1 : 0]          ifu_axi_arcache,  // read transaction memory attribute
-    output wire [`AXI_PROT_WIDTH       -1 : 0]           ifu_axi_arprot,   // read transaction protection attribute
-    output wire [`AXI_QOS_WIDTH-1 : 0]            ifu_axi_arqos,    // read transaction quality of service
-    output wire [`AXI_REGION_WIDTH-1 : 0]         ifu_axi_arregion, // read transaction region
-    output wire                                   ifu_axi_arvalid,  // read address channel valid
-    input  wire                                   ifu_axi_arready,  // read address channel ready
+    input  wire                              clk,
+    input  wire                              rst_n,          
+    input  wire                              enable,          
+
+    input  wire                              exu2ifu_branch_en,       
+    input  wire [`CPU_WIDTH            -1:0] exu2ifu_branch_pc,       
+    input  wire                              exu2ifu_jump_en,       
+    input  wire [`CPU_WIDTH            -1:0] exu2ifu_jump_pc,       
+// AR channel
+    output wire                              ifu_arvalid,
+    input  wire                              ifu_arready,
+    output wire [`AXI_ID_WIDTH         -1:0] ifu_arid,
+    output wire [`AXI_ADDR_WIDTH       -1:0] ifu_araddr,
+    output wire [`AXI_LEN_WIDTH        -1:0] ifu_arlen,
+    output wire [`AXI_SIZE_WIDTH       -1:0] ifu_arsize,
+    output wire [`AXI_BURST_WIDTH      -1:0] ifu_arburst,
+    output wire                              ifu_arlock,
+    output wire [`AXI_CACHE_WIDTH      -1:0] ifu_arcache,
+    output wire [`AXI_PROT_WIDTH       -1:0] ifu_arprot,
+    output wire [`AXI_QOS_WIDTH        -1:0] ifu_arqos,
+    output wire [`AXI_REGION_WIDTH     -1:0] ifu_arregion,
 // R channel
-    input  wire [`AXI_ID_WIDTH-1 : 0]             ifu_axi_rid,      // read transaction id
-    input  wire [`AXI_DATA_WIDTH-1 : 0]           ifu_axi_rdata,    // read data
-    input  wire [`AXI_RESP_WIDTH-1 : 0]            ifu_axi_rresp,    // read transaction response
-    input  wire                                    ifu_axi_rlast,    // read last data indicate
-    input  wire                                    ifu_axi_rvalid,   // read data channel valid
-    output wire                                    ifu_axi_rready    // read data channel read
+    input  wire                              ifu_rvalid,
+    output wire                              ifu_rready,
+    input  wire [`AXI_ID_WIDTH         -1:0] ifu_rid,
+    input  wire [`AXI_DATA_WIDTH       -1:0] ifu_rdata,
+    input  wire [`AXI_RESP_WIDTH       -1:0] ifu_rresp,
+    input  wire                              ifu_rlast,
+
+    output wire                              ifu2idu_en,
+    output wire [`CPU_WIDTH            -1:0] ifu2idu_pc,
+    output wire [`CPU_WIDTH            -1:0] ifu2idu_inst
 
 );
 
-wire                         next_en;
-wire [`CPU_WIDTH-1:0]        curr_pc;    // current pc addr
-wire [`CPU_WIDTH-1:0]        next_pc;    // next pc addr
-wire                         pc_update;
+localparam DLY = 0.1;
 
-wire [`BRAN_WIDTH-1:0]       branch;     // branch flag
-wire                         zero;       // alu result is zero
-wire [`JUMP_WIDTH-1:0]       jump;       // jump flag
+reg  [`CPU_WIDTH        -1:0] curr_pc;    
+reg  [`CPU_WIDTH        -1:0] next_pc;    
+reg  [`CPU_WIDTH        -1:0] if_pc;    
 
-wire [`CPU_WIDTH-1:0]        imm;    // next pc addr
-wire [`CPU_WIDTH-1:0]        reg1_rdata;    // next pc addr
-assign branch     = `BRAN_WIDTH'b0;
-assign zero       = 1'b0;
-assign jump       = `JUMP_WIDTH'b0;
-assign imm        = `CPU_WIDTH'b0;
-assign reg1_rdata = `CPU_WIDTH'b0;
+wire                          rd_req_en;
+wire                          rd_block_en;
 
-wire if_process   = pc_update;
-reg  if_process_r;
-assign next_en = enable & ~if_process & ~if_process_r;
-PC_REG U_PC_REG(
-    .clk                            ( clk                           ),
-    .rst_n                          ( rst_n                         ),
-    .next_en                        ( next_en                       ),
-    .next_pc                        ( next_pc                       ),
-    .curr_pc                        ( curr_pc                       ),
-    .pc_update                      ( pc_update                     )
-);
+wire [`AXI_ADDR_WIDTH   -1:0] rd_base_addr = `INST_MEM_BASE_ADDR + if_pc;
+wire [`AXI_LEN_WIDTH    -1:0] rd_len       = `AXI_LEN_WIDTH'h0; // len = 1
+wire [`AXI_SIZE_WIDTH   -1:0] rd_size      = `AXI_SIZE_4_BYTE;
+wire [`AXI_BURST_WIDTH  -1:0] rd_burst     = `AXI_BURTS_INCR;
+wire [`AXI_LOCK_WIDTH   -1:0] rd_lock      = `AXI_LOCK_WIDTH'b0;
+wire [`AXI_CACHE_WIDTH  -1:0] rd_cache     = `AXI_CACHE_WIDTH'b0000;
+wire [`AXI_PROT_WIDTH   -1:0] rd_prot      = `AXI_PROT_WIDTH'b000;
+wire [`AXI_QOS_WIDTH    -1:0] rd_qos       = `AXI_QOS_WIDTH'h0;
+wire [`AXI_REGION_WIDTH -1:0] rd_region    = `AXI_REGION_WIDTH'h0;
 
-MUX_PC U_MUX_PC(
-    .ena                            ( next_en                       ),
-    .branch                         ( branch                        ),
-    .zero                           ( zero                          ),
-    .jump                           ( jump                          ),
-    .imm                            ( imm                           ),
-    .reg1_rdata                     ( reg1_rdata                    ),
-    .curr_pc                        ( curr_pc                       ),
-    .next_pc                        ( next_pc                       )
-);
+wire                          rd_result_en; 
+wire [`AXI_DATA_WIDTH   -1:0] rd_result_data;
 
+reg  [`CPU_WIDTH        -1:0] ifu2idu_pc_r;
 
-// ---------------------------------------------------------------------------------------------------
-// IFU CTRL
-// ---------------------------------------------------------------------------------------------------
-wire if_req_en    = ifu_axi_arvalid & ifu_axi_arready;
-wire if_result_en = ifu_axi_rvalid  & ifu_axi_rready & ifu_axi_rlast;
+wire                          pc_full; 
+wire                          pc_empty; 
+wire [`PC_FIFO_DATA_W -1:0]   pc_pop_dat;
+wire                          pc_pop_dat_vld; 
+wire [`PC_FIFO_DEEP_W   :0]   pc_fifo_num;
+
+wire                          inst_full; 
+wire                          inst_empty; 
+wire [`INST_FIFO_DATA_W -1:0] inst_pop_dat;
+wire                          inst_pop_dat_vld; 
+wire [`INST_FIFO_DEEP_W   :0] inst_fifo_num;
+// PC REGISTER 
 always @ (posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-        if_process_r <= 1'b0;
+    if(~rst_n) begin
+        curr_pc <= #DLY `CPU_WIDTH'b0;
     end
-    else if (pc_update) begin
-        if_process_r <= if_process;
-    end
-    else if (if_result_en) begin
-        if_process_r <= 1'b0;
-    end
-end
-
-
-// ---------------------------------------------------------------------------------------------------
-// AXI MST CTRL
-// ---------------------------------------------------------------------------------------------------
-localparam integer TX_NUM_WIDTH = $clog2(BURST_LEN-1);
-
-localparam [1:0] IDLE    = 2'b00, 
-                 WRITE   = 2'b01, // write transaction,
-                 READ    = 2'b10; // read transaction
-
-reg [1:0] mst_exestate;
-
-// axi internal signals
-reg  [`AXI_ADDR_WIDTH-1 : 0]       axi_awaddr;
-reg                                 axi_awvalid;
-reg  [`AXI_DATA_WIDTH-1 : 0]       axi_wdata;
-reg                                 axi_wlast;
-reg                                 axi_wvalid;
-reg                                 axi_bready;
-reg  [`AXI_ADDR_WIDTH-1 : 0]       axi_araddr;
-reg                                 axi_arvalid;
-reg                                 axi_rready;
-
-reg  [TX_NUM_WIDTH : 0] 	write_index; // write beat count in a burst
-reg  [TX_NUM_WIDTH : 0] 	read_index; // read beat count in a burst
-
-wire [TX_NUM_WIDTH+2 : 0] burst_size_bytes; //size of BURST_LEN length burst in bytes
-
-reg                                 start_single_burst_write;
-reg                                 start_single_burst_read;
-reg                                 writes_done;
-reg                                 reads_done;
-reg                                 burst_write_active;
-reg                                 burst_read_active;
-reg                                 txn_start_ff;
-reg                                 txn_start_ff2;
-wire                                txn_start_pulse;
-
-//Interface response error flags
-wire                                write_resp_error;
-wire                                read_resp_error;
-
-
-//Write Address (AW)
-assign ifu_axi_awid       = 'b0;
-assign ifu_axi_awaddr     = INST_MEM_BASE_ADDR + axi_awaddr;
-assign ifu_axi_awlen      = BURST_LEN - 1;
-assign ifu_axi_awsize     = $clog2((`AXI_DATA_WIDTH/8)-1);
-assign ifu_axi_awburst    = `AXI_BURST_WIDTH'b01;
-assign ifu_axi_awlock     = 1'b0;
-assign ifu_axi_awcache    = `AXI_CACHE_WIDTH'b0010;
-assign ifu_axi_awprot     = `AXI_PROT_WIDTH'h0;
-assign ifu_axi_awqos      = `AXI_QOS_WIDTH'h0;
-assign ifu_axi_awregion   = `AXI_REGION_WIDTH'h0;
-assign ifu_axi_awvalid    = axi_awvalid;
-//Write Data(W)
-assign ifu_axi_wdata      = axi_wdata;
-assign ifu_axi_wstrb      = {(`AXI_DATA_WIDTH/8){1'b1}};
-assign ifu_axi_wlast      = axi_wlast;
-assign ifu_axi_wvalid     = axi_wvalid;
-//Write Response (B)
-assign ifu_axi_bready     = axi_bready;
-//Read Address (AR)
-assign ifu_axi_arid       = 'b0;
-assign ifu_axi_araddr     = INST_MEM_BASE_ADDR + axi_araddr;
-assign ifu_axi_arlen      = BURST_LEN - 1;
-assign ifu_axi_arsize     = $clog2((`AXI_DATA_WIDTH/8)-1);
-assign ifu_axi_arburst    = `AXI_BURST_WIDTH'b01;
-assign ifu_axi_arlock     = 1'b0;
-assign ifu_axi_arcache    = `AXI_CACHE_WIDTH'b0010;
-assign ifu_axi_arprot     = `AXI_PROT_WIDTH'h0;
-assign ifu_axi_arqos      = `AXI_QOS_WIDTH'h0;
-assign ifu_axi_arregion   = `AXI_REGION_WIDTH'h0;
-assign ifu_axi_arvalid    = axi_arvalid;
-//Read and Read Response (R)
-assign ifu_axi_rready     = axi_rready;
-
-//Example design I/O
-assign txn_done         = (~burst_write_active) && (~burst_read_active);
-
-//Burst size in bytes
-assign burst_size_bytes = BURST_LEN * `AXI_DATA_WIDTH/8;
-
-//Generate a pulse to initiate AXI transaction.
-// assign txn_start_pulse	= (!txn_start_ff2) && txn_start_ff;
-// always @(posedge clk) begin
-    // if (rst_n == 0 ) begin
-        // txn_start_ff  <= 1'b0;
-        // txn_start_ff2 <= 1'b0;
-    // end
-    // else begin // rising edge detection
-        // txn_start_ff  <= txn_start;
-        // txn_start_ff2 <= txn_start_ff;
-    // end
-// end
-
-
-//--------------------
-//Write Address Channel
-//--------------------
-
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_awvalid <= 1'b0;
-    end
-    else if (~axi_awvalid && start_single_burst_write) begin
-        axi_awvalid <= 1'b1;
-    end
-    else if (ifu_axi_awready && axi_awvalid) begin
-        axi_awvalid <= 1'b0;
-    end 
-    else begin
-        axi_awvalid <= axi_awvalid;
-    end
-end
-
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_awaddr <= 'b0;
-    end
-    else if (ifu_axi_awready && axi_awvalid) begin
-        axi_awaddr <= axi_awaddr + burst_size_bytes;
-    end
-    else begin
-        axi_awaddr <= axi_awaddr;
-    end
-end
-
-
-//--------------------
-//Write Data Channel
-//--------------------
-
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_wvalid <= 1'b0;
-    end
-    else if (~axi_wvalid && start_single_burst_write) begin
-        axi_wvalid <= 1'b1;
-    end
-    else if (ifu_axi_wready & axi_wvalid && axi_wlast) begin
-        axi_wvalid <= 1'b0;
-    end
-    else begin
-        axi_wvalid <= axi_wvalid;
-    end
-end
-
-
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_wlast <= 1'b0;
-    end
-    else if (((write_index == BURST_LEN-2 && BURST_LEN >= 2) && ifu_axi_wready & axi_wvalid) || (BURST_LEN == 1 )) begin
-        axi_wlast <= 1'b1;
-    end
-    else if (ifu_axi_wready & axi_wvalid) begin
-        axi_wlast <= 1'b0;
-    end
-    else if (axi_wlast && BURST_LEN == 1) begin
-        axi_wlast <= 1'b0;
-    end
-    else begin
-        axi_wlast <= axi_wlast;
-    end
-end
-
-
-always @(posedge clk) begin
-    if (rst_n == 0 || start_single_burst_write == 1'b1) begin
-        write_index <= 0;
-    end
-    else if (ifu_axi_wready & axi_wvalid && (write_index != BURST_LEN-1)) begin
-        write_index <= write_index + 1;
-    end
-    else begin
-        write_index <= write_index;
-    end
-end
-
-
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_wdata <= 'b0;
-    end
-    else if (ifu_axi_wready & axi_wvalid) begin
-        axi_wdata <= axi_wdata + 1;
-    end
-    else begin
-        axi_wdata <= axi_wdata;
-    end
-end
-
-
-//----------------------------
-//Write Response (B) Channel
-//----------------------------
-
-always @(posedge clk) begin
-    if (rst_n == 0) begin
-        axi_bready <= 1'b0;
-    end
-    // accept/acknowledge bresp with axi_bready by the master
-    else if (ifu_axi_bvalid && ~axi_bready) begin
-        axi_bready <= 1'b1;
-    end
-    else if (axi_bready) begin
-        axi_bready <= 1'b0;
-    end
-    else begin
-        axi_bready <= axi_bready;
-    end
-end
-
-
-//Flag any write response errors
-assign write_resp_error = axi_bready & ifu_axi_bvalid & ifu_axi_bresp[1];
-
-
-//----------------------------
-//Read Address Channel
-//----------------------------
-
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_arvalid <= 1'b0;
-    end
-    // If previously not valid , start next transaction
-    else if (~axi_arvalid && start_single_burst_read) begin
-        axi_arvalid <= 1'b1;
-    end
-    else if (ifu_axi_arready && axi_arvalid) begin
-        axi_arvalid <= 1'b0;
-    end
-    else begin
-        axi_arvalid <= axi_arvalid;
-    end
-end
-
-
-// generate next address 
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        axi_araddr <= 'b0;
-    end
-    else if (~axi_arvalid && pc_update) begin
-        axi_araddr <= curr_pc;
-    end
-    else begin
-        axi_araddr <= axi_araddr;
-    end
-end
-
-
-//--------------------------------
-//Read Data (and Response) Channel
-//--------------------------------
-
-always @(posedge clk) begin
-    if (rst_n == 0 || start_single_burst_read) begin
-        read_index <= 0;
-    end
-    else if ( ifu_axi_rvalid && axi_rready && (read_index != BURST_LEN-1)) begin
-        read_index <= read_index + 1;
-    end
-    else begin
-        read_index <= read_index;
-    end
-end
-
-
-always @(posedge clk) begin
-    if (rst_n == 0  ) begin
-        axi_rready <= 1'b0;
-    end
-    else if (ifu_axi_rlast && ifu_axi_rvalid && axi_rready) begin
-        axi_rready <= 1'b0;
-    end
-    else begin
-        axi_rready <= 1'b1; //TODO
-    end
-end
-
-//Flag any read response errors
-assign read_resp_error = axi_rready & ifu_axi_rvalid & ifu_axi_rresp[1];
-
-
-//--------------------------------
-// write/ read transaction state 
-//--------------------------------
-
-always @ ( posedge clk) begin
-    if (rst_n == 1'b0 ) begin
-        mst_exestate             <= IDLE;
-        start_single_burst_write <= 1'b0;
-        start_single_burst_read  <= 1'b0;
-    end
-    else begin
-        // state transition
-        case (mst_exestate)
-            IDLE:
-                if (pc_update == 1'b1) begin
-                    mst_exestate  <= READ;
-                end
-                else begin
-                    mst_exestate  <= IDLE;
-                end
-
-            WRITE:
-                if (writes_done) begin
-                    mst_exestate <= IDLE;
-                end
-                else begin
-                    mst_exestate  <= WRITE;
-                    if ( ~burst_write_active) begin
-                        start_single_burst_write <= 1'b1;
-                    end
-                    else begin
-                        start_single_burst_write <= 1'b0; 
-                    end
-                end
-
-            READ:
-                if (reads_done) begin
-                    mst_exestate <= IDLE;
-                end
-                else begin
-                    mst_exestate  <= READ;
-                    if (~burst_read_active) begin
-                        start_single_burst_read <= 1'b1;
-                    end
-                    else begin
-                        start_single_burst_read <= 1'b0; 
-                    end
-                end
-            default:
-                begin
-                    mst_exestate  <= IDLE;
-                end
-        endcase
+    else if (enable) begin
+        if (exu2ifu_branch_en) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
+            curr_pc <= #DLY exu2ifu_branch_pc;
+        end
+        else if (exu2ifu_jump_en) begin           // jal 
+            curr_pc <= #DLY exu2ifu_jump_pc;
+        end
+        else if (ifu2idu_en) begin
+            curr_pc <= #DLY curr_pc + `CPU_WIDTH'h4;      // pc + 4  
+        end
     end
 end 
+// INST FETCH PC REGISTER 
+always @ (posedge clk or negedge rst_n) begin
+    if(~rst_n) begin
+        if_pc <= #DLY `CPU_WIDTH'b0;
+    end
+    else if (enable) begin
+        if (exu2ifu_branch_en) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
+            if_pc <= #DLY exu2ifu_branch_pc;
+        end
+        else if (exu2ifu_jump_en) begin           // jal 
+            if_pc <= #DLY exu2ifu_jump_pc;
+        end
+        else if (rd_req_en) begin
+            if_pc <= #DLY if_pc + `CPU_WIDTH'h4;      // pc + 4  
+        end
+    end
+end 
+// AXI_MST_RD_CTRL INST
+assign rd_req_en = enable & ~rd_block_en & ~pc_full;
+AXI_MST_RD_CTRL #(
+    .AXI_RD_OST_NUM     (8                  )
+)U_AXI_MST_RD_CTRL(
+    .clk                (clk                ),
+    .rst_n              (rst_n              ), 
+                        
+    .rd_block_en        (rd_block_en        ), 
+    .rd_req_en          (rd_req_en          ), 
+    .rd_base_addr       (rd_base_addr       ),
+    .rd_len             (rd_len             ),
+    .rd_size            (rd_size            ),
+    .rd_burst           (rd_burst           ),
+    .rd_lock            (rd_lock            ),
+    .rd_cache           (rd_cache           ),
+    .rd_prot            (rd_prot            ),
+    .rd_qos             (rd_qos             ),
+    .rd_region          (rd_region          ),
 
+    .rd_result_en       (rd_result_en       ), 
+    .rd_result_data     (rd_result_data     ),
+                        
+    .axi_mst_arvalid    (ifu_arvalid        ),
+    .axi_mst_arready    (ifu_arready        ),
+    .axi_mst_arid       (ifu_arid           ),
+    .axi_mst_araddr     (ifu_araddr         ),
+    .axi_mst_arlen      (ifu_arlen          ),
+    .axi_mst_arsize     (ifu_arsize         ),
+    .axi_mst_arburst    (ifu_arburst        ),
+    .axi_mst_arlock     (ifu_arlock         ),
+    .axi_mst_arcache    (ifu_arcache        ),
+    .axi_mst_arprot     (ifu_arprot         ),
+    .axi_mst_arqos      (ifu_arqos          ),
+    .axi_mst_arregion   (ifu_arregion       ),
+                        
+    .axi_mst_rvalid     (ifu_rvalid         ),
+    .axi_mst_rready     (ifu_rready         ),
+    .axi_mst_rid        (ifu_rid            ),
+    .axi_mst_rdata      (ifu_rdata          ),     
+    .axi_mst_rresp      (ifu_rresp          ),
+    .axi_mst_rlast      (ifu_rlast          )
+);
+SYNC_FIFO #(
+    .FIFO_DEEP   (`PC_FIFO_DEEP   ),
+    .FIFO_DEEP_W (`PC_FIFO_DEEP_W ),
+    .FIFO_DATA_W (`PC_FIFO_DATA_W )
+) U_PC_FIFO 
+(
+    .clk                (clk                ),
+    .rst_n              (rst_n              ),
 
-// burst_write_active signal is asserted when there is a burst write transaction
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        burst_write_active <= 1'b0;
-    end
-    else if (start_single_burst_write) begin
-        burst_write_active <= 1'b1;
-    end
-    else if (ifu_axi_bvalid && axi_bready) begin
-        burst_write_active <= 0;
-    end
-end
+    .push               (rd_req_en          ),
+    .push_dat           (if_pc              ),
 
-// Check for last write completion.
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        writes_done <= 1'b0;
-    end
-    else if (ifu_axi_bvalid && axi_bready) begin // only write transaction once
-        writes_done <= 1'b1;
-    end
-    else begin
-        writes_done <= 1'b0;
-    end
-end
+    .pop                (enable & ~inst_empty),
+    .pop_dat            (pc_pop_dat         ),
+    .pop_dat_vld        (pc_pop_dat_vld     ),
 
-// burst_read_active signal is asserted when there is a burst write transaction
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        burst_read_active <= 1'b0;
-    end
-    else if (start_single_burst_read) begin
-        burst_read_active <= 1'b1;
-    end
-    else if (ifu_axi_rvalid && axi_rready && ifu_axi_rlast) begin
-        burst_read_active <= 0;
-    end
-end
+    .full               (pc_full            ),
+    .empty              (pc_empty           ),
+    .fifo_num           (pc_fifo_num        )
+);
+SYNC_FIFO #(
+    .FIFO_DEEP   (`INST_FIFO_DEEP   ),
+    .FIFO_DEEP_W (`INST_FIFO_DEEP_W ),
+    .FIFO_DATA_W (`INST_FIFO_DATA_W )
+) U_INST_FIFO 
+(
+    .clk                (clk                ),
+    .rst_n              (rst_n              ),
 
+    .push               (rd_result_en       ),
+    .push_dat           (rd_result_data     ),
 
-// Check for last read completion.
-always @(posedge clk) begin
-    if (rst_n == 0 ) begin
-        reads_done <= 1'b0;
-    end
-    else if (ifu_axi_rvalid && axi_rready && ifu_axi_rlast) begin
-        reads_done <= 1'b1;
-    end
-    else begin
-        reads_done <= 1'b0;
-    end
-end
+    .pop                (enable & ~inst_empty),
+    .pop_dat            (inst_pop_dat       ),
+    .pop_dat_vld        (inst_pop_dat_vld   ),
 
-
+    .full               (inst_full          ),
+    .empty              (inst_empty         ),
+    .fifo_num           (inst_fifo_num      )
+);
+// ---------------------------------------------------------------------------------
+// IFU CTRL
+// ---------------------------------------------------------------------------------
+assign ifu2idu_en   = (pc_pop_dat_vld & (curr_pc == pc_pop_dat)) & ~exu2ifu_branch_en & ~exu2ifu_jump_en;
+assign ifu2idu_pc   = pc_pop_dat;
+assign ifu2idu_inst = {`INST_FIFO_DATA_W{inst_pop_dat_vld}} & inst_pop_dat;
 
 endmodule
 

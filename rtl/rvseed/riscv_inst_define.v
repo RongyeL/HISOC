@@ -5,31 +5,12 @@
 // Filename      : rvseed_defines.v
 // Author        : Rongye
 // Created On    : 2022-03-21 20:17
-// Last Modified : 2024-07-23 07:33
+// Last Modified : 2024-08-11 07:57
 // -----------------------------------------------------------------------
 // Description   : 
 //
 //
 // -FHDR------------------------------------------------------------------
-
-// simulation clock period
-`define SIM_PERIOD 20 // 20ns -> 50MHz 
-
-// processor numbers
-`define CPU_WIDTH 32 // rv32
-
-// instruction memory
-`define INST_MEM_ADDR_DEPTH 1024
-`define INST_MEM_ADDR_WIDTH 10 // 2^10 = 1024
-
-// register 
-`define REG_DATA_DEPTH 32
-`define REG_ADDR_WIDTH 5 // 2^5 = 32
-
-// data memory 
-`define DATA_MEM_ADDR_DEPTH 1024
-`define DATA_MEM_ADDR_WIDTH 10 // 2^10 = 1024
-
 // immediate generate
 `define INST_I_IMM_WIDTH 12
 `define INST_S_IMM_WIDTH 12
@@ -133,8 +114,7 @@
 `define ALU_SLTU `ALU_OP_WIDTH'b1001 // set less than (unsigned) 
 `define ALU_BLT  `ALU_OP_WIDTH'b1010 // branch less than
 `define ALU_BLTU `ALU_OP_WIDTH'b1011 // branch less than (unsigned)
-`define ALU_JAL  `ALU_OP_WIDTH'b1100  
-`define ALU_JALR `ALU_OP_WIDTH'b1101  
+`define ALU_EQU  `ALU_OP_WIDTH'b1100 // equal
 
 // ALU select soure
 `define ALU_SRC_WIDTH 2
@@ -142,7 +122,10 @@
 `define ALU_SRC_IMM     `ALU_SRC_WIDTH'b01 // src1 = reg1, src2 = imm
 `define ALU_SRC_FOUR_PC `ALU_SRC_WIDTH'b10 // src1 = 4,    src2 = pc
 `define ALU_SRC_IMM_PC  `ALU_SRC_WIDTH'b11 // src1 = imm,  src2 = pc
-// MEM opcode `define MEM_OP_WIDTH 3 `define MEM_LB  `MEM_OP_WIDTH'b000 // load byte
+
+// MEM opcode 
+`define MEM_OP_WIDTH 3 
+`define MEM_LB  `MEM_OP_WIDTH'b000 // load byte
 `define MEM_LH  `MEM_OP_WIDTH'b001 // load half word
 `define MEM_LW  `MEM_OP_WIDTH'b010 // load word
 `define MEM_LBU `MEM_OP_WIDTH'b011 // load byte (unsigned)
@@ -158,8 +141,3 @@
 `define IMM_GEN_B `IMM_GEN_OP_WIDTH'b010
 `define IMM_GEN_J `IMM_GEN_OP_WIDTH'b011
 `define IMM_GEN_U `IMM_GEN_OP_WIDTH'b100
-
-// IFU define
-`define IFU_AXI_ID_WIDTH   4
-`define IFU_AXI_ADDR_WIDTH 32
-`define IFU_AXI_DATA_WIDTH 32

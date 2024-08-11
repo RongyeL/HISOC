@@ -5,17 +5,19 @@
 // Filename      : axi_mem.v
 // Author        : Rongye
 // Created On    : 2024-07-23 05:57
-// Last Modified : 2024-07-25 08:40
+// Last Modified : 2024-08-01 07:46
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
 //
 // -FHDR----------------------------------------------------------------------------
-module AXI_MEM(
+module AXI_ROM(
 // Global 
     input wire                                 clk,
     input wire                                 rst_n,
 // AR channel
+    input  wire                                axi_slv_arvalid,
+    output wire                                axi_slv_arready,
     input  wire [`AXI_ID_WIDTH     -1:0]       axi_slv_arid,
     input  wire [`AXI_ADDR_WIDTH   -1:0]       axi_slv_araddr,
     input  wire [`AXI_LEN_WIDTH    -1:0]       axi_slv_arlen,
@@ -26,15 +28,13 @@ module AXI_MEM(
     input  wire [`AXI_PROT_WIDTH   -1:0]       axi_slv_arprot,
     input  wire [`AXI_QOS_WIDTH    -1:0]       axi_slv_arqos,
     input  wire [`AXI_REGION_WIDTH -1:0]       axi_slv_arregion,
-    input  wire                                axi_slv_arvalid,
-    output wire                                axi_slv_arready,
 // R channel
+    output wire                                axi_slv_rvalid,
+    input  wire                                axi_slv_rready,
     output wire [`AXI_ID_WIDTH     -1:0]       axi_slv_rid,
     output wire [`AXI_DATA_WIDTH   -1:0]       axi_slv_rdata,
     output wire [`AXI_RESP_WIDTH   -1:0]       axi_slv_rresp,
-    output wire                                axi_slv_rlast,
-    output wire                                axi_slv_rvalid,
-    input  wire                                axi_slv_rready
+    output wire                                axi_slv_rlast
 );
 
 localparam integer MEM_ADDR_DEEP  = 2048;
@@ -49,7 +49,9 @@ wire [`AXI_ADDR_WIDTH -1:0] rd_base_addr;
 wire [`AXI_DATA_WIDTH -1:0] rd_result_data;
 
 
-AXI_SLV_CTRL_RD U_AXI_SLV_CTRL_RD(
+AXI_SLV_RD_CTRL #(
+    .AXI_RD_OST_NUM     (8                  )
+)U_AXI_SLV_RD_CTRL(
     .clk                (clk                ),
     .rst_n              (rst_n              ), 
                         
@@ -81,29 +83,18 @@ AXI_SLV_CTRL_RD U_AXI_SLV_CTRL_RD(
 
 
 
-// implement Block RAM(s)
+// implement Block ROM(s) read only
 reg [`AXI_DATA_WIDTH-1:0] mem_data [0:MEM_ADDR_DEEP-1];
-reg [`AXI_DATA_WIDTH-1:0] mem_data_out;
+wire [`AXI_DATA_WIDTH-1:0] mem_data_out;
 reg mem_data_out_en;
 
 wire mem_rden = rd_req_en;
-wire [MEM_ADDR_WIDTH-1:0] mem_address = (mem_rden ? rd_base_addr[ADDR_LSB+:MEM_ADDR_WIDTH]
-                                                  : {MEM_ADDR_WIDTH{1'b0}});
-always @(posedge clk or negedge rst_n) begin
-    if (~rst_n) begin
-        mem_data_out    <= {`AXI_DATA_WIDTH{1'b0}};
-        mem_data_out_en <= 1'b0;
-    end
-    else if (mem_rden) begin
-        mem_data_out    <= mem_data[mem_address];
-        mem_data_out_en <= 1'b1;
-    end
-    else begin
-        mem_data_out    <= {`AXI_DATA_WIDTH{1'b0}};
-        mem_data_out_en <= 1'b0;
-    end
-end
+wire [MEM_ADDR_WIDTH-1:0] mem_address = mem_rden ? rd_base_addr[ADDR_LSB+:MEM_ADDR_WIDTH]
+                                                 : {MEM_ADDR_WIDTH{1'b0}};
+
+assign mem_data_out = mem_rden ? mem_data[mem_address] : {`AXI_DATA_WIDTH{1'b0}};
+
 assign rd_result_data = mem_data_out;
-assign rd_result_en   = mem_data_out_en;
+assign rd_result_en   = mem_rden;
 
 endmodule

@@ -4,7 +4,7 @@ Warning-[LINX_KRNL] Unsupported Linux kernel
   Supported versions are 2.4* or 2.6*.
 
                          Chronologic VCS (TM)
-       Version O-2018.09-SP2_Full64 -- Tue Jul 23 07:39:45 2024
+       Version O-2018.09-SP2_Full64 -- Mon Jul 29 06:48:05 2024
                Copyright (c) 1991-2018 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
@@ -13,123 +13,13 @@ and may be used and disclosed only as authorized in a license agreement
 controlling such use and disclosure.
 
 Parsing design file '/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v'
-Parsing included file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'.
-Back to file '/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v'.
-Parsing design file '/home/myeda/project/hisoc/rtl/macro/axi_define.v'
-Parsing design file '/home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v'
-Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/ifu.v'
-Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/rvseed.v'
-Parsing design file '/home/myeda/project/hisoc/rtl/rvseed/rvseed_defines.v'
-Top Level Modules:
-       TB_RVSEED
-       AXI_MEM
-TimeScale is 1 ns / 1 ps
 
-Warning-[TFIPC] Too few instance port connections
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 137
-TB_RVSEED, "RVSEED U_RVSEED_0( .clk (clk),  .rst_n (rst_n));"
-  The above instance has fewer port connections than the module definition.
-  Please use '+lint=TFIPC-L' to print out detailed information of unconnected 
-  ports.
+Error-[SFCOR] Source file cannot be opened
+  Source file "rvseed_defines.v" cannot be opened for reading due to 'No such 
+  file or directory'.
+  Please fix above issue and compile again.
+  "/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v", 15
+  Source info: `include "rvseed_defines.v"
 
-
-Warning-[UNGB] Unnamed generate block
-  Unnamed generate block at:
-  "/home/myeda/project/hisoc/rtl/cbb/axi/axi_mem.v", 318
-  VCS has encountered unnamed generate blocks. Accessing declarations in 
-  unnamed generate blocks will result in cross module reference resolution 
-  errors (XMRE).
-  Next steps:
-     1. Label all the unnamed generate blocks (preferred).
-     2. Or, use -v2k_generate compile switch to enable cross module reference 
-  for unnamed generate blocks. This switch will be obsolete in future VCS 
-  versions.
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 23
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign zero_x0 = U_RVSEED_0.U_REG_FILE_0.reg_f[0];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 24
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign ra_x1 = U_RVSEED_0.U_REG_FILE_0.reg_f[1];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 25
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign sp_x2 = U_RVSEED_0.U_REG_FILE_0.reg_f[2];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 26
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign gp_x3 = U_RVSEED_0.U_REG_FILE_0.reg_f[3];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 27
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign tp_x4 = U_RVSEED_0.U_REG_FILE_0.reg_f[4];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 28
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign t0_x5 = U_RVSEED_0.U_REG_FILE_0.reg_f[5];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 29
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign t1_x6 = U_RVSEED_0.U_REG_FILE_0.reg_f[6];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 30
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign t2_x7 = U_RVSEED_0.U_REG_FILE_0.reg_f[7];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 31
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign s0_fp_x8 = U_RVSEED_0.U_REG_FILE_0.reg_f[8];
-  
-
-
-Error-[XMRE] Cross-module reference resolution error
-/home/myeda/project/hisoc/verification/tb_rvseed/tc/tb_rvseed.v, 32
-  Error found while trying to resolve cross-module reference.
-  token 'U_REG_FILE_0'.  Originating module 'TB_RVSEED'.
-  Source info: assign s1_x9 = U_RVSEED_0.U_REG_FILE_0.reg_f[9];
-  
-
-
-Note-[MAX_ERROR_COUNT] Maximum error count reached
-  Current number of errors has reached the default maximum error count (10).
-  Please use +error+<count> to increase the limit.
-
-2 warnings
-10 errors
-CPU time: .100 seconds to compile
+1 error
+CPU time: .072 seconds to compile

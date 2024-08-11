@@ -1,1 +1,12 @@
 *.swp
+verification/tb_hisoc/sim/csrc/
+verification/tb_hisoc/sim/novas.conf
+verification/tb_hisoc/sim/novas.rc
+verification/tb_hisoc/sim/novas_dump.log
+verification/tb_hisoc/sim/signal.rc
+verification/tb_hisoc/sim/sim_out.fsdb
+verification/tb_hisoc/sim/simv
+verification/tb_hisoc/sim/simv.daidir/
+verification/tb_hisoc/sim/ucli.key
+verification/tb_hisoc/sim/vcs.log
+verification/tb_hisoc/sim/verdiLog/

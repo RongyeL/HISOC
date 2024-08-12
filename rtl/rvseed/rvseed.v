@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-08-11 08:41
+// Last Modified : 2024-08-12 05:13
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -131,11 +131,6 @@ wire                                idu2exu_mem_wen;    // memory write enable
 wire                                idu2exu_mem_ren;    // memory read enable
 wire                                idu2exu_mem2reg;    // memory to register flag
 wire [`MEM_OP_WIDTH         -1:0]   idu2exu_mem_op;     // memory opcode
-
-wire [`CPU_WIDTH            -1:0]   mem_addr;       // idu_jump flag
-wire [`CPU_WIDTH            -1:0]   mem_rdata;       // idu_jump flag
-wire [`CPU_WIDTH            -1:0]   mem_wdata;       // idu_jump flag
-
 wire [`CPU_WIDTH            -1:0]   idu2exu_imm;        // immediate value
 
 wire [`ALU_OP_WIDTH         -1:0]   idu2exu_alu_op;     // alu opcode
@@ -288,15 +283,35 @@ assign exu2idu_branch_en = exu2ifu_branch_en;
 assign exu2idu_branch_pc = exu2ifu_branch_pc;
 assign exu2idu_jump_en   = exu2ifu_jump_en;
 assign exu2idu_jump_pc   = exu2ifu_jump_pc;
-                           
-assign mem_addr = alu_res; 
-MUX_MEM U_MUX_MEM(
-    .mem_op                         ( idu2exu_mem_op_r              ),
-    .mem_addr                       ( mem_addr                      ),
-    .reg2_rdata                     ( reg2exu_reg2_rdata            ),
-    .mem_rdata                      ( mem_rdata                     ),
-    .mem_wdata                      ( mem_wdata                     )
-);
+    
+wire [`CPU_WIDTH            -1:0]   mem_addr;       // idu_jump flag
+wire [`CPU_WIDTH            -1:0]   mem_rdata;       // idu_jump flag
+wire [`CPU_WIDTH            -1:0]   mem_wdata;       // idu_jump flag
+
+assign mem_addr   = alu_res;
+
+wire [`MEM_OP_WIDTH-1:0] mem_op     = idu2exu_mem_op_r;
+wire [`CPU_WIDTH   -1:0] reg2_rdata = reg2exu_reg2_rdata;
+
+always @(*) begin
+    case (idu2exu_mem_op_r)
+        `MEM_SB:
+            case (mem_addr[1:0])
+                2'h0: mem_wdata = {mem_rdata[31:8],  reg2_rdata[7:0]};
+                2'h1: mem_wdata = {mem_rdata[31:16], reg2_rdata[7:0], mem_rdata[7:0]};
+                2'h2: mem_wdata = {mem_rdata[31:24], reg2_rdata[7:0], mem_rdata[15:0]};
+                2'h3: mem_wdata = {reg2_rdata[7:0],  mem_rdata[23:0]};
+            endcase
+        `MEM_SH:
+            case (mem_addr[1])
+                1'h0: mem_wdata = {mem_rdata[31:16], reg2_rdata[15:0]};
+                1'h1: mem_wdata = {reg2_rdata[15:0], mem_rdata[15:0]};
+            endcase
+        `MEM_SW:
+                mem_wdata = reg2_rdata;
+        default:; // ? 
+    endcase
+end
 
 DATA_MEM U_DATA_MEM(
     .clk                            ( clk                           ),

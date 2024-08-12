@@ -1,3 +1,0 @@
--f $HISOC_PATH/rtl/macro/macro.f
--f $HISOC_PATH/rtl/cbb/cbb.f
--f $HISOC_PATH/rtl/rvseed/rvseed.f

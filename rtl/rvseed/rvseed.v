@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-08-12 05:13
+// Last Modified : 2024-08-12 05:20
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -286,7 +286,7 @@ assign exu2idu_jump_pc   = exu2ifu_jump_pc;
     
 wire [`CPU_WIDTH            -1:0]   mem_addr;       // idu_jump flag
 wire [`CPU_WIDTH            -1:0]   mem_rdata;       // idu_jump flag
-wire [`CPU_WIDTH            -1:0]   mem_wdata;       // idu_jump flag
+reg [`CPU_WIDTH            -1:0]   mem_wdata;       // idu_jump flag
 
 assign mem_addr   = alu_res;
 

@@ -5,7 +5,7 @@
 // Filename      : m_axi.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-08-11 02:19
+// Last Modified : 2024-08-12 08:08
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -17,10 +17,12 @@ module IFU(
     input  wire                              rst_n,          
     input  wire                              enable,          
 
-    input  wire                              exu2ifu_branch_en,       
-    input  wire [`CPU_WIDTH            -1:0] exu2ifu_branch_pc,       
-    input  wire                              exu2ifu_jump_en,       
-    input  wire [`CPU_WIDTH            -1:0] exu2ifu_jump_pc,       
+    input  wire [`CPU_WIDTH            -1:0] curr_pc,    
+
+    input  wire                              branch_en,       
+    input  wire [`CPU_WIDTH            -1:0] branch_pc,       
+    input  wire                              jump_en,       
+    input  wire [`CPU_WIDTH            -1:0] jump_pc,       
 // AR channel
     output wire                              ifu_arvalid,
     input  wire                              ifu_arready,
@@ -50,8 +52,6 @@ module IFU(
 
 localparam DLY = 0.1;
 
-reg  [`CPU_WIDTH        -1:0] curr_pc;    
-reg  [`CPU_WIDTH        -1:0] next_pc;    
 reg  [`CPU_WIDTH        -1:0] if_pc;    
 
 wire                          rd_req_en;
@@ -83,34 +83,18 @@ wire                          inst_empty;
 wire [`INST_FIFO_DATA_W -1:0] inst_pop_dat;
 wire                          inst_pop_dat_vld; 
 wire [`INST_FIFO_DEEP_W   :0] inst_fifo_num;
-// PC REGISTER 
-always @ (posedge clk or negedge rst_n) begin
-    if(~rst_n) begin
-        curr_pc <= #DLY `CPU_WIDTH'b0;
-    end
-    else if (enable) begin
-        if (exu2ifu_branch_en) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
-            curr_pc <= #DLY exu2ifu_branch_pc;
-        end
-        else if (exu2ifu_jump_en) begin           // jal 
-            curr_pc <= #DLY exu2ifu_jump_pc;
-        end
-        else if (ifu2idu_en) begin
-            curr_pc <= #DLY curr_pc + `CPU_WIDTH'h4;      // pc + 4  
-        end
-    end
-end 
+
 // INST FETCH PC REGISTER 
 always @ (posedge clk or negedge rst_n) begin
     if(~rst_n) begin
         if_pc <= #DLY `CPU_WIDTH'b0;
     end
     else if (enable) begin
-        if (exu2ifu_branch_en) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
-            if_pc <= #DLY exu2ifu_branch_pc;
+        if (branch_en) begin // beq/bge/bgeu : idu_branch if the exu_zero flag is high.// bne/blt/bltu : idu_branch if the exu_zero flag is low.
+            if_pc <= #DLY branch_pc;
         end
-        else if (exu2ifu_jump_en) begin           // jal 
-            if_pc <= #DLY exu2ifu_jump_pc;
+        else if (jump_en) begin           // jal 
+            if_pc <= #DLY jump_pc;
         end
         else if (rd_req_en) begin
             if_pc <= #DLY if_pc + `CPU_WIDTH'h4;      // pc + 4  
@@ -203,7 +187,7 @@ SYNC_FIFO #(
 // ---------------------------------------------------------------------------------
 // IFU CTRL
 // ---------------------------------------------------------------------------------
-assign ifu2idu_en   = (pc_pop_dat_vld & (curr_pc == pc_pop_dat)) & ~exu2ifu_branch_en & ~exu2ifu_jump_en;
+assign ifu2idu_en   = (pc_pop_dat_vld & (curr_pc == pc_pop_dat)) & ~branch_en & ~jump_en;
 assign ifu2idu_pc   = pc_pop_dat;
 assign ifu2idu_inst = {`INST_FIFO_DATA_W{inst_pop_dat_vld}} & inst_pop_dat;
 

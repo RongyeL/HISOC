@@ -5,7 +5,7 @@
 // Filename      : inst_decoder.v
 // Author        : Rongye
 // Created On    : 2022-03-22 19:10
-// Last Modified : 2024-08-11 08:02
+// Last Modified : 2024-08-12 05:50
 // ---------------------------------------------------------------------------------
 // Description   : The main control module decodes the read instructions 
 //                 to obtain the control signals, corresponding addresses 

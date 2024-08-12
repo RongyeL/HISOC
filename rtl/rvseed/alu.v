@@ -5,7 +5,7 @@
 // Filename      : alu.v
 // Author        : Rongye
 // Created On    : 2022-03-24 23:36
-// Last Modified : 2024-08-11 08:39
+// Last Modified : 2024-08-12 05:22
 // ---------------------------------------------------------------------------------
 // Description   : Only simple operations:
 //                 Integer Arithmetic Operations 
@@ -21,31 +21,4 @@ module ALU(
 );
 
 
-always @(*) begin
-    alu_res = `CPU_WIDTH'b0;
-    case (alu_op)
-        `ALU_AND: 
-            alu_res = alu_src1 & alu_src2;
-        `ALU_OR: 
-            alu_res = alu_src1 | alu_src2;
-        `ALU_XOR: 
-            alu_res = alu_src1 ^ alu_src2;
-        `ALU_ADD: 
-            alu_res = alu_src1 + alu_src2;
-        `ALU_SUB: 
-            alu_res = alu_src1 - alu_src2;
-        `ALU_SLL: 
-            alu_res = alu_src1 << alu_src2[4:0];
-        `ALU_SRL: 
-            alu_res = alu_src1 >> alu_src2[4:0];
-        `ALU_SRA: 
-            alu_res = $signed(alu_src1) >>> alu_src2[4:0];
-        `ALU_SLT:
-            alu_res = {{(`CPU_WIDTH-1){1'b0}},($signed(alu_src1) < $signed(alu_src2))};
-        `ALU_SLTU:
-            alu_res = {{(`CPU_WIDTH-1){1'b0}},($unsigned(alu_src1) < $unsigned(alu_src2))};
-        `ALU_EQU: 
-            alu_res = {{(`CPU_WIDTH-1){1'b0}},(alu_src1 == alu_src2)};
-    endcase
-end
 endmodule

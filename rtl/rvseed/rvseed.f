@@ -9,7 +9,7 @@ $HISOC_PATH/rtl/rvseed/regs_rvseed.v
 $HISOC_PATH/rtl/rvseed/pc_reg.v
 $HISOC_PATH/rtl/rvseed/ifu.v
 $HISOC_PATH/rtl/rvseed/idu.v
+$HISOC_PATH/rtl/rvseed/exu.v
 $HISOC_PATH/rtl/rvseed/ifu2idu.v
 $HISOC_PATH/rtl/rvseed/idu2exu.v
-// $HISOC_PATH/rtl/rvseed/exu.v
 $HISOC_PATH/rtl/rvseed/rvseed.v

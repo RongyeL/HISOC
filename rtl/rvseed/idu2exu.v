@@ -5,7 +5,7 @@
 // Filename      : idu2exu.v
 // Author        : Rongye
 // Created On    : 2024-08-05 06:09
-// Last Modified : 2024-08-12 08:20
+// Last Modified : 2024-08-18 07:13
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -24,6 +24,9 @@ module IDU2EXU (
 
     input  wire                             idu2exu_reg_wen,    
     input  wire [`REG_ADDR_WIDTH    -1:0]   idu2exu_reg_waddr,  
+    input  wire [`REG_DATA_WIDTH    -1:0]   idu2exu_reg1_rdata,  
+    input  wire [`REG_DATA_WIDTH    -1:0]   idu2exu_reg2_rdata,  
+    input  wire [`CPU_WIDTH         -1:0]   idu2exu_imm,  
 
     input  wire                             idu2exu_mem_wen,    
     input  wire [`DATA_MEM_ADDR_WIDTH-1:0]  idu2exu_mem_waddr,     
@@ -46,6 +49,9 @@ module IDU2EXU (
 
     output reg                              idu2exu_reg_wen_r,    
     output reg  [`REG_ADDR_WIDTH    -1:0]   idu2exu_reg_waddr_r,  
+    output reg  [`REG_DATA_WIDTH    -1:0]   idu2exu_reg1_rdata_r,  
+    output reg  [`REG_DATA_WIDTH    -1:0]   idu2exu_reg2_rdata_r,  
+    output reg  [`CPU_WIDTH         -1:0]   idu2exu_imm_r,  
 
     output reg                              idu2exu_mem_wen_r,    
     output reg  [`DATA_MEM_ADDR_WIDTH-1:0]  idu2exu_mem_waddr_r,     
@@ -98,6 +104,9 @@ always @ (posedge clk or negedge rst_n) begin
 
         idu2exu_reg_wen_r       <= #DLY 1'b0;
         idu2exu_reg_waddr_r     <= #DLY {`REG_ADDR_WIDTH{1'b0}};
+        idu2exu_reg1_rdata_r    <= #DLY {`REG_DATA_WIDTH{1'b0}};
+        idu2exu_reg2_rdata_r    <= #DLY {`REG_DATA_WIDTH{1'b0}};
+        idu2exu_imm_r           <= #DLY {`CPU_WIDTH{1'b0}};
 
         idu2exu_mem_wen_r       <= #DLY 1'b0;
         idu2exu_mem_waddr_r     <= #DLY {`DATA_MEM_ADDR_WIDTH{1'b0}};
@@ -117,6 +126,9 @@ always @ (posedge clk or negedge rst_n) begin
 
         idu2exu_reg_wen_r       <= #DLY 1'b0;
         idu2exu_reg_waddr_r     <= #DLY {`REG_ADDR_WIDTH{1'b0}};
+        idu2exu_reg1_rdata_r    <= #DLY {`REG_DATA_WIDTH{1'b0}};
+        idu2exu_reg2_rdata_r    <= #DLY {`REG_DATA_WIDTH{1'b0}};
+        idu2exu_imm_r           <= #DLY {`CPU_WIDTH{1'b0}};
 
         idu2exu_mem_wen_r       <= #DLY 1'b0;
         idu2exu_mem_waddr_r     <= #DLY {`DATA_MEM_ADDR_WIDTH{1'b0}};
@@ -136,6 +148,9 @@ always @ (posedge clk or negedge rst_n) begin
 
         idu2exu_reg_wen_r       <= #DLY idu2exu_reg_wen;     
         idu2exu_reg_waddr_r     <= #DLY idu2exu_reg_waddr;   
+        idu2exu_reg1_rdata_r    <= #DLY idu2exu_reg1_rdata;
+        idu2exu_reg2_rdata_r    <= #DLY idu2exu_reg2_rdata;
+        idu2exu_imm_r           <= #DLY idu2exu_imm;
 
         idu2exu_mem_wen_r       <= #DLY idu2exu_mem_wen;     
         idu2exu_mem_waddr_r     <= #DLY idu2exu_mem_waddr;   

@@ -5,7 +5,7 @@
 // Filename      : idu.v
 // Author        : Rongye
 // Created On    : 2022-12-25 03:08
-// Last Modified : 2024-08-12 07:56
+// Last Modified : 2024-08-18 07:10
 // ---------------------------------------------------------------------------------
 // Description   :
 //
@@ -13,74 +13,77 @@
 // -FHDR----------------------------------------------------------------------------
 module IDU(
 // global 
-    input  wire                            clk,
-    input  wire                            rst_n,          // active low
-    input  wire                            enable,          // rvseed enable ctrl
+    input  wire                             clk,
+    input  wire                             rst_n,          // active low
+    input  wire                             enable,          // rvseed enable ctrl
 
 // IFU2IDU
-    input  wire                            ifu2idu_en,
-    input  wire [`CPU_WIDTH          -1:0] ifu2idu_pc,
-    input  wire [`CPU_WIDTH          -1:0] ifu2idu_inst,
+    input  wire                             ifu2idu_en,
+    input  wire [`CPU_WIDTH           -1:0] ifu2idu_pc,
+    input  wire [`CPU_WIDTH           -1:0] ifu2idu_inst,
 // IDU2EXU
-    output wire                            idu2exu_en,
-    output wire [`CPU_WIDTH          -1:0] idu2exu_pc,
-    output wire [`CPU_WIDTH          -1:0] idu2exu_inst,
+    output wire                             idu2exu_en,
+    output wire [`CPU_WIDTH           -1:0] idu2exu_pc,
+    output wire [`CPU_WIDTH           -1:0] idu2exu_inst,
 
-    output reg [`BRAN_WIDTH          -1:0] idu2exu_branch,     // branch flag
-    output reg [`JUMP_WIDTH          -1:0] idu2exu_jump,       // jump flag
+    output wire [`BRAN_WIDTH          -1:0] idu2exu_branch,
+    output wire [`JUMP_WIDTH          -1:0] idu2exu_jump,
 
-    output reg [`REG_ADDR_WIDTH      -1:0] idu2reg_reg1_raddr, // register 1 read address
-    output reg [`REG_ADDR_WIDTH      -1:0] idu2reg_reg2_raddr, // register 2 read address
-    input  wire [`REG_DATA_WIDTH     -1:0] reg2idu_reg1_rdata, // register 1 read address
-    input  wire [`REG_DATA_WIDTH     -1:0] reg2idu_reg2_rdata, // register 2 read address
+    output wire [`REG_ADDR_WIDTH      -1:0] idu2reg_reg1_raddr,
+    output wire [`REG_ADDR_WIDTH      -1:0] idu2reg_reg2_raddr,
+    input  wire [`REG_DATA_WIDTH      -1:0] reg2idu_reg1_rdata,
+    input  wire [`REG_DATA_WIDTH      -1:0] reg2idu_reg2_rdata,
 
-    output reg                             idu2exu_reg_wen,    // register write enable
-    output reg [`REG_ADDR_WIDTH      -1:0] idu2exu_reg_waddr,  // register write address
+    output wire                             idu2exu_reg_wen,    
+    output wire [`REG_ADDR_WIDTH      -1:0] idu2exu_reg_waddr,
+    output wire [`REG_DATA_WIDTH      -1:0] idu2exu_reg1_rdata,
+    output wire [`REG_DATA_WIDTH      -1:0] idu2exu_reg2_rdata,
+    output wire [`CPU_WIDTH           -1:0] idu2exu_imm,
 
-    output reg                             idu2exu_mem_wen,    // memory write enable
-    output reg [`DATA_MEM_ADDR_WIDTH -1:0] idu2exu_mem_waddr,  // register write address
-    output reg                             idu2exu_mem_ren,    // memory read enable
-    output reg [`DATA_MEM_ADDR_WIDTH -1:0] idu2exu_mem_raddr,  // register write address
+    output wire                             idu2exu_mem_wen,    
+    output wire [`DATA_MEM_ADDR_WIDTH -1:0] idu2exu_mem_waddr,
+    output wire                             idu2exu_mem_ren,    
+    output wire [`DATA_MEM_ADDR_WIDTH -1:0] idu2exu_mem_raddr,
 
-    output reg                             idu2exu_mem2reg,    // memory to register flag
-    output reg [`MEM_OP_WIDTH        -1:0] idu2exu_mem_op,     // memory opcode
+    output wire                             idu2exu_mem2reg,    
+    output wire [`MEM_OP_WIDTH        -1:0] idu2exu_mem_op,
      
-    output reg [`ALU_OP_WIDTH        -1:0] idu2exu_alu_op,     // alu opcode
-    output reg [`CPU_WIDTH           -1:0] idu2exu_alu_src1,// alu source select flag
-    output reg [`CPU_WIDTH           -1:0] idu2exu_alu_src2 // alu source select flag
+    output wire [`ALU_OP_WIDTH        -1:0] idu2exu_alu_op,
+    output wire [`CPU_WIDTH           -1:0] idu2exu_alu_src1,
+    output wire [`CPU_WIDTH           -1:0] idu2exu_alu_src2
 
 );
 
 localparam DLY = 0.1;
 
-wire [`CPU_WIDTH        -1:0]   inst; 
-wire [`CPU_WIDTH        -1:0]   curr_pc; 
+wire [`CPU_WIDTH           -1:0] inst;
+wire [`CPU_WIDTH           -1:0] curr_pc;
 
-reg [`BRAN_WIDTH       -1:0]   branch;     
-reg [`JUMP_WIDTH       -1:0]   jump;       
+reg  [`BRAN_WIDTH          -1:0] branch;
+reg  [`JUMP_WIDTH          -1:0] jump;
  
-reg [`REG_ADDR_WIDTH   -1:0]   reg1_raddr; 
-reg [`REG_ADDR_WIDTH   -1:0]   reg2_raddr; 
+reg  [`REG_ADDR_WIDTH      -1:0] reg1_raddr;
+reg  [`REG_ADDR_WIDTH      -1:0] reg2_raddr;
 
-wire [`REG_DATA_WIDTH   -1:0]   reg1_rdata; 
-wire [`REG_DATA_WIDTH   -1:0]   reg2_rdata; 
+wire [`REG_DATA_WIDTH      -1:0] reg1_rdata;
+wire [`REG_DATA_WIDTH      -1:0] reg2_rdata;
 
-reg                            reg_wen;    
-reg [`REG_ADDR_WIDTH   -1:0]   reg_waddr;  
+reg                              reg_wen;
+reg  [`REG_ADDR_WIDTH      -1:0] reg_waddr;
 
-reg                               mem_wen;    
-reg [`DATA_MEM_ADDR_WIDTH   -1:0] mem_waddr;  
-reg                               mem_ren;    
-reg [`DATA_MEM_ADDR_WIDTH   -1:0] mem_raddr;  
+reg                              mem_wen;
+reg  [`DATA_MEM_ADDR_WIDTH -1:0] mem_waddr;
+reg                              mem_ren;
+reg  [`DATA_MEM_ADDR_WIDTH -1:0] mem_raddr;
 
-reg                            mem2reg;    
-reg [`MEM_OP_WIDTH     -1:0]   mem_op;     
+reg                              mem2reg;
+reg  [`MEM_OP_WIDTH        -1:0] mem_op;
 
-reg [`CPU_WIDTH        -1:0]   imm; 
+reg  [`CPU_WIDTH           -1:0] imm;
 
-reg [`ALU_OP_WIDTH     -1:0]   alu_op;     
-reg [`CPU_WIDTH         -1:0]   alu_src1;
-reg [`CPU_WIDTH         -1:0]   alu_src2;
+reg  [`ALU_OP_WIDTH        -1:0] alu_op;
+reg  [`CPU_WIDTH           -1:0] alu_src1;
+reg  [`CPU_WIDTH           -1:0] alu_src2;
 
 // INST DECODER 
 assign inst       = ifu2idu_inst;
@@ -283,30 +286,27 @@ end
 //--------------------------------------------------------------------------------
 // Output Signal
 //--------------------------------------------------------------------------------
-assign idu2exu_en       = ifu2idu_en;
-assign idu2exu_pc       = ifu2idu_pc;
-assign idu2exu_inst     = ifu2idu_inst;
-always @(*) begin
-    idu2exu_branch      = branch;
-    idu2exu_jump        = jump;
+assign idu2exu_en         = ifu2idu_en;
+assign idu2exu_pc         = ifu2idu_pc;
+assign idu2exu_inst       = ifu2idu_inst;
+assign idu2exu_reg1_rdata = reg2idu_reg1_rdata;
+assign idu2exu_reg2_rdata = reg2idu_reg2_rdata;
+assign idu2exu_imm        = imm;
+assign idu2exu_branch     = branch;
+assign idu2exu_jump       = jump;
+assign idu2reg_reg1_raddr = reg1_raddr;
+assign idu2reg_reg2_raddr = reg2_raddr;
+assign idu2exu_reg_wen    = reg_wen;
+assign idu2exu_reg_waddr  = reg_waddr;
+assign idu2exu_mem_wen    = mem_wen;
+assign idu2exu_mem_waddr  = mem_waddr;
+assign idu2exu_mem_ren    = mem_ren;
+assign idu2exu_mem_raddr  = mem_raddr;
+assign idu2exu_mem2reg    = mem2reg;
+assign idu2exu_mem_op     = mem_op;
+assign idu2exu_alu_op     = alu_op;
+assign idu2exu_alu_src1   = alu_src1;
+assign idu2exu_alu_src2   = alu_src2;
 
-    idu2reg_reg1_raddr  = reg1_raddr;
-    idu2reg_reg2_raddr  = reg2_raddr;
-
-    idu2exu_reg_wen     = reg_wen;
-    idu2exu_reg_waddr   = reg_waddr;
-
-    idu2exu_mem_wen     = mem_wen;
-    idu2exu_mem_waddr   = mem_waddr;
-    idu2exu_mem_ren     = mem_ren;
-    idu2exu_mem_raddr   = mem_raddr;
-
-    idu2exu_mem2reg     = mem2reg;
-    idu2exu_mem_op      = mem_op;
-
-    idu2exu_alu_op      = alu_op;
-    idu2exu_alu_src1    = alu_src1;
-    idu2exu_alu_src2    = alu_src2;
-end
 endmodule
 

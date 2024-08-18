@@ -5,7 +5,7 @@
 // Filename      : rvseed.v
 // Author        : Rongye
 // Created On    : 2022-03-25 03:42
-// Last Modified : 2024-08-12 08:14
+// Last Modified : 2024-08-18 07:28
 // ---------------------------------------------------------------------------------
 // Description   : rvseed cpu top module.
 //                 
@@ -126,29 +126,32 @@ wire                                idu2exu_en;
 wire [`CPU_WIDTH            -1:0]   idu2exu_pc;
 wire [`CPU_WIDTH            -1:0]   idu2exu_inst;
 
-wire [`BRAN_WIDTH           -1:0]   idu2exu_branch;     // idu_branch flag
-wire [`JUMP_WIDTH           -1:0]   idu2exu_jump;       // idu_jump flag
+wire [`BRAN_WIDTH           -1:0]   idu2exu_branch;    
+wire [`JUMP_WIDTH           -1:0]   idu2exu_jump;      
 
-wire [`REG_ADDR_WIDTH       -1:0]   idu2reg_reg1_raddr; // register 1 read address
-wire [`REG_ADDR_WIDTH       -1:0]   idu2reg_reg2_raddr; // register 2 read address
-wire [`REG_DATA_WIDTH       -1:0]   reg2idu_reg1_rdata;       // idu_jump flag
-wire [`REG_DATA_WIDTH       -1:0]   reg2idu_reg2_rdata;       // idu_jump flag
+wire [`REG_ADDR_WIDTH       -1:0]   idu2reg_reg1_raddr;
+wire [`REG_ADDR_WIDTH       -1:0]   idu2reg_reg2_raddr;
+wire [`REG_DATA_WIDTH       -1:0]   reg2idu_reg1_rdata;
+wire [`REG_DATA_WIDTH       -1:0]   reg2idu_reg2_rdata;
 
-wire                                idu2exu_reg_wen;    // register write enable
-wire [`REG_ADDR_WIDTH       -1:0]   idu2exu_reg_waddr;  // register write address
-wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg_wdata;  // register write address
+wire                                idu2exu_reg_wen;   
+wire [`REG_ADDR_WIDTH       -1:0]   idu2exu_reg_waddr; 
+wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg1_rdata;
+wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg2_rdata;
+wire [`CPU_WIDTH            -1:0]   idu2exu_imm;
+wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg_wdata; 
 
-wire                                idu2exu_mem_wen;    // memory write enable
-wire [`DATA_MEM_ADDR_WIDTH  -1:0]   idu2exu_mem_waddr;  // register write address
-wire                                idu2exu_mem_ren;    // memory read enable
-wire [`DATA_MEM_ADDR_WIDTH  -1:0]   idu2exu_mem_raddr;  // register write address
+wire                                idu2exu_mem_wen;   
+wire [`DATA_MEM_ADDR_WIDTH  -1:0]   idu2exu_mem_waddr; 
+wire                                idu2exu_mem_ren;   
+wire [`DATA_MEM_ADDR_WIDTH  -1:0]   idu2exu_mem_raddr; 
 
-wire                                idu2exu_mem2reg;    // memory to register flag
-wire [`MEM_OP_WIDTH         -1:0]   idu2exu_mem_op;     // memory opcode
+wire                                idu2exu_mem2reg;   
+wire [`MEM_OP_WIDTH         -1:0]   idu2exu_mem_op;    
 
-wire [`ALU_OP_WIDTH         -1:0]   idu2exu_alu_op;     // alu opcode
-wire [`CPU_WIDTH            -1:0]   idu2exu_alu_src1;     // alu opcode
-wire [`CPU_WIDTH            -1:0]   idu2exu_alu_src2; // alu source select flag
+wire [`ALU_OP_WIDTH         -1:0]   idu2exu_alu_op;    
+wire [`CPU_WIDTH            -1:0]   idu2exu_alu_src1;  
+wire [`CPU_WIDTH            -1:0]   idu2exu_alu_src2; 
 
 IDU U_IDU (
     .clk                    (clk                    ),
@@ -173,6 +176,9 @@ IDU U_IDU (
 
     .idu2exu_reg_wen        (idu2exu_reg_wen        ),
     .idu2exu_reg_waddr      (idu2exu_reg_waddr      ),
+    .idu2exu_reg1_rdata     (idu2exu_reg1_rdata     ),
+    .idu2exu_reg2_rdata     (idu2exu_reg2_rdata     ),
+    .idu2exu_imm            (idu2exu_imm            ),
 
     .idu2exu_mem_wen        (idu2exu_mem_wen        ),
     .idu2exu_mem_waddr      (idu2exu_mem_waddr      ),
@@ -196,6 +202,10 @@ wire [`JUMP_WIDTH           -1:0]   idu2exu_jump_r;       // idu_jump flag
 
 wire                                idu2exu_reg_wen_r;    // register write enable
 wire [`REG_ADDR_WIDTH       -1:0]   idu2exu_reg_waddr_r;  // register write address
+wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg1_rdata_r; // register write address
+wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg2_rdata_r; // register write address
+wire [`CPU_WIDTH            -1:0]   idu2exu_imm_r;
+
 wire [`REG_DATA_WIDTH       -1:0]   idu2exu_reg_wdata_r;  // register write address
 
 wire                                idu2exu_mem_wen_r;    // memory write enable
@@ -223,6 +233,9 @@ IDU2EXU U_IDU2EXU(
 
     .idu2exu_reg_wen        (idu2exu_reg_wen        ),
     .idu2exu_reg_waddr      (idu2exu_reg_waddr      ),
+    .idu2exu_reg1_rdata     (idu2exu_reg1_rdata     ),
+    .idu2exu_reg2_rdata     (idu2exu_reg2_rdata     ),
+    .idu2exu_imm            (idu2exu_imm            ),
 
     .idu2exu_mem_wen        (idu2exu_mem_wen        ),
     .idu2exu_mem_waddr      (idu2exu_mem_waddr      ),
@@ -245,6 +258,9 @@ IDU2EXU U_IDU2EXU(
 
     .idu2exu_reg_wen_r      (idu2exu_reg_wen_r      ),
     .idu2exu_reg_waddr_r    (idu2exu_reg_waddr_r    ),
+    .idu2exu_reg1_rdata_r   (idu2exu_reg1_rdata_r   ),
+    .idu2exu_reg2_rdata_r   (idu2exu_reg2_rdata_r   ),
+    .idu2exu_imm_r          (idu2exu_imm_r          ),
 
     .idu2exu_mem_wen_r      (idu2exu_mem_wen_r      ),
     .idu2exu_mem_waddr_r    (idu2exu_mem_waddr_r    ),
@@ -262,91 +278,101 @@ IDU2EXU U_IDU2EXU(
     .jump_en                (jump_en                )
 );
 
-assign idu2exu_reg_wdata = {`REG_DATA_WIDTH{1'b0}};
-REGS_RVSEED U_REGS_RVSEED(
-    .clk_reg                (clk                    ),
-    .rst_reg_n              (rst_n                  ),
 
-    .reg1_raddr             (idu2reg_reg1_raddr     ),
-    .reg2_raddr             (idu2reg_reg2_raddr     ),
-    .reg1_rdata             (reg2idu_reg1_rdata     ),
-    .reg2_rdata             (reg2idu_reg2_rdata     ),
+wire                             exu2mem_en;
+wire [`CPU_WIDTH           -1:0] exu2mem_pc;
+wire [`CPU_WIDTH           -1:0] exu2mem_inst;
 
-    .reg_wen                (idu2exu_reg_wen      ),
-    .reg_waddr              (idu2exu_reg_waddr    ),
-    .reg_wdata              (idu2exu_reg_wdata    )
+wire                             exu2mem_mem_wen;    
+wire [`DATA_MEM_ADDR_WIDTH -1:0] exu2mem_mem_waddr;
+wire [`DATA_MEM_DATA_WIDTH -1:0] exu2mem_mem_wdata;
 
+wire                             exu2mem_mem_ren;    
+wire [`DATA_MEM_ADDR_WIDTH -1:0] exu2mem_mem_raddr;
+wire [`DATA_MEM_DATA_WIDTH -1:0] mem2exu_mem_rdata;
+
+wire                             exu2reg_reg_wen;    
+wire [`REG_ADDR_WIDTH      -1:0] exu2reg_reg_waddr;
+wire [`REG_DATA_WIDTH      -1:0] exu2reg_reg_wdata;
+
+
+EXU U_EXU (
+    .clk               ( clk                  ),
+    .rst_n             ( rst_n                ),
+    .enable            ( enable               ),
+
+    .idu2exu_en        ( idu2exu_en_r         ),
+    .idu2exu_pc        ( idu2exu_pc_r         ),
+    .idu2exu_inst      ( idu2exu_inst_r       ),
+
+    .idu2exu_branch    ( idu2exu_branch_r     ),
+    .idu2exu_jump      ( idu2exu_jump_r       ),
+
+    .idu2exu_reg_wen   ( idu2exu_reg_wen_r    ),
+    .idu2exu_reg_waddr ( idu2exu_reg_waddr_r  ),
+    .idu2exu_reg1_rdata( idu2exu_reg1_rdata_r ),
+    .idu2exu_reg2_rdata( idu2exu_reg2_rdata_r ),
+    .idu2exu_imm       ( idu2exu_imm_r        ),
+
+    .idu2exu_mem_wen   ( idu2exu_mem_wen_r    ),
+    .idu2exu_mem_waddr ( idu2exu_mem_waddr_r  ),
+    .idu2exu_mem_ren   ( idu2exu_mem_ren_r    ),
+    .idu2exu_mem_raddr ( idu2exu_mem_raddr_r  ),
+
+    .idu2exu_mem2reg   ( idu2exu_mem2reg_r    ),
+    .idu2exu_mem_op    ( idu2exu_mem_op_r     ),
+
+    .idu2exu_alu_op    ( idu2exu_alu_op_r     ),
+    .idu2exu_alu_src1  ( idu2exu_alu_src1_r   ),
+    .idu2exu_alu_src2  ( idu2exu_alu_src2_r   ),
+
+    .exu2mem_en        ( exu2mem_en           ),
+    .exu2mem_pc        ( exu2mem_pc           ),
+    .exu2mem_inst      ( exu2mem_inst         ),
+
+    .exu2mem_mem_wen   ( exu2mem_mem_wen      ),
+    .exu2mem_mem_waddr ( exu2mem_mem_waddr    ),
+    .exu2mem_mem_wdata ( exu2mem_mem_wdata    ),
+
+    .exu2mem_mem_ren   ( exu2mem_mem_ren      ),
+    .exu2mem_mem_raddr ( exu2mem_mem_raddr    ),
+    .mem2exu_mem_rdata ( mem2exu_mem_rdata    ),
+
+    .exu2reg_reg_wen   ( exu2reg_reg_wen      ),
+    .exu2reg_reg_waddr ( exu2reg_reg_waddr    ),
+    .exu2reg_reg_wdata ( exu2reg_reg_wdata    ),
+
+    .branch_en         ( branch_en            ),
+    .branch_pc         ( branch_pc            ),
+    .jump_en           ( jump_en              ),
+    .jump_pc           ( jump_pc              )
 );
 
-// MUX_ALU U_MUX_ALU(
-    // .alu_src_sel                    ( idu2exu_alu_src_sel_r        ),
-    // .reg1_rdata                     ( reg2idu_reg1_rdata           ),
-    // .reg2_rdata                     ( reg2idu_reg2_rdata           ),
-    // .imm                            ( idu2exu_imm_r                ),
-    // .curr_pc                        ( idu2exu_pc_r                 ),
-    // .alu_src1                       ( alu_src1                     ),
-    // .alu_src2                       ( alu_src2                     )
-// );
+REGS_RVSEED U_REGS_RVSEED(
+    .clk_reg           ( clk                ),
+    .rst_reg_n         ( rst_n              ),
 
-// ALU U_ALU(
-    // .alu_op                         ( idu2exu_alu_op_r             ),
-    // .alu_src1                       ( alu_src1                     ),
-    // .alu_src2                       ( alu_src2                     ),
-    // .alu_res                        ( alu_res                      )
-// );
-// assign branch_en = ((idu2exu_branch_r == `BRAN_TYPE_A) &&  (alu_res==1)) 
-                         // | ((idu2exu_branch_r == `BRAN_TYPE_B) && ~(alu_res==1)); 
-// assign branch_pc = idu2exu_pc_r + idu2exu_imm_r;
-// assign jump_en   = (idu2exu_jump_r == `JUMP_JAL) | (idu2exu_jump_r == `JUMP_JALR);
-// assign jump_pc   = (idu2exu_jump_r == `JUMP_JAL) ? idu2exu_pc_r + idu2exu_imm_r
-                                                         // : reg2idu_reg1_rdata + idu2exu_imm_r;
-assign branch_en = 1'b0;
-assign jump_en   = 1'b0;
-    
-wire [`DATA_MEM_ADDR_WIDTH            -1:0]   mem_addr;       // idu_jump flag
-wire [`DATA_MEM_DATA_WIDTH            -1:0]   mem_rdata;       // idu_jump flag
-wire [`DATA_MEM_DATA_WIDTH            -1:0]   mem_wdata;       // idu_jump flag
+    .reg1_raddr        ( idu2reg_reg1_raddr ),
+    .reg2_raddr        ( idu2reg_reg2_raddr ),
+    .reg1_rdata        ( reg2idu_reg1_rdata ),
+    .reg2_rdata        ( reg2idu_reg2_rdata ),
 
-// assign mem_addr   = alu_res;
+    .reg_wen           ( exu2reg_reg_wen    ),
+    .reg_waddr         ( exu2reg_reg_waddr  ),
+    .reg_wdata         ( exu2reg_reg_wdata  )
 
-// wire [`MEM_OP_WIDTH-1:0] mem_op     = idu2exu_mem_op_r;
-// wire [`CPU_WIDTH   -1:0] reg2_rdata = reg2idu_reg2_rdata;
-
-// always @(*) begin
-    // case (idu2exu_mem_op_r)
-        // `MEM_SB:
-            // case (mem_addr[1:0])
-                // 2'h0: mem_wdata = {mem_rdata[31:8],  reg2_rdata[7:0]};
-                // 2'h1: mem_wdata = {mem_rdata[31:16], reg2_rdata[7:0], mem_rdata[7:0]};
-                // 2'h2: mem_wdata = {mem_rdata[31:24], reg2_rdata[7:0], mem_rdata[15:0]};
-                // 2'h3: mem_wdata = {reg2_rdata[7:0],  mem_rdata[23:0]};
-            // endcase
-        // `MEM_SH:
-            // case (mem_addr[1])
-                // 1'h0: mem_wdata = {mem_rdata[31:16], reg2_rdata[15:0]};
-                // 1'h1: mem_wdata = {reg2_rdata[15:0], mem_rdata[15:0]};
-            // endcase
-        // `MEM_SW:
-                // mem_wdata = reg2_rdata;
-        // default:; // ? 
-    // endcase
-// end
+);
 
 DATA_MEM U_DATA_MEM(
     .clk                            ( clk                           ),
-    .mem_wen                        ( idu2exu_mem_wen               ),
-    .mem_ren                        ( idu2exu_mem_ren               ),
-    .mem_addr                       ( mem_addr                      ),
-    .mem_wdata                      ( mem_wdata                     ),
-    .mem_rdata                      ( mem_rdata                     )
+
+    .mem_wen                        ( exu2mem_mem_wen               ),
+    .mem_waddr                      ( exu2mem_mem_waddr             ),
+    .mem_wdata                      ( exu2mem_mem_wdata             ),
+
+    .mem_ren                        ( exu2mem_mem_ren               ),
+    .mem_raddr                      ( exu2mem_mem_raddr             ),
+    .mem_rdata                      ( mem2exu_mem_rdata             )
 );
 
-// MUX_REG U_MUX_REG(
-    // .mem2reg                        ( idu2exu_mem2reg_r             ),
-    // .alu_res                        ( alu_res                       ),
-    // .mem_op                         ( idu2exu_mem_op_r              ),
-    // .mem_addr                       ( mem_addr                      ),
-    // .mem_rdata                      ( mem_rdata                     ),
-    // .reg_wdata                      ( idu2exu_reg_wdata_r           )
-// );
 endmodule

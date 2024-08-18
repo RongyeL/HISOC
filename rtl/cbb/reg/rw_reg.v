@@ -5,7 +5,7 @@
 // Filename      : rw_reg.v
 // Author        : Rongye
 // Created On    : 2024-07-25 05:27
-// Last Modified : 2024-07-25 05:32
+// Last Modified : 2024-08-18 07:37
 // ---------------------------------------------------------------------------------
 // Description   : 
 //
@@ -32,6 +32,6 @@ always @ (posedge clk_reg or negedge rst_reg_n) begin
         reg_data <= #DLY data_in;
     end
 end
-assign data_out = reg_data;
+assign data_out = wen ? data_in : reg_data;
 
 endmodule
